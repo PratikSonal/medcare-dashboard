@@ -1,0 +1,38 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('en-IN', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
+}
+
+export function getStatusColor(status: string): string {
+  switch (status) {
+    case 'Active': return 'var(--accent-green)';
+    case 'Critical': return 'var(--accent-red)';
+    case 'Recovering': return 'var(--accent-yellow)';
+    case 'Discharged': return 'var(--text-tertiary)';
+    default: return 'var(--text-tertiary)';
+  }
+}
+
+export function getStatusBg(status: string): string {
+  switch (status) {
+    case 'Active': return 'rgba(16, 188, 131, 0.1)';
+    case 'Critical': return 'rgba(239, 68, 68, 0.1)';
+    case 'Recovering': return 'rgba(245, 158, 11, 0.1)';
+    case 'Discharged': return 'rgba(107, 114, 128, 0.1)';
+    default: return 'rgba(107, 114, 128, 0.1)';
+  }
+}
+
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency', currency: 'INR', maximumFractionDigits: 0
+  }).format(amount);
+}
