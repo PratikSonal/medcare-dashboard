@@ -6,9 +6,9 @@ import {
   PieChart, Pie, Cell, LineChart, Line, Legend, AreaChart, Area,
 } from 'recharts';
 import { TrendingUp, DollarSign, Users, Activity, ChevronRight } from 'lucide-react';
-import { metricsData, departmentStats, mockPatients, mockBillingData } from '@/lib/mockData';
+import { metricsData, departmentStats, mockBillingData } from '@/lib/mockData';
 import { Badge } from '@/components/ui/Badge';
-import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -56,6 +56,7 @@ export default function AnalyticsPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const patients = useAppSelector(s => s.patients.patients);
   const totalPatients = metricsData.reduce((s, d) => s + d.patients, 0);
   const totalRevenue = metricsData.reduce((s, d) => s + d.revenue, 0);
   const totalAppointments = metricsData.reduce((s, d) => s + d.appointments, 0);
@@ -85,7 +86,7 @@ export default function AnalyticsPage() {
     .slice(0, 5);
 
   const doctorMap: Record<string, { total: number; active: number; critical: number; recovering: number; discharged: number; depts: Set<string> }> = {};
-  mockPatients.forEach(p => {
+  patients.forEach(p => {
     if (!doctorMap[p.doctor]) doctorMap[p.doctor] = { total: 0, active: 0, critical: 0, recovering: 0, discharged: 0, depts: new Set() };
     doctorMap[p.doctor].total++;
     doctorMap[p.doctor].depts.add(p.department);

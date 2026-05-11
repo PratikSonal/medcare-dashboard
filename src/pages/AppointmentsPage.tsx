@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, ChevronLeft, ChevronRight, Plus, Filter, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { mockAppointments, mockPatients } from '@/lib/mockData';
+import { mockAppointments } from '@/lib/mockData';
 import type { AppointmentStatus } from '@/types';
-import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient } from '@/features/patients/patientsSlice';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
@@ -47,6 +47,7 @@ function formatDateKey(d: Date) {
 
 export default function AppointmentsPage() {
   const dispatch = useAppDispatch();
+  const patients = useAppSelector(s => s.patients.patients);
   const [selectedDate, setSelectedDate] = useState(new Date('2026-05-11'));
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterStatus, setFilterStatus] = useState<string>('All');
@@ -73,7 +74,7 @@ export default function AppointmentsPage() {
 
   const handleViewPatient = () => {
     if (!selectedApp) return;
-    const patient = mockPatients.find(p => p.id === selectedApp.patientId);
+    const patient = patients.find(p => p.id === selectedApp.patientId);
     if (patient) dispatch(setSelectedPatient(patient));
     setSelectedApp(null);
   };

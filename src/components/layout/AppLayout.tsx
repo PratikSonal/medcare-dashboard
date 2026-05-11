@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { PatientModal } from '@/components/PatientModal';
+import { ToastContainer } from '@/components/ToastContainer';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient } from '@/features/patients/patientsSlice';
 
@@ -24,6 +25,7 @@ export function AppLayout() {
           <PatientModal patient={selectedPatient} onClose={() => dispatch(setSelectedPatient(null))} />
         )}
       </AnimatePresence>
+      <ToastContainer />
     </div>
   );
 }

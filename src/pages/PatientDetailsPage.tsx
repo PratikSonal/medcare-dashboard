@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Grid3X3, List, Filter, X, ChevronDown, Activity, Heart } from 'lucide-react';
+import { Search, Grid3X3, List, Filter, X, ChevronDown, Activity, Heart, UserPlus } from 'lucide-react';
+import { AddPatientModal } from '@/components/AddPatientModal';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setViewMode, setSearchQuery, setFilterStatus, setFilterDepartment, clearFilters, setSelectedPatient } from '@/features/patients/patientsSlice';
 import { showPatientAlertNotification } from '@/lib/notifications';
@@ -90,8 +91,9 @@ function PatientListRow({ patient, onClick }: { patient: Patient; onClick: () =>
 
 export default function PatientDetailsPage() {
   const dispatch = useAppDispatch();
-  const { filteredPatients, viewMode, searchQuery, filterStatus, filterDepartment } = useAppSelector(s => s.patients);
+  const { patients, filteredPatients, viewMode, searchQuery, filterStatus, filterDepartment } = useAppSelector(s => s.patients);
   const [showFilters, setShowFilters] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const hasActiveFilters = filterStatus !== 'All' || filterDepartment !== 'All';
 
   const handlePatientClick = async (patient: Patient) => {
@@ -105,15 +107,21 @@ export default function PatientDetailsPage() {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h1 style={{ fontSize: '30px', fontWeight: 700, color: 'var(--text-primary)' }}>Patients</h1>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredPatients.length} of 20 patients</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>{filteredPatients.length} of {patients.length} patients</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-            {[{ mode: 'grid' as const, icon: <Grid3X3 size={15} />, label: 'Grid' }, { mode: 'list' as const, icon: <List size={15} />, label: 'List' }].map(({ mode, icon, label }) => (
-              <button key={mode} onClick={() => dispatch(setViewMode(mode))}
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 200ms ease', background: viewMode === mode ? 'var(--accent-blue)' : 'transparent', color: viewMode === mode ? 'white' : 'var(--text-secondary)' }}>
-                {icon} {label}
-              </button>
-            ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button onClick={() => setShowAddModal(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 18px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit', background: '#3c83f6', color: 'white', boxShadow: '0 4px 14px rgba(60,131,246,0.3)' }}>
+              <UserPlus size={15} /> Add Patient
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+              {[{ mode: 'grid' as const, icon: <Grid3X3 size={15} />, label: 'Grid' }, { mode: 'list' as const, icon: <List size={15} />, label: 'List' }].map(({ mode, icon, label }) => (
+                <button key={mode} onClick={() => dispatch(setViewMode(mode))}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 200ms ease', background: viewMode === mode ? 'var(--accent-blue)' : 'transparent', color: viewMode === mode ? 'white' : 'var(--text-secondary)' }}>
+                  {icon} {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         <div className="glow-line" style={{ marginTop: '16px' }} />
@@ -143,8 +151,12 @@ export default function PatientDetailsPage() {
 
       <AnimatePresence>
         {showFilters && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            className="glass-card" style={{ borderRadius: '16px', padding: '20px', marginBottom: '24px', overflow: 'hidden' }}>
+          <motion.div
+            initial={{ opacity: 0, maxHeight: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, maxHeight: 240, marginBottom: 24 }}
+            exit={{ opacity: 0, maxHeight: 0, marginBottom: 0 }}
+            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            className="glass-card" style={{ borderRadius: '16px', padding: '20px', overflow: 'hidden' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
               {[{ label: 'Status', items: STATUSES, current: filterStatus, action: setFilterStatus }, { label: 'Department', items: DEPARTMENTS, current: filterDepartment, action: setFilterDepartment }].map(({ label, items, current, action }) => (
                 <div key={label}>
@@ -201,6 +213,10 @@ export default function PatientDetailsPage() {
       <style>{`
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
       `}</style>
+
+      <AnimatePresence>
+        {showAddModal && <AddPatientModal onClose={() => setShowAddModal(false)} />}
+      </AnimatePresence>
     </div>
   );
 }

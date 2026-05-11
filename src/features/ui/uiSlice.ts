@@ -1,11 +1,18 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Theme, Notification } from '@/types';
 
+interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
 interface UIState {
   theme: Theme;
   sidebarOpen: boolean;
   notifications: Notification[];
   unreadCount: number;
+  toasts: Toast[];
 }
 
 const savedTheme = (localStorage.getItem('medcare-theme') as Theme) || 'light';
@@ -13,6 +20,7 @@ const savedTheme = (localStorage.getItem('medcare-theme') as Theme) || 'light';
 const initialState: UIState = {
   theme: savedTheme,
   sidebarOpen: true,
+  toasts: [],
   notifications: [
     { id: 'N001', title: 'Critical Alert', message: 'Patient Rohan Verma requires immediate attention in ICU.', type: 'error', timestamp: new Date().toISOString(), read: false },
     { id: 'N002', title: 'New Admission', message: 'Lakshmi Naidu admitted to Neurology department.', type: 'info', timestamp: new Date(Date.now() - 1800000).toISOString(), read: false },
@@ -50,6 +58,12 @@ const uiSlice = createSlice({
       state.notifications.forEach(n => { n.read = true; });
       state.unreadCount = 0;
     },
+    addToast(state, action: PayloadAction<{ message: string; type: 'success' | 'error' | 'info' }>) {
+      state.toasts.push({ id: `T${Date.now()}`, ...action.payload });
+    },
+    removeToast(state, action: PayloadAction<string>) {
+      state.toasts = state.toasts.filter(t => t.id !== action.payload);
+    },
     addNotification(state, action: PayloadAction<Omit<Notification, 'id' | 'timestamp' | 'read'>>) {
       const newNotif: Notification = {
         ...action.payload,
@@ -63,5 +77,5 @@ const uiSlice = createSlice({
   },
 });
 
-export const { toggleTheme, setTheme, toggleSidebar, markNotificationRead, markAllRead, addNotification } = uiSlice.actions;
+export const { toggleTheme, setTheme, toggleSidebar, markNotificationRead, markAllRead, addNotification, addToast, removeToast } = uiSlice.actions;
 export default uiSlice.reducer;

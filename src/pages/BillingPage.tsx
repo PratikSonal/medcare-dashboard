@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { CreditCard, TrendingUp, Clock, CheckCircle } from 'lucide-react';
-import { mockBillingData, mockPatients } from '@/lib/mockData';
+import { mockBillingData } from '@/lib/mockData';
 import { Badge } from '@/components/ui/Badge';
-import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient } from '@/features/patients/patientsSlice';
 import type { ClaimStatus } from '@/types';
 
@@ -41,6 +41,7 @@ const providerShort: Record<string, string> = {
 
 export default function BillingPage() {
   const dispatch = useAppDispatch();
+  const patients = useAppSelector(s => s.patients.patients);
 
   const totalBilled = mockBillingData.reduce((s, r) => s + r.totalAmount, 0);
   const insuranceCovered = mockBillingData.reduce((s, r) => s + r.insuranceCovered, 0);
@@ -72,7 +73,7 @@ export default function BillingPage() {
   ];
 
   const handleRowClick = (patientId: string) => {
-    const patient = mockPatients.find(p => p.id === patientId);
+    const patient = patients.find(p => p.id === patientId);
     if (patient) dispatch(setSelectedPatient(patient));
   };
 

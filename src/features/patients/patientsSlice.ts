@@ -60,6 +60,10 @@ const patientsSlice = createSlice({
       state.filterDepartment = action.payload;
       applyFilters(state);
     },
+    addPatient(state, action: PayloadAction<Patient>) {
+      state.patients.push(action.payload);
+      applyFilters(state);
+    },
     setSelectedPatient(state, action: PayloadAction<Patient | null>) {
       state.selectedPatient = action.payload;
     },
@@ -72,5 +76,5 @@ const patientsSlice = createSlice({
   },
 });
 
-export const { setViewMode, setSearchQuery, setFilterStatus, setFilterDepartment, setSelectedPatient, clearFilters } = patientsSlice.actions;
+export const { setViewMode, setSearchQuery, setFilterStatus, setFilterDepartment, addPatient, setSelectedPatient, clearFilters } = patientsSlice.actions;
 export default patientsSlice.reducer;

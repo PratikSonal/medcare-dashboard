@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { Users, Activity, AlertTriangle, Calendar, CreditCard, UserCheck, Building2, ShieldCheck, ChevronRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Badge } from '@/components/ui/Badge';
-import { metricsData, mockPatients, mockBillingData, todayAppointmentCount, mockAppointments } from '@/lib/mockData';
+import { metricsData, mockBillingData, todayAppointmentCount, mockAppointments } from '@/lib/mockData';
 import { getStatusBg, getStatusColor } from '@/lib/utils';
 import { showDailySummaryNotification } from '@/lib/notifications';
-import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient, setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -96,7 +96,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const [chartPeriod, setChartPeriod] = useState<'3M' | '6M' | 'All'>('All');
 
-  const patients = mockPatients;
+  const patients = useAppSelector(s => s.patients.patients);
   const criticalPatients = patients.filter(p => p.status === 'Critical');
   const activeCount = patients.filter(p => p.status === 'Active').length;
 
@@ -288,7 +288,7 @@ export default function DashboardPage() {
               {todayAppointments.map((app, i) => {
                 const sc = APP_STATUS_COLORS[app.status];
                 const typeColor = APP_TYPE_COLORS[app.type] || 'var(--accent-blue)';
-                const patient = mockPatients.find(p => p.id === app.patientId);
+                const patient = patients.find(p => p.id === app.patientId);
                 return (
                   <tr key={app.id}
                     onClick={() => patient && dispatch(setSelectedPatient(patient))}
