@@ -14,6 +14,8 @@ export default {
         'accent-purple': 'var(--accent-purple)',
         'accent-yellow': 'var(--accent-yellow)',
         'accent-red':    'var(--accent-red)',
+        'accent-green':  'var(--accent-green)',
+        'border-accent': 'var(--border-accent)',
         'text-primary':  'var(--text-primary)',
         'text-secondary':'var(--text-secondary)',
         'text-tertiary': 'var(--text-tertiary)',

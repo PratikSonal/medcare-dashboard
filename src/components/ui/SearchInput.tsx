@@ -1,4 +1,5 @@
 import { Search, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SearchInputProps {
   value: string;
@@ -9,19 +10,24 @@ interface SearchInputProps {
 
 export function SearchInput({ value, onChange, placeholder = 'Search...', width }: SearchInputProps) {
   return (
-    <div style={{ position: 'relative', ...(width ? { width } : { flex: 1 }) }}>
-      <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
+    <div className={cn('relative', !width && 'flex-1')} style={width ? { width } : undefined}>
+      <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
       <input
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{ width: '100%', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: '12px', padding: '10px 36px 10px 38px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit', transition: 'border-color 200ms ease' }}
-        onFocus={e => (e.target.style.borderColor = 'var(--accent-blue)')}
-        onBlur={e => (e.target.style.borderColor = 'var(--border-primary)')}
+        className={cn(
+          'w-full bg-bg-secondary border border-border-primary rounded-12',
+          'py-[10px] pr-9 pl-[38px] text-[13px] text-text-primary',
+          'outline-none font-sans transition-colors duration-200',
+          'focus:border-accent-blue placeholder:text-text-tertiary',
+        )}
       />
       {value && (
-        <button onClick={() => onChange('')}
-          style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', display: 'flex', padding: '2px' }}>
+        <button
+          onClick={() => onChange('')}
+          className="absolute right-[10px] top-1/2 -translate-y-1/2 flex p-[2px] bg-transparent border-0 cursor-pointer text-text-tertiary"
+        >
           <X size={14} />
         </button>
       )}

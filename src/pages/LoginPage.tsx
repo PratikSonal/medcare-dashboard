@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -8,7 +8,6 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setError, setLoading } from "@/features/auth/authSlice";
 import { showWelcomeNotification, registerServiceWorker } from "@/lib/notifications";
 import { Button } from "@/components/ui/Button";
-import { useEffect } from "react";
 
 const slides = [
   { icon: Shield,     color: "#3c83f6", stat: "99.9%",  headline: "Always On",             description: "Round-the-clock monitoring with enterprise-grade uptime SLA and zero workflow interruptions." },
@@ -40,12 +39,13 @@ function FeatureCarousel() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            style={{ display: "flex", alignItems: "stretch", gap: "20px", height: "100%", position: "absolute", width: "100%" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            className="flex items-stretch gap-5 h-full absolute w-full"
+          >
+            <div className="flex items-center justify-center shrink-0">
               <Icon size={56} style={{ color: slide.color }} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "8px" }}>
+            <div className="flex flex-col justify-center">
+              <div className="flex items-baseline gap-[10px] mb-2">
                 <span style={{ fontSize: "32px", fontWeight: 800, color: slide.color, lineHeight: 1, letterSpacing: "-0.02em" }}>{slide.stat}</span>
                 <span style={{ fontSize: "16px", fontWeight: 600, color: "#f8fafc", lineHeight: 1 }}>{slide.headline}</span>
               </div>
@@ -54,10 +54,14 @@ function FeatureCarousel() {
           </motion.div>
         </AnimatePresence>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "20px" }}>
+      <div className="flex items-center gap-[6px] mt-5">
         {slides.map((s, i) => (
-          <button key={i} onClick={() => setActive(i)}
-            style={{ width: i === active ? "20px" : "6px", height: "6px", borderRadius: "99px", border: "none", cursor: "pointer", padding: 0, transition: "all 300ms ease", background: i === active ? s.color : "#1d2839" }} />
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            className="h-[6px] rounded-full border-0 cursor-pointer p-0 transition-all duration-300"
+            style={{ width: i === active ? "20px" : "6px", background: i === active ? s.color : "#1d2839" }}
+          />
         ))}
       </div>
     </>
@@ -77,7 +81,6 @@ export default function LoginPage() {
   const [loading, setLocalLoading] = useState(false);
   const [error, setLocalError] = useState("");
 
-  // Reset form when switching modes
   useEffect(() => {
     setName(""); setEmail(""); setPassword(""); setLocalError("");
   }, [isRegister]);
@@ -127,30 +130,17 @@ export default function LoginPage() {
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    background: "var(--bg-secondary)",
-    border: "1px solid var(--border-primary)",
-    borderRadius: "12px",
-    padding: "12px 16px",
-    fontSize: "14px",
-    color: "var(--text-primary)",
-    outline: "none",
-    fontFamily: "inherit",
-    transition: "border-color 200ms ease",
-    boxSizing: "border-box",
-  };
-
   return (
-    <div className="dot-grid" style={{ minHeight: "100vh", display: "flex", background: "var(--bg-primary)" }}>
+    <div className="dot-grid min-h-screen flex bg-bg-primary">
 
       {/* ── Left Panel — always dark ── */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
-        className="lg-flex"
-        style={{ display: "none", flexDirection: "column", width: "52%", position: "relative", overflow: "hidden", background: "#0c111d", borderRight: "1px solid #1d2839" }}>
+        className="hidden lg:flex"
+        style={{ flexDirection: "column", width: "52%", position: "relative", overflow: "hidden", background: "#0c111d", borderRight: "1px solid #1d2839" }}
+      >
         <div style={{ position: "absolute", top: "-80px", left: "-80px", width: "400px", height: "400px", borderRadius: "50%", opacity: 0.07, filter: "blur(80px)", background: "#3c83f6", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: "-80px", right: "-60px", width: "350px", height: "350px", borderRadius: "50%", opacity: 0.05, filter: "blur(80px)", background: "#0ea5e9", pointerEvents: "none" }} />
 
@@ -191,92 +181,112 @@ export default function LoginPage() {
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
-        style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "32px" }}>
-        <div style={{ width: "100%", maxWidth: "400px" }}>
+        className="flex-1 flex items-center justify-center p-8"
+      >
+        <div className="w-full max-w-[400px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={isRegister ? "register" : "login"}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}>
-
-              <div style={{ marginBottom: "28px" }}>
-                <h2 style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-primary)", marginBottom: "6px", letterSpacing: "-0.01em" }}>
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              <div className="mb-7">
+                <h2 className="text-[26px] font-bold text-text-primary mb-[6px] tracking-[-0.01em]">
                   {isRegister ? "Join MedCare" : "Welcome back"}
                 </h2>
-                <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
+                <p className="text-sm text-text-secondary">
                   {isRegister ? "Sign up for MedCare" : "Sign in to your MedCare account"}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]">
 
                 {isRegister && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Full Name</label>
-                    <div style={{ position: "relative" }}>
-                      <User size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
-                      <input type="text" placeholder="Dr. Jane Smith" value={name}
+                  <div className="flex flex-col gap-[6px]">
+                    <label className="text-[13px] font-medium text-text-secondary">Full Name</label>
+                    <div className="relative">
+                      <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
+                      <input
+                        type="text"
+                        placeholder="Dr. Jane Smith"
+                        value={name}
                         onChange={(e) => { setName(e.target.value); setLocalError(""); }}
-                        style={{ ...inputStyle, paddingLeft: "38px" }}
-                        onFocus={(e) => (e.target.style.borderColor = "var(--accent-blue)")}
-                        onBlur={(e) => (e.target.style.borderColor = "var(--border-primary)")} />
+                        className="w-full bg-bg-secondary border border-border-primary rounded-[12px] py-3 px-4 pl-[38px] text-sm text-text-primary outline-none font-sans transition-colors duration-200 focus:border-accent-blue box-border"
+                      />
                     </div>
                   </div>
                 )}
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Email Address</label>
-                  <div style={{ position: "relative" }}>
-                    <Mail size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
-                    <input type="email" placeholder="doctor@medcare.com" value={email}
+                <div className="flex flex-col gap-[6px]">
+                  <label className="text-[13px] font-medium text-text-secondary">Email Address</label>
+                  <div className="relative">
+                    <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
+                    <input
+                      type="email"
+                      placeholder="doctor@medcare.com"
+                      value={email}
                       onChange={(e) => { setEmail(e.target.value); setLocalError(""); }}
-                      style={{ ...inputStyle, paddingLeft: "38px" }}
-                      onFocus={(e) => (e.target.style.borderColor = "var(--accent-blue)")}
-                      onBlur={(e) => (e.target.style.borderColor = "var(--border-primary)")} />
+                      className="w-full bg-bg-secondary border border-border-primary rounded-[12px] py-3 px-4 pl-[38px] text-sm text-text-primary outline-none font-sans transition-colors duration-200 focus:border-accent-blue box-border"
+                    />
                   </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Password</label>
+                <div className="flex flex-col gap-[6px]">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[13px] font-medium text-text-secondary">Password</label>
                     {!isRegister && (
-                      <button type="button" style={{ fontSize: "12px", color: "var(--accent-blue)", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0 }}>
+                      <button
+                        type="button"
+                        className="text-xs text-accent-blue bg-transparent border-0 cursor-pointer font-sans p-0"
+                      >
                         Forgot password?
                       </button>
                     )}
                   </div>
-                  <div style={{ position: "relative" }}>
-                    <Lock size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
-                    <input type={showPassword ? "text" : "password"} placeholder="••••••••" value={password}
+                  <div className="relative">
+                    <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
                       onChange={(e) => { setPassword(e.target.value); setLocalError(""); }}
-                      style={{ ...inputStyle, paddingLeft: "38px", paddingRight: "38px" }}
-                      onFocus={(e) => (e.target.style.borderColor = "var(--accent-blue)")}
-                      onBlur={(e) => (e.target.style.borderColor = "var(--border-primary)")} />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)}
-                      style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-tertiary)", display: "flex", alignItems: "center", padding: 0 }}>
+                      className="w-full bg-bg-secondary border border-border-primary rounded-[12px] py-3 px-4 pl-[38px] pr-[38px] text-sm text-text-primary outline-none font-sans transition-colors duration-200 focus:border-accent-blue box-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-text-tertiary flex items-center p-0"
+                    >
                       {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
                   </div>
                 </div>
 
                 {error && (
-                  <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                    style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", borderRadius: "10px", fontSize: "13px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "var(--accent-red)" }}>
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 py-[10px] px-[14px] rounded-[10px] text-[13px] bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] text-accent-red"
+                  >
                     ⚠️ {error}
                   </motion.div>
                 )}
 
-                <Button type="submit" loading={loading}
-                  style={{ width: "100%", padding: "13px", fontSize: "14px", marginTop: "6px", borderRadius: "12px", background: "var(--gradient-primary)", border: "none", color: "white", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
+                <Button
+                  type="submit"
+                  loading={loading}
+                  className="w-full mt-[6px]"
+                  style={{ padding: "13px", fontSize: "14px", borderRadius: "12px", background: "var(--gradient-primary)", border: "none", color: "white", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit" }}
+                >
                   {isRegister ? "Create Account" : "Sign In to MedCare"}
                 </Button>
               </form>
 
-              <p style={{ textAlign: "center", fontSize: "13px", color: "var(--text-secondary)", marginTop: "20px" }}>
+              <p className="text-center text-[13px] text-text-secondary mt-5">
                 {isRegister ? "Already have an account? " : "Don't have an account? "}
-                <Link to={isRegister ? "/login" : "/register"} style={{ color: "var(--accent-blue)", textDecoration: "none", fontWeight: 600 }}>
+                <Link to={isRegister ? "/login" : "/register"} className="text-accent-blue no-underline font-semibold">
                   {isRegister ? "Sign in" : "Create one"}
                 </Link>
               </p>
@@ -285,11 +295,6 @@ export default function LoginPage() {
           </AnimatePresence>
         </div>
       </motion.div>
-
-      <style>{`
-        @media (min-width: 1024px) { .lg-flex { display: flex !important; } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
     </div>
   );
 }

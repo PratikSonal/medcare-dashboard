@@ -1,4 +1,5 @@
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
@@ -6,41 +7,39 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-const variantStyles: Record<string, React.CSSProperties> = {
-  primary: { background: 'var(--accent-blue)', color: 'white', border: 'none', boxShadow: 'var(--glow-blue)' },
-  secondary: { background: 'var(--accent-green)', color: 'white', border: 'none', boxShadow: 'var(--glow-green)' },
-  ghost: { background: 'transparent', color: 'var(--text-secondary)', border: 'none' },
-  danger: { background: 'rgba(239,68,68,0.1)', color: 'var(--accent-red)', border: '1px solid rgba(239,68,68,0.3)' },
-  outline: { background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' },
+const variantClasses: Record<string, string> = {
+  primary:   'bg-accent-blue text-white border-0 shadow-[var(--glow-blue)]',
+  secondary: 'bg-accent-green text-white border-0',
+  ghost:     'bg-transparent text-text-secondary border-0',
+  danger:    'bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.3)]',
+  outline:   'bg-transparent text-text-primary border border-border-primary',
 };
 
-const sizeStyles: Record<string, React.CSSProperties> = {
-  sm: { padding: '6px 12px', fontSize: '12px', borderRadius: '8px' },
-  md: { padding: '8px 16px', fontSize: '14px', borderRadius: '10px' },
-  lg: { padding: '12px 24px', fontSize: '16px', borderRadius: '12px' },
+const sizeClasses: Record<string, string> = {
+  sm: 'px-3 py-[6px] text-xs rounded-[8px]',
+  md: 'px-4 py-2 text-sm rounded-[10px]',
+  lg: 'px-6 py-3 text-base rounded-12',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ style, variant = 'primary', size = 'md', loading, disabled, children, ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', loading, disabled, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        style={{
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-          fontWeight: 500, cursor: (disabled || loading) ? 'not-allowed' : 'pointer',
-          opacity: (disabled || loading) ? 0.5 : 1,
-          transition: 'all 200ms ease', fontFamily: 'inherit',
-          ...variantStyles[variant],
-          ...sizeStyles[size],
-          ...style,
-        }}
+        className={cn(
+          'inline-flex items-center justify-center gap-2 font-medium font-sans transition-all duration-200',
+          'cursor-pointer disabled:cursor-not-allowed disabled:opacity-50',
+          variantClasses[variant],
+          sizeClasses[size],
+          className,
+        )}
         {...props}
       >
         {loading && (
-          <svg style={{ animation: 'spin 1s linear infinite', width: '16px', height: '16px' }} fill="none" viewBox="0 0 24 24">
-            <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
         )}
         {children}

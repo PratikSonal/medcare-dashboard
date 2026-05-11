@@ -1,5 +1,6 @@
 import { motion, type Variants } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
 
 interface KpiCardProps {
@@ -35,46 +36,49 @@ export function KpiCard({
   return (
     <motion.div
       variants={variants}
-      className="glass-card"
+      className={cn('glass-card relative overflow-hidden', sm ? 'rounded-16 p-[18px]' : 'rounded-20 p-6')}
       whileHover={{ y: -3, transition: { duration: 0.2 } }}
       onClick={onClick}
       style={{
-        borderRadius: sm ? '16px' : '20px',
-        padding: sm ? '18px' : '24px',
-        position: 'relative',
-        overflow: 'hidden',
         cursor: onClick ? 'pointer' : 'default',
         ...(active ? { border: `1px solid ${color}50` } : {}),
       }}
     >
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        opacity: active ? 0.07 : 0.05,
-        background: `radial-gradient(circle at top right, ${color}, transparent)`,
-        transition: 'opacity 200ms ease',
-      }} />
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: sm ? '12px' : '13px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: sm ? '10px' : '8px' }}>
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-200"
+        style={{
+          opacity: active ? 0.07 : 0.05,
+          background: `radial-gradient(circle at top right, ${color}, transparent)`,
+        }}
+      />
+      <div className="relative flex items-start justify-between">
+        <div className="flex-1">
+          <p className={cn('font-medium text-text-secondary', sm ? 'text-[12px] mb-[10px]' : 'text-[13px] mb-2')}>
             {title}
           </p>
-          <p style={{ fontSize: sm ? '28px' : '32px', fontWeight: 700, color: sm ? color : 'var(--text-primary)', lineHeight: 1 }}>
+          <p
+            className={cn('font-bold leading-none', sm ? 'text-[28px]' : 'text-[32px]')}
+            style={{ color: sm ? color : 'var(--text-primary)' }}
+          >
             {displayValue}
           </p>
           {change ? (
-            <p style={{ fontSize: '12px', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px', color: positive ? '#0ea5e9' : 'var(--accent-red)' }}>
+            <p className={cn('text-xs mt-2 flex items-center gap-1', positive ? 'text-accent-cyan' : 'text-accent-red')}>
               <span>{positive ? '↑' : '↓'}</span>{change}
             </p>
           ) : sub ? (
-            <p style={{ fontSize: sm ? '11px' : '12px', color: 'var(--text-tertiary)', marginTop: '6px' }}>{sub}</p>
+            <p className={cn('text-text-tertiary mt-[6px]', sm ? 'text-[11px]' : 'text-xs')}>{sub}</p>
           ) : null}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
-          <div style={{ padding: sm ? '6px' : '12px', borderRadius: sm ? '8px' : '12px', background: `${color}18`, color, flexShrink: 0 }}>
+        <div className="flex flex-col items-end gap-2">
+          <div
+            className={cn('shrink-0', sm ? 'p-[6px] rounded-[8px]' : 'p-3 rounded-12')}
+            style={{ background: `${color}18`, color }}
+          >
             {icon}
           </div>
           {showArrow && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#0ea5e9', fontSize: '11px' }}>
+            <div className="flex items-center gap-[3px] text-accent-cyan text-[11px]">
               View <ChevronRight size={12} />
             </div>
           )}

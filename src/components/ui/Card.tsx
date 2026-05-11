@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 interface CardProps {
   children: React.ReactNode;
   className?: string;
@@ -10,10 +12,12 @@ export function Card({ children, className, hover = false, onClick, style }: Car
   return (
     <div
       onClick={onClick}
-      className={`glass-card ${className || ''}`}
-      style={{ borderRadius: '16px', padding: '24px', cursor: onClick || hover ? 'pointer' : 'default', transition: 'all 250ms ease', ...style }}
-      onMouseEnter={e => { if (hover || onClick) (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; }}
-      onMouseLeave={e => { if (hover || onClick) (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
+      className={cn(
+        'glass-card rounded-16 p-6 transition-all duration-200',
+        (onClick || hover) && 'cursor-pointer hover:-translate-y-0.5',
+        className,
+      )}
+      style={style}
     >
       {children}
     </div>
@@ -32,18 +36,18 @@ interface StatCardProps {
 export function StatCard({ title, value, change, positive = true, icon, color = 'var(--accent-blue)' }: StatCardProps) {
   return (
     <Card hover style={{ position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.05, background: `radial-gradient(circle at top right, ${color}, transparent)`, pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+      <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ background: `radial-gradient(circle at top right, ${color}, transparent)` }} />
+      <div className="relative flex items-start justify-between">
         <div>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{title}</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{value}</p>
+          <p className="text-[13px] text-text-secondary mb-2">{title}</p>
+          <p className="text-[32px] font-bold text-text-primary leading-none">{value}</p>
           {change && (
-            <p style={{ fontSize: '12px', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px', color: positive ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+            <p className={cn('text-xs mt-2 flex items-center gap-1', positive ? 'text-accent-cyan' : 'text-accent-red')}>
               <span>{positive ? '↑' : '↓'}</span>{change}
             </p>
           )}
         </div>
-        <div style={{ padding: '12px', borderRadius: '12px', background: `${color}18`, color }}>
+        <div className="p-3 rounded-12 shrink-0" style={{ background: `${color}18`, color }}>
           {icon}
         </div>
       </div>

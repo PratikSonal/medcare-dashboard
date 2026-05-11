@@ -1,0 +1,35 @@
+.sidebar {
+  box-shadow: 4px 0 20px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+
+  [data-theme="dark"] & {
+    box-shadow: 4px 0 24px rgba(0,0,0,0.35), 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+}
+
+.navItem {
+  transition: background 200ms ease, color 200ms ease;
+
+  &:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: rgba(60, 131, 246, 0.1);
+    color: var(--accent-blue);
+
+    &:hover {
+      background: rgba(60, 131, 246, 0.1);
+      color: var(--accent-blue);
+    }
+  }
+}
+
+.logoutBtn {
+  transition: background 200ms ease, color 200ms ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--accent-red);
+  }
+}

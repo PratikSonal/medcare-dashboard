@@ -12,11 +12,11 @@ export function AppLayout() {
   const selectedPatient = useAppSelector(s => s.patients.selectedPatient);
 
   return (
-    <div className="dot-grid" style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div className="dot-grid min-h-screen bg-bg-primary">
       <Sidebar />
       <Navbar />
-      <main style={{ marginLeft: '264px', paddingTop: '76px', minHeight: '100vh' }}>
-        <div style={{ padding: '24px' }}>
+      <main className="min-h-screen" style={{ marginLeft: '264px', paddingTop: '76px' }}>
+        <div className="p-6">
           <Outlet />
         </div>
       </main>

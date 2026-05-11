@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Activity, AlertTriangle, Calendar, CreditCard, UserCheck, Building2, ShieldCheck, ChevronRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { KpiCard } from '@/components/ui/KpiCard';
 import { metricsData, mockBillingData } from '@/lib/mockData';
@@ -14,8 +15,6 @@ import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from '@/lib/constants';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
-
-
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
@@ -41,22 +40,22 @@ export default function DashboardPage() {
   }, [patients.length, criticalPatients.length]);
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" style={{ maxWidth: '1280px', margin: '0 auto' }}>
+    <motion.div variants={container} initial="hidden" animate="show" className="max-w-[1280px] mx-auto">
 
       {/* Header */}
-      <motion.div variants={item} style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <motion.div variants={item} className="mb-8">
+        <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
-            <h1 style={{ fontSize: '30px', fontWeight: 700, color: 'var(--text-primary)' }}>Dashboard</h1>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>Overview of patients, appointments, and revenue</p>
+            <h1 className="text-[30px] font-bold text-text-primary">Dashboard</h1>
+            <p className="text-sm text-text-secondary mt-1">Overview of patients, appointments, and revenue</p>
           </div>
           <Badge variant="info">12 May 2026</Badge>
         </div>
-        <div className="glow-line" style={{ marginTop: '24px' }} />
+        <div className="glow-line mt-6" />
       </motion.div>
 
       {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+      <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
         <KpiCard variants={item} title="Total Patients" rawValue={patients.length} change="12% this month" positive icon={<Users size={20} />} color="#3c83f6"
           onClick={() => { dispatch(clearFilters()); navigate('/patients'); }} />
         <KpiCard variants={item} title="Active Cases" rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="#0ea5e9"
@@ -71,29 +70,27 @@ export default function DashboardPage() {
 
       {/* Critical Patients Alert */}
       {criticalPatients.length > 0 && (
-        <motion.div variants={item} style={{ marginBottom: '24px', padding: '16px 20px', borderRadius: '16px', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <AlertTriangle size={14} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
-            <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent-red)' }}>
+        <motion.div variants={item} className="mb-6 px-5 py-4 rounded-16 bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.25)]">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle size={14} className="text-accent-red shrink-0" />
+            <p className="text-[13px] font-semibold text-accent-red">
               {criticalPatients.length} Critical Patient{criticalPatients.length > 1 ? 's' : ''} — Immediate Attention Required
             </p>
             <button onClick={() => { dispatch(setFilterStatus('Critical')); navigate('/patients'); }}
-              style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '12px', color: 'var(--accent-red)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 500, flexShrink: 0 }}>
+              className="ml-auto flex items-center gap-[3px] text-xs text-accent-red bg-transparent border-0 cursor-pointer font-sans font-medium shrink-0">
               View all <ChevronRight size={13} />
             </button>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <div className="flex flex-wrap gap-[10px]">
             {criticalPatients.map(p => (
               <div key={p.id} onClick={() => dispatch(setSelectedPatient(p))}
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', cursor: 'pointer', flex: '1', minWidth: '220px', transition: 'background 200ms ease' }}
-                onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(239,68,68,0.14)'}
-                onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(239,68,68,0.08)'}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: 'white', flexShrink: 0, background: 'var(--accent-red)' }}>{p.avatar}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</p>
-                  <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.diagnosis} · {p.department}</p>
+                className="flex items-center gap-[10px] px-[14px] py-[10px] rounded-12 bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] cursor-pointer flex-1 min-w-[220px] transition-colors duration-200 hover:bg-[rgba(239,68,68,0.14)]">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 bg-accent-red">{p.avatar}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{p.name}</p>
+                  <p className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">{p.diagnosis} · {p.department}</p>
                 </div>
-                <ChevronRight size={14} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
+                <ChevronRight size={14} className="text-accent-red shrink-0" />
               </div>
             ))}
           </div>
@@ -101,17 +98,17 @@ export default function DashboardPage() {
       )}
 
       {/* Chart + Recent Patients */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', marginBottom: '24px' }}>
-        <motion.div variants={item} className="glass-card" style={{ borderRadius: '20px', padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div className="grid gap-6 mb-6" style={{ gridTemplateColumns: '1fr 340px' }}>
+        <motion.div variants={item} className="glass-card rounded-20 p-6">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>Patient Trends</h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px' }}>Monthly overview</p>
+              <h2 className="text-base font-semibold text-text-primary">Patient Trends</h2>
+              <p className="text-[13px] text-text-secondary mt-[2px]">Monthly overview</p>
             </div>
-            <div style={{ display: 'flex', gap: '6px' }}>
+            <div className="flex gap-[6px]">
               {(['3M', '6M', 'All'] as const).map(p => (
                 <button key={p} onClick={() => setChartPeriod(p)}
-                  style={{ padding: '5px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 200ms ease', background: chartPeriod === p ? 'var(--accent-blue)' : 'var(--bg-tertiary)', color: chartPeriod === p ? 'white' : 'var(--text-secondary)', border: 'none' }}>
+                  className={cn('px-3 py-[5px] rounded-[8px] text-xs font-medium cursor-pointer font-sans transition-all duration-200 border-0', chartPeriod === p ? 'bg-accent-blue text-white' : 'bg-bg-tertiary text-text-secondary')}>
                   {p}
                 </button>
               ))}
@@ -137,34 +134,32 @@ export default function DashboardPage() {
               <Area type="monotone" dataKey="recovered" name="Recovered" stroke="#0ea5e9" strokeWidth={2} fill="url(#rG)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#3c83f6' }} /><span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Total Patients</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#0ea5e9' }} /><span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Recovered</span></div>
+          <div className="flex items-center gap-6 mt-4">
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#3c83f6]" /><span className="text-xs text-text-secondary">Total Patients</span></div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#0ea5e9]" /><span className="text-xs text-text-secondary">Recovered</span></div>
           </div>
         </motion.div>
 
         {/* Recent Patients */}
-        <motion.div variants={item} className="glass-card" style={{ borderRadius: '20px', padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>Recent Patients</h2>
+        <motion.div variants={item} className="glass-card rounded-20 p-6">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-base font-semibold text-text-primary">Recent Patients</h2>
             <button onClick={() => { dispatch(clearFilters()); navigate('/patients'); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '12px', color: 'var(--accent-blue)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 500 }}>
+              className="flex items-center gap-[3px] text-xs text-accent-blue bg-transparent border-0 cursor-pointer font-sans font-medium">
               View all <ChevronRight size={13} />
             </button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div className="flex flex-col gap-[6px]">
             {patients.slice(0, 6).map((patient, i) => (
               <motion.div key={patient.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
                 onClick={() => dispatch(setSelectedPatient(patient))}
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '12px', cursor: 'pointer', transition: 'background 200ms ease' }}
-                onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'var(--bg-tertiary)'}
-                onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'transparent'}>
-                <div style={{ width: '34px', height: '34px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: 'white', flexShrink: 0, background: 'var(--gradient-primary)' }}>{patient.avatar}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{patient.name}</p>
-                  <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{patient.diagnosis}</p>
+                className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-12 cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary">
+                <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ background: 'var(--gradient-primary)' }}>{patient.avatar}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{patient.name}</p>
+                  <p className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">{patient.diagnosis}</p>
                 </div>
-                <span style={{ fontSize: '10px', fontWeight: 500, padding: '3px 7px', borderRadius: '8px', flexShrink: 0, background: getStatusBg(patient.status), color: getStatusColor(patient.status) }}>{patient.status}</span>
+                <span className="text-[10px] font-medium px-[7px] py-[3px] rounded-[8px] shrink-0" style={{ background: getStatusBg(patient.status), color: getStatusColor(patient.status) }}>{patient.status}</span>
               </motion.div>
             ))}
           </div>
@@ -172,42 +167,42 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Stats */}
-      <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', marginBottom: '24px' }}>
+      <motion.div variants={item} className="grid grid-cols-5 gap-4 mb-6">
         {[
-          { label: 'Discharged', value: patients.filter(p => p.status === 'Discharged').length, color: 'var(--text-tertiary)', icon: <UserCheck size={16} />, desc: 'Patients released' },
-          { label: 'Recovering', value: patients.filter(p => p.status === 'Recovering').length, color: 'var(--accent-yellow)', icon: <Activity size={16} />, desc: 'In recovery phase' },
-          { label: 'Departments', value: [...new Set(patients.map(p => p.department))].length, color: '#7c3bed', icon: <Building2 size={16} />, desc: 'Active specialties' },
-          { label: 'Doctors', value: [...new Set(patients.map(p => p.doctor))].length, color: '#3c83f6', icon: <Users size={16} />, desc: 'Attending physicians' },
-          { label: 'Claim Approval', value: `${approvalRate}%`, color: '#0ea5e9', icon: <ShieldCheck size={16} />, desc: 'Insurance approved' },
+          { label: 'Discharged',    value: patients.filter(p => p.status === 'Discharged').length, color: 'var(--text-tertiary)',  icon: <UserCheck size={16} />,  desc: 'Patients released' },
+          { label: 'Recovering',    value: patients.filter(p => p.status === 'Recovering').length, color: 'var(--accent-yellow)', icon: <Activity size={16} />,   desc: 'In recovery phase' },
+          { label: 'Departments',   value: [...new Set(patients.map(p => p.department))].length,   color: '#7c3bed',              icon: <Building2 size={16} />,  desc: 'Active specialties' },
+          { label: 'Doctors',       value: [...new Set(patients.map(p => p.doctor))].length,       color: '#3c83f6',              icon: <Users size={16} />,      desc: 'Attending physicians' },
+          { label: 'Claim Approval',value: `${approvalRate}%`,                                     color: '#0ea5e9',              icon: <ShieldCheck size={16} />,desc: 'Insurance approved' },
         ].map(stat => (
-          <div key={stat.label} className="glass-card" style={{ borderRadius: '16px', padding: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)' }}>{stat.label}</p>
-              <div style={{ padding: '6px', borderRadius: '8px', background: `${stat.color}18`, color: stat.color, flexShrink: 0 }}>{stat.icon}</div>
+          <div key={stat.label} className="glass-card rounded-16 p-4">
+            <div className="flex items-start justify-between mb-[10px]">
+              <p className="text-xs font-medium text-text-secondary">{stat.label}</p>
+              <div className="p-[6px] rounded-[8px] shrink-0" style={{ background: `${stat.color}18`, color: stat.color }}>{stat.icon}</div>
             </div>
-            <p style={{ fontSize: '28px', fontWeight: 700, color: stat.color, lineHeight: 1 }}>{stat.value}</p>
-            <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '6px' }}>{stat.desc}</p>
+            <p className="text-[28px] font-bold leading-none" style={{ color: stat.color }}>{stat.value}</p>
+            <p className="text-[11px] text-text-tertiary mt-[6px]">{stat.desc}</p>
           </div>
         ))}
       </motion.div>
 
       {/* Today's Appointments */}
-      <motion.div variants={item} className="glass-card" style={{ borderRadius: '20px', padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-          <Calendar size={16} style={{ color: '#3c83f6' }} />
-          <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>Today's Appointments</h3>
-          <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>11 May 2026</span>
+      <motion.div variants={item} className="glass-card rounded-20 p-6">
+        <div className="flex items-center gap-[10px] mb-5">
+          <Calendar size={16} className="text-[#3c83f6]" />
+          <h3 className="text-[15px] font-semibold text-text-primary">Today's Appointments</h3>
+          <span className="text-xs text-text-tertiary">11 May 2026</span>
           <button onClick={() => navigate('/appointments')}
-            style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '12px', color: 'var(--accent-blue)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 500 }}>
+            className="ml-auto flex items-center gap-[3px] text-xs text-accent-blue bg-transparent border-0 cursor-pointer font-sans font-medium">
             View all <ChevronRight size={13} />
           </button>
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', fontSize: '14px', borderCollapse: 'collapse' }}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-primary)' }}>
+              <tr className="border-b border-border-primary">
                 {['Time', 'Patient', 'Type', 'Doctor', 'Clinic', 'Intake & Insurance', 'Status'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '8px 12px', fontSize: '11px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                  <th key={h} className="text-left px-3 py-2 text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -219,35 +214,33 @@ export default function DashboardPage() {
                 return (
                   <tr key={app.id}
                     onClick={() => patient && dispatch(setSelectedPatient(patient))}
-                    style={{ borderBottom: i < todayAppointments.length - 1 ? '1px solid var(--border-primary)' : 'none', transition: 'background 200ms ease', cursor: 'pointer' }}
-                    onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'var(--bg-tertiary)'}
-                    onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}>
-                    <td style={{ padding: '12px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{app.time}</td>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: 'white', background: 'var(--gradient-primary)', flexShrink: 0 }}>{app.patientAvatar}</div>
-                        <span style={{ fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{app.patientName}</span>
+                    className={cn('cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary', i < todayAppointments.length - 1 && 'border-b border-border-primary')}>
+                    <td className="px-3 py-3 font-bold text-text-primary whitespace-nowrap">{app.time}</td>
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0" style={{ background: 'var(--gradient-primary)' }}>{app.patientAvatar}</div>
+                        <span className="font-medium text-text-primary whitespace-nowrap">{app.patientName}</span>
                       </div>
                     </td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '99px', background: `${typeColor}18`, color: typeColor, border: `1px solid ${typeColor}30`, fontWeight: 500, whiteSpace: 'nowrap' }}>{app.type}</span>
+                    <td className="px-3 py-3">
+                      <span className="text-[11px] px-2 py-[2px] rounded-full font-medium whitespace-nowrap" style={{ background: `${typeColor}18`, color: typeColor, border: `1px solid ${typeColor}30` }}>{app.type}</span>
                     </td>
-                    <td style={{ padding: '12px', color: 'var(--text-secondary)', fontSize: '13px', whiteSpace: 'nowrap' }}>{app.doctor}</td>
-                    <td style={{ padding: '12px', color: 'var(--text-secondary)', fontSize: '12px', maxWidth: '180px' }}>
-                      <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{app.clinicName}</p>
+                    <td className="px-3 py-3 text-text-secondary text-[13px] whitespace-nowrap">{app.doctor}</td>
+                    <td className="px-3 py-3 text-text-secondary text-xs max-w-[180px]">
+                      <p className="overflow-hidden text-ellipsis whitespace-nowrap">{app.clinicName}</p>
                     </td>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '5px', background: app.intakeComplete ? 'rgba(14,165,233,0.1)' : 'rgba(245,158,11,0.1)', color: app.intakeComplete ? '#0ea5e9' : '#f59e0b', whiteSpace: 'nowrap' }}>
+                    <td className="px-3 py-3">
+                      <div className="flex gap-1">
+                        <span className="text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap" style={{ background: app.intakeComplete ? 'rgba(14,165,233,0.1)' : 'rgba(245,158,11,0.1)', color: app.intakeComplete ? '#0ea5e9' : '#f59e0b' }}>
                           {app.intakeComplete ? '✓ Intake' : '⏳ Intake'}
                         </span>
-                        <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '5px', background: app.insuranceVerified ? 'rgba(14,165,233,0.1)' : 'rgba(239,68,68,0.1)', color: app.insuranceVerified ? '#0ea5e9' : '#ef4444', whiteSpace: 'nowrap' }}>
+                        <span className="text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap" style={{ background: app.insuranceVerified ? 'rgba(14,165,233,0.1)' : 'rgba(239,68,68,0.1)', color: app.insuranceVerified ? '#0ea5e9' : '#ef4444' }}>
                           {app.insuranceVerified ? '✓ Ins.' : '✗ Ins.'}
                         </span>
                       </div>
                     </td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{ fontSize: '11px', fontWeight: 500, padding: '3px 8px', borderRadius: '8px', background: sc.bg, color: sc.color, whiteSpace: 'nowrap' }}>{app.status}</span>
+                    <td className="px-3 py-3">
+                      <span className="text-[11px] font-medium px-2 py-[3px] rounded-[8px] whitespace-nowrap" style={{ background: sc.bg, color: sc.color }}>{app.status}</span>
                     </td>
                   </tr>
                 );
