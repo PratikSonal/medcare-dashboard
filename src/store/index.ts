@@ -3,6 +3,7 @@ import authReducer from '@/features/auth/authSlice';
 import patientsReducer from '@/features/patients/patientsSlice';
 import uiReducer from '@/features/ui/uiSlice';
 import appointmentsReducer from '@/features/appointments/appointmentsSlice';
+import billingReducer from '@/features/billing/billingSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     patients: patientsReducer,
     ui: uiReducer,
     appointments: appointmentsReducer,
+    billing: billingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
