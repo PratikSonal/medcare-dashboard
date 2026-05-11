@@ -1,24 +1,29 @@
 import { Outlet } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
-import { useAppSelector } from '@/hooks/useAppDispatch';
+import { PatientModal } from '@/components/PatientModal';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
+import { setSelectedPatient } from '@/features/patients/patientsSlice';
 
 export function AppLayout() {
-  const sidebarOpen = useAppSelector(s => s.ui.sidebarOpen);
+  const dispatch = useAppDispatch();
+  const selectedPatient = useAppSelector(s => s.patients.selectedPatient);
+
   return (
     <div className="dot-grid" style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
       <Sidebar />
       <Navbar />
-      <motion.main
-        animate={{ marginLeft: sidebarOpen ? '260px' : '72px' }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        style={{ paddingTop: '64px', minHeight: '100vh' }}
-      >
+      <main style={{ marginLeft: '264px', paddingTop: '76px', minHeight: '100vh' }}>
         <div style={{ padding: '24px' }}>
           <Outlet />
         </div>
-      </motion.main>
+      </main>
+      <AnimatePresence>
+        {selectedPatient && (
+          <PatientModal patient={selectedPatient} onClose={() => dispatch(setSelectedPatient(null))} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import DashboardPage from '@/pages/DashboardPage';
 import AnalyticsPage from '@/pages/AnalyticsPage';
 import PatientDetailsPage from '@/pages/PatientDetailsPage';
 import AppointmentsPage from '@/pages/AppointmentsPage';
+import BillingPage from '@/pages/BillingPage';
 
 function ThemeInitializer() {
   useEffect(() => {
@@ -32,6 +33,7 @@ function AppRoutes() {
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="patients" element={<PatientDetailsPage />} />
           <Route path="appointments" element={<AppointmentsPage />} />
+          <Route path="billing" element={<BillingPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

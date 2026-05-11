@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Sun, Moon, Search, X, CheckCheck } from 'lucide-react';
+import { Bell, Sun, Moon, X, CheckCheck } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { toggleTheme, markAllRead, markNotificationRead } from '@/features/ui/uiSlice';
 
@@ -8,7 +8,6 @@ export function Navbar() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(s => s.ui.theme);
   const { notifications, unreadCount } = useAppSelector(s => s.ui);
-  const sidebarOpen = useAppSelector(s => s.ui.sidebarOpen);
   const [showNotifs, setShowNotifs] = useState(false);
 
   const typeIcons: Record<string, string> = { error: '🚨', info: 'ℹ️', success: '✅', warning: '⚠️' };
@@ -26,41 +25,32 @@ export function Navbar() {
   };
 
   const iconBtn: React.CSSProperties = {
-    width: '36px', height: '36px', borderRadius: '10px', display: 'flex',
+    width: '32px', height: '32px', borderRadius: '8px', display: 'flex',
     alignItems: 'center', justifyContent: 'center', border: 'none',
     background: 'transparent', cursor: 'pointer', color: 'var(--text-secondary)',
-    transition: 'all 200ms ease', position: 'relative',
+    transition: 'all 200ms ease', position: 'relative', flexShrink: 0,
   };
 
   return (
     <motion.header
-      animate={{ left: sidebarOpen ? '260px' : '72px' }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
       style={{
-        position: 'fixed', top: 0, right: 0, zIndex: 40, height: '64px',
+        left: '284px',
+        position: 'fixed', top: '14px', right: '20px', zIndex: 40,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 24px', gap: '16px',
-        background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-primary)',
+        padding: '6px 16px 6px 16px', gap: '8px',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-primary)',
+        borderRadius: '999px',
+        boxShadow: theme === 'dark'
+          ? '0 2px 8px rgba(0,0,0,0.35), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)'
+          : '0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
+        backdropFilter: 'blur(12px)',
+        height: '48px',
+        transition: 'background 400ms ease, border-color 400ms ease, box-shadow 400ms ease',
       }}
     >
-      {/* Search */}
-      <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
-        <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-        <input
-          placeholder="Search patients, doctors..."
-          style={{
-            width: '100%', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: '12px', padding: '8px 16px 8px 36px', fontSize: '14px',
-            color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit',
-            transition: 'border-color 200ms ease',
-          }}
-          onFocus={e => e.target.style.borderColor = 'var(--accent-blue)'}
-          onBlur={e => e.target.style.borderColor = 'var(--border-primary)'}
-        />
-      </div>
-
       {/* Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }}>
         {/* Theme toggle */}
         <button
           onClick={() => dispatch(toggleTheme())}
@@ -68,7 +58,7 @@ export function Navbar() {
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--bg-tertiary)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-primary)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)'; }}
         >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
         </button>
 
         {/* Notifications */}
@@ -79,11 +69,11 @@ export function Navbar() {
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--bg-tertiary)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-primary)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)'; }}
           >
-            <Bell size={18} />
+            <Bell size={15} />
             {unreadCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }} animate={{ scale: 1 }}
-                style={{ position: 'absolute', top: '-4px', right: '-4px', width: '16px', height: '16px', borderRadius: '50%', background: 'var(--accent-red)', color: 'white', fontSize: '10px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ position: 'absolute', top: '-3px', right: '-3px', width: '14px', height: '14px', borderRadius: '50%', background: 'var(--accent-red)', color: 'white', fontSize: '9px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {unreadCount}
               </motion.span>
@@ -99,9 +89,8 @@ export function Navbar() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  style={{ position: 'absolute', right: 0, top: '48px', width: '320px', borderRadius: '20px', zIndex: 50, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+                  style={{ position: 'absolute', right: 0, top: '44px', width: '320px', borderRadius: '16px', zIndex: 50, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
                 >
-                  {/* Header */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid var(--border-primary)' }}>
                     <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Notifications</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -117,13 +106,9 @@ export function Navbar() {
                       </button>
                     </div>
                   </div>
-
-                  {/* List */}
                   <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
                     {notifications.map((n) => (
-                      <div
-                        key={n.id}
-                        onClick={() => dispatch(markNotificationRead(n.id))}
+                      <div key={n.id} onClick={() => dispatch(markNotificationRead(n.id))}
                         style={{ display: 'flex', gap: '12px', padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid var(--border-primary)', background: !n.read ? 'rgba(60,131,246,0.04)' : 'transparent', transition: 'background 200ms ease' }}
                         onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'var(--bg-tertiary)'}
                         onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = !n.read ? 'rgba(60,131,246,0.04)' : 'transparent'}
