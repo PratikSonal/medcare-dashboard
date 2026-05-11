@@ -5,7 +5,6 @@ import { store } from '@/store';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ProtectedRoute } from '@/pages/ProtectedRoute';
 import LoginPage from '@/pages/LoginPage';
-import RegisterPage from '@/pages/RegisterPage';
 import DashboardPage from '@/pages/DashboardPage';
 import AnalyticsPage from '@/pages/AnalyticsPage';
 import PatientDetailsPage from '@/pages/PatientDetailsPage';
@@ -14,7 +13,7 @@ import BillingPage from '@/pages/BillingPage';
 
 function ThemeInitializer() {
   useEffect(() => {
-    const theme = localStorage.getItem('medcare-theme') || 'dark';
+    const theme = localStorage.getItem('medcare-theme') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
   }, []);
   return null;
@@ -26,7 +25,7 @@ function AppRoutes() {
       <ThemeInitializer />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register" element={<LoginPage />} />
         <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
