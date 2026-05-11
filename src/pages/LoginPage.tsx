@@ -100,7 +100,7 @@ export default function LoginPage() {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       await registerServiceWorker();
-      await showWelcomeNotification(result.user.displayName || result.user.email || "Doctor");
+      showWelcomeNotification(result.user.displayName || result.user.email || "Doctor");
       navigate("/dashboard");
     } catch (err: unknown) {
       const code = (err as { code?: string }).code || "";

@@ -1,5 +1,4 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
 import { LayoutDashboard, BarChart3, Users, LogOut, Activity, Calendar, CreditCard } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { logout } from '@/features/auth/authSlice';

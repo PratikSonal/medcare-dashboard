@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, ChevronLeft, ChevronRight, ChevronDown, Plus, Filter, Phone, Search, X, UserX, ShieldCheck, ClipboardCheck } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import type { AppointmentStatus, Appointment } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';

@@ -16,6 +16,7 @@ interface UIState {
 }
 
 const savedTheme = (localStorage.getItem('medcare-theme') as Theme) || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
 
 const initialState: UIState = {
   theme: savedTheme,

@@ -2,7 +2,7 @@
 
 ## Project Overview
 A B2B Healthcare SaaS UI built as a take-home assignment for **RagaAI** (sachin.kamat@raga.ai).
-Live at: `pratiksonal.github.io` | GitHub: `medcare-dashboard` (public repo)
+Live at: `medcare-dashboard.vercel.app` (pending) | GitHub: `medcare-dashboard` (public repo)
 
 ---
 
@@ -39,7 +39,8 @@ src/
 │   └── ToastContainer    — toast notification renderer
 ├── features/
 │   ├── auth/             — authSlice.ts
-│   ├── appointments/     — appointmentsSlice.ts (addAppointment)
+│   ├── appointments/     — appointmentsSlice.ts (addAppointment, updateAppointmentStatus, updateAppointmentChecks)
+│   ├── billing/          — billingSlice.ts (updateClaimStatus)
 │   ├── patients/         — patientsSlice.ts (addPatient, setSelectedPatient, filters)
 │   └── ui/               — uiSlice.ts (theme, sidebar, notifications, toasts)
 ├── hooks/            — useAppDispatch.ts
@@ -169,21 +170,23 @@ VITE_FIREBASE_MEASUREMENT_ID=G-VRL533H0TN
 - Patient modal with vitals, appointments, billing, prescriptions tabs
 
 ### AppointmentsPage (`/appointments`)
-- Week calendar strip with dot indicators
+- Week calendar strip with density badge (count, colour-coded: cyan < 4, yellow 4–5, red ≥ 6)
 - Stats cards (Total/Confirmed/Pending/No-Shows) — clickable to filter
 - Search input + collapsible filter panel (status + appointment type pills)
 - Appointment list sorted by time, with intake + insurance badges
+- Inline card status actions: Pending → Confirm / No-show / Cancel; Confirmed → No-show / Cancel
 - "New Appointment" button → `NewAppointmentModal`
 - Doctor schedules sidebar with progress bars
-- Action Required sidebar (pending intake/insurance)
+- Action Required sidebar — "Complete Intake" / "Verify Insurance" buttons dispatch Redux directly
 - Time slots panel: dynamic from Redux appointments, sorted by time
 - Appointment detail modal with "View Patient" action
 
 ### BillingPage (`/billing`)
-- KPI cards: Total Billed, Insurance Settled, Patient Outstanding, Pending Claims
-- Stacked bar chart: claims by status per provider
-- Donut chart: claim status distribution
-- Billing records table — click row to open patient profile
+- KPI cards: Total Billed, Insurance Settled, Patient Outstanding, Pending Claims — all from Redux
+- 3-column charts row: Provider Performance bar chart | Claim Status donut | Outstanding Balance leaderboard (top 5 by patientDue)
+- Billing records: search (patient / doctor / procedure / provider) + collapsible filter (Status pills + Provider pills) + pagination (8/page)
+- Click any row → billing detail modal: financial breakdown, claim status update pills (dispatches `updateClaimStatus`), "View Patient Profile" action
+- Modal uses `selectedRecordId` + `records.find()` pattern — auto-updates on Redux dispatch without closing
 
 ---
 
@@ -201,6 +204,7 @@ store: {
   auth:         { user }
   patients:     { patients[], filteredPatients[], selectedPatient, filterStatus, viewMode, searchQuery }
   appointments: { appointments[] }   // seeded from mockAppointments, mutable via addAppointment
+  billing:      { records[] }        // seeded from mockBillingData, mutable via updateClaimStatus
   ui:           { theme, sidebarOpen, notifications[], toasts[] }
 }
 ```
@@ -211,6 +215,9 @@ store: {
 | patients | `addPatient(patient)` | Push + re-apply filters |
 | patients | `setSelectedPatient(patient)` | Opens PatientModal globally via AppLayout |
 | appointments | `addAppointment(appointment)` | Push; all consumers react immediately |
+| appointments | `updateAppointmentStatus({ id, status })` | Updates status in place |
+| appointments | `updateAppointmentChecks({ id, intakeComplete?, insuranceVerified? })` | Marks intake/insurance done |
+| billing | `updateClaimStatus({ id, status })` | Updates claim status in place |
 | ui | `addToast({ message, type })` | Auto-dismissed after 3.5s |
 
 ---
@@ -222,7 +229,8 @@ store: {
 - **Departments**: Cardiology, Neurology, Pulmonology, Endocrinology, Orthopedics, Surgery, Nephrology, etc.
 - **metricsData**: 7 months (Nov 2025 – May 2026)
 - **departmentStats**: 8 departments with blues/indigos colour palette
-- `mockAppointments` and `mockPatients` seed Redux on init — do **not** read them directly in components, always use `useAppSelector`
+- **17 billing records** — covering all major departments and all 7 insurance providers
+- `mockAppointments`, `mockPatients`, and `mockBillingData` seed Redux on init — do **not** read them directly in components, always use `useAppSelector`
 
 ---
 
@@ -237,10 +245,10 @@ Discharged → gray   var(--text-tertiary)
 ---
 
 ## Pending / Next Steps
-- [ ] Fix remaining internal page components (dashboard, analytics, patients, appointments) for light mode
 - [ ] Deploy to Vercel (add VITE_* env vars in dashboard)
 - [ ] Write README.md
 - [ ] Submit GitHub repo + live link + fill RagaAI application form
+- [ ] Overdue appointment highlight on cards (explicitly deferred)
 
 ## Key Behavioural Rules
 
@@ -255,6 +263,12 @@ Discharged → gray   var(--text-tertiary)
 - Conflict = any overlap between `[slotStart, slotStart+duration)` and an existing appointment's `[start, start+duration)`
 - Click anywhere on a track to snap the proposed time to that position (30-min snapping)
 - Slot picker buttons show red dot badge + red text for any conflicting slot
+- Submit is **disabled** when a conflict exists
+
+### BillingPage modal pattern
+- `selectedRecordId: string | null` state; `selectedRecord = records.find(r => r.id === selectedRecordId)`
+- Dispatching `updateClaimStatus` updates Redux → `records.find` re-runs on next render → modal reflects new status without closing
+- Same ID-based pattern should be used anywhere a detail modal needs to stay open while Redux state updates
 
 ### PayloadAction imports in slices
 Always use `import { createSlice, type PayloadAction }` — `type` keyword required or Vite throws at runtime because `PayloadAction` has no runtime value.
