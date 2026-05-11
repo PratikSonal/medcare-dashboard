@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { X, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
 import type { AppointmentType, Appointment } from '@/types';
 import { useAppSelector, useAppDispatch } from '@/hooks/useAppDispatch';
-import { addToast } from '@/features/ui/uiSlice';
+import { addToast, addNotification } from '@/features/ui/uiSlice';
 import { addAppointment } from '@/features/appointments/appointmentsSlice';
 
 interface Props {
@@ -145,6 +145,11 @@ export default function NewAppointmentModal({ defaultDate, onClose }: Props) {
     dispatch(addAppointment(newAppointment));
     dispatch(addToast({
       message: `Appointment booked for ${pt.name} with ${form.doctor} at ${form.time}`,
+      type: 'success',
+    }));
+    dispatch(addNotification({
+      title: 'Appointment Scheduled',
+      message: `${pt.name} with ${form.doctor} at ${form.time} on ${form.date}.`,
       type: 'success',
     }));
     onClose();
