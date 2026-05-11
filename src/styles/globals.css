@@ -1,9 +1,6 @@
-@import "tailwindcss";
-@source "./src/**/*.{ts,tsx}";
-
-@theme {
-  --font-sans: 'Poppins', sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ── Light mode is default ── */
 :root {

@@ -31,6 +31,7 @@ import NewAppointmentModal from "@/components/NewAppointmentModal";
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/lib/constants";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { Avatar } from "@/components/ui/Avatar";
+import { KpiCard } from "@/components/ui/KpiCard";
 
 const container = {
   hidden: { opacity: 0 },
@@ -241,84 +242,17 @@ export default function AppointmentsPage() {
         }}
       >
         {stats.map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.06 }}
-            onClick={() => setFilterStatus(s.filter)}
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="glass-card"
-            style={{
-              borderRadius: "16px",
-              padding: "18px",
-              cursor: "pointer",
-              position: "relative",
-              overflow: "hidden",
-              border:
-                filterStatus === s.filter
-                  ? `1px solid ${s.color}50`
-                  : undefined,
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                opacity: filterStatus === s.filter ? 0.07 : 0.03,
-                background: `radial-gradient(circle at top right, ${s.color}, transparent)`,
-                pointerEvents: "none",
-                transition: "opacity 200ms ease",
-              }}
+          <motion.div key={s.label} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.06 }}>
+            <KpiCard
+              size="sm"
+              title={s.label}
+              value={String(s.value)}
+              sub={s.desc}
+              icon={s.icon}
+              color={s.color}
+              active={filterStatus === s.filter}
+              onClick={() => setFilterStatus(s.filter)}
             />
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "space-between",
-                marginBottom: "10px",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "12px",
-                  fontWeight: 500,
-                  color: "var(--text-secondary)",
-                }}
-              >
-                {s.label}
-              </p>
-              <div
-                style={{
-                  padding: "6px",
-                  borderRadius: "8px",
-                  background: `${s.color}18`,
-                  color: s.color,
-                  flexShrink: 0,
-                }}
-              >
-                {s.icon}
-              </div>
-            </div>
-            <p
-              style={{
-                fontSize: "28px",
-                fontWeight: 700,
-                color: s.color,
-                lineHeight: 1,
-              }}
-            >
-              {s.value}
-            </p>
-            <p
-              style={{
-                fontSize: "11px",
-                color: "var(--text-tertiary)",
-                marginTop: "6px",
-              }}
-            >
-              {s.desc}
-            </p>
           </motion.div>
         ))}
       </motion.div>

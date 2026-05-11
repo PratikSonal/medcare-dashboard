@@ -4,61 +4,18 @@ import { motion } from 'framer-motion';
 import { Users, Activity, AlertTriangle, Calendar, CreditCard, UserCheck, Building2, ShieldCheck, ChevronRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Badge } from '@/components/ui/Badge';
+import { KpiCard } from '@/components/ui/KpiCard';
 import { metricsData, mockBillingData } from '@/lib/mockData';
 import { getStatusBg, getStatusColor } from '@/lib/utils';
 import { showDailySummaryNotification } from '@/lib/notifications';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient, setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
-import { useCountUp } from '@/hooks/useCountUp';
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from '@/lib/constants';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
 
-function AnimatedStatCard({ title, rawValue, change, positive = true, icon, color = 'var(--accent-blue)', prefix = '', suffix = '', onClick }:
-  { title: string; rawValue: number; change?: string; positive?: boolean; icon: React.ReactNode; color?: string; prefix?: string; suffix?: string; onClick?: () => void }) {
-  const count = useCountUp(rawValue);
-  return (
-    <motion.div variants={item} className="glass-card"
-      style={{ borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: onClick ? 'pointer' : 'default' }}
-      onClick={onClick}
-      whileHover={{ y: -3, transition: { duration: 0.2 } }}>
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.05, background: `radial-gradient(circle at top right, ${color}, transparent)`, pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{title}</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{prefix}{count}{suffix}</p>
-          {change && (
-            <p style={{ fontSize: '12px', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px', color: positive ? '#0ea5e9' : 'var(--accent-red)' }}>
-              <span>{positive ? '↑' : '↓'}</span>{change}
-            </p>
-          )}
-        </div>
-        <div style={{ padding: '12px', borderRadius: '12px', background: `${color}18`, color }}>{icon}</div>
-      </div>
-    </motion.div>
-  );
-}
-
-function RevenueStatCard({ title, value, sub, icon, color, onClick }: { title: string; value: string; sub: string; icon: React.ReactNode; color: string; onClick?: () => void }) {
-  return (
-    <motion.div variants={item} className="glass-card"
-      style={{ borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: onClick ? 'pointer' : 'default' }}
-      onClick={onClick}
-      whileHover={{ y: -3, transition: { duration: 0.2 } }}>
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.05, background: `radial-gradient(circle at top right, ${color}, transparent)`, pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{title}</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{value}</p>
-          <p style={{ fontSize: '12px', marginTop: '8px', color: 'var(--text-tertiary)' }}>{sub}</p>
-        </div>
-        <div style={{ padding: '12px', borderRadius: '12px', background: `${color}18`, color }}>{icon}</div>
-      </div>
-    </motion.div>
-  );
-}
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
@@ -100,15 +57,15 @@ export default function DashboardPage() {
 
       {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <AnimatedStatCard title="Total Patients" rawValue={patients.length} change="12% this month" positive icon={<Users size={20} />} color="#3c83f6"
+        <KpiCard variants={item} title="Total Patients" rawValue={patients.length} change="12% this month" positive icon={<Users size={20} />} color="#3c83f6"
           onClick={() => { dispatch(clearFilters()); navigate('/patients'); }} />
-        <AnimatedStatCard title="Active Cases" rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="#0ea5e9"
+        <KpiCard variants={item} title="Active Cases" rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="#0ea5e9"
           onClick={() => { dispatch(setFilterStatus('Active')); navigate('/patients'); }} />
-        <AnimatedStatCard title="Critical Alerts" rawValue={criticalPatients.length} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="var(--accent-red)"
+        <KpiCard variants={item} title="Critical Alerts" rawValue={criticalPatients.length} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="var(--accent-red)"
           onClick={() => { dispatch(setFilterStatus('Critical')); navigate('/patients'); }} />
-        <AnimatedStatCard title="Appointments Today" rawValue={todayAppointments.length} change="vs 6 yesterday" positive icon={<Calendar size={20} />} color="#7c3bed"
+        <KpiCard variants={item} title="Appointments Today" rawValue={todayAppointments.length} change="vs 6 yesterday" positive icon={<Calendar size={20} />} color="#7c3bed"
           onClick={() => navigate('/appointments')} />
-        <RevenueStatCard title="Revenue Billed" value={`₹${(totalBilled / 100000).toFixed(1)}L`} sub={`${pendingClaims} claims pending`} icon={<CreditCard size={20} />} color="#f59e0b"
+        <KpiCard variants={item} title="Revenue Billed" value={`₹${(totalBilled / 100000).toFixed(1)}L`} sub={`${pendingClaims} claims pending`} icon={<CreditCard size={20} />} color="#f59e0b"
           onClick={() => navigate('/billing')} />
       </div>
 

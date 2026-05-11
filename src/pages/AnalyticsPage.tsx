@@ -5,9 +5,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, Legend, AreaChart, Area,
 } from 'recharts';
-import { TrendingUp, DollarSign, Users, Activity, ChevronRight } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, Activity } from 'lucide-react';
 import { metricsData, departmentStats, mockBillingData } from '@/lib/mockData';
 import { Badge } from '@/components/ui/Badge';
+import { KpiCard } from '@/components/ui/KpiCard';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
 import { formatCompact, PROVIDER_SHORT } from '@/lib/utils';
@@ -105,25 +106,7 @@ export default function AnalyticsPage() {
       {/* KPI Cards */}
       <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
         {kpis.map(k => (
-          <motion.div key={k.title} className="glass-card"
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            onClick={k.onClick}
-            style={{ borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
-            <div style={{ position: 'absolute', inset: 0, opacity: 0.05, background: `radial-gradient(circle at top right, ${k.color}, transparent)`, pointerEvents: 'none' }} />
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{k.title}</p>
-                <p style={{ fontSize: '30px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{k.display}</p>
-                <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '6px' }}>{k.sub}</p>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
-                <div style={{ padding: '12px', borderRadius: '12px', background: `${k.color}18`, color: k.color }}>{k.icon}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#0ea5e9', fontSize: '11px' }}>
-                  View <ChevronRight size={12} />
-                </div>
-              </div>
-            </div>
-          </motion.div>
+          <KpiCard key={k.title} value={k.display} sub={k.sub} icon={k.icon} color={k.color} onClick={k.onClick} title={k.title} showArrow />
         ))}
       </motion.div>
 

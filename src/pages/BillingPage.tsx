@@ -5,6 +5,7 @@ import { CreditCard, TrendingUp, Clock, CheckCircle, SlidersHorizontal, X, Troph
 import { SearchInput } from '@/components/ui/SearchInput';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
+import { KpiCard } from '@/components/ui/KpiCard';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient } from '@/features/patients/patientsSlice';
 import { updateClaimStatus } from '@/features/billing/billingSlice';
@@ -83,10 +84,10 @@ export default function BillingPage() {
   const providerData = Object.entries(providerMap).map(([name, counts]) => ({ name, ...counts }));
 
   const kpis = [
-    { title: 'Total Billed', value: formatCompact(totalBilled), sub: `${records.length} records`, icon: <CreditCard size={20} />, color: '#3c83f6' },
-    { title: 'Insurance Settled', value: formatCompact(insuranceCoveredTotal), sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`, icon: <CheckCircle size={20} />, color: '#0ea5e9' },
-    { title: 'Patient Outstanding', value: formatCompact(patientDueTotal), sub: 'Across all visits', icon: <TrendingUp size={20} />, color: '#7c3bed' },
-    { title: 'Pending Claims', value: `${pendingRecords.length}`, sub: formatCompact(pendingAmount) + ' at risk', icon: <Clock size={20} />, color: '#f59e0b' },
+    { title: 'Total Billed', rawValue: totalBilled, format: formatCompact, sub: `${records.length} records`, icon: <CreditCard size={20} />, color: '#3c83f6' },
+    { title: 'Insurance Settled', rawValue: insuranceCoveredTotal, format: formatCompact, sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`, icon: <CheckCircle size={20} />, color: '#0ea5e9' },
+    { title: 'Patient Outstanding', rawValue: patientDueTotal, format: formatCompact, sub: 'Across all visits', icon: <TrendingUp size={20} />, color: '#7c3bed' },
+    { title: 'Pending Claims', rawValue: pendingRecords.length, sub: formatCompact(pendingAmount) + ' at risk', icon: <Clock size={20} />, color: '#f59e0b' },
   ];
 
   const activeFilters = statusFilter.length + providerFilter.length;
@@ -127,18 +128,7 @@ export default function BillingPage() {
         {/* KPI Cards */}
         <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           {kpis.map(k => (
-            <motion.div key={k.title} className="glass-card" whileHover={{ y: -3, transition: { duration: 0.2 } }}
-              style={{ borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', inset: 0, opacity: 0.05, background: `radial-gradient(circle at top right, ${k.color}, transparent)`, pointerEvents: 'none' }} />
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                <div>
-                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{k.title}</p>
-                  <p style={{ fontSize: '30px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{k.value}</p>
-                  <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '6px' }}>{k.sub}</p>
-                </div>
-                <div style={{ padding: '12px', borderRadius: '12px', background: `${k.color}18`, color: k.color }}>{k.icon}</div>
-              </div>
-            </motion.div>
+            <KpiCard key={k.title} title={k.title} rawValue={k.rawValue} format={k.format} sub={k.sub} icon={k.icon} color={k.color} />
           ))}
         </motion.div>
 
