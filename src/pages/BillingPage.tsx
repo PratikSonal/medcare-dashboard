@@ -1,44 +1,22 @@
 import { useState, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
-import { CreditCard, TrendingUp, Clock, CheckCircle, Search, SlidersHorizontal, X, Trophy, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CreditCard, TrendingUp, Clock, CheckCircle, SlidersHorizontal, X, Trophy, ChevronLeft, ChevronRight } from 'lucide-react';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient } from '@/features/patients/patientsSlice';
 import { updateClaimStatus } from '@/features/billing/billingSlice';
 import type { ClaimStatus } from '@/types';
+import { formatCompact, PROVIDER_SHORT } from '@/lib/utils';
+import { CLAIM_STATUS_COLORS } from '@/lib/constants';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
 const ttStyle = { contentStyle: { background: 'var(--bg-card)', border: '1px solid var(--border-primary)', borderRadius: '12px', color: 'var(--text-primary)', fontFamily: 'Poppins', fontSize: '12px' } };
 
-const claimColors: Record<ClaimStatus, string> = {
-  Approved: '#0ea5e9',
-  Partial: '#7c3bed',
-  Pending: '#f59e0b',
-  Denied: '#ef4444',
-};
-
-const claimBg: Record<ClaimStatus, string> = {
-  Approved: 'rgba(14,165,233,0.1)',
-  Partial: 'rgba(124,59,237,0.1)',
-  Pending: 'rgba(245,158,11,0.1)',
-  Denied: 'rgba(239,68,68,0.1)',
-};
-
-const fmt = (n: number) =>
-  n >= 100000 ? `₹${(n / 100000).toFixed(2)}L` : `₹${(n / 1000).toFixed(1)}K`;
-
-const providerShort: Record<string, string> = {
-  'Star Health Insurance': 'Star Health',
-  'HDFC ERGO Health': 'HDFC ERGO',
-  'Bajaj Allianz Health': 'Bajaj Allianz',
-  'Niva Bupa Health': 'Niva Bupa',
-  'New India Assurance': 'New India',
-  'ICICI Lombard Health': 'ICICI Lombard',
-  'United India Insurance': 'United India',
-};
 
 const ALL_STATUSES: ClaimStatus[] = ['Approved', 'Partial', 'Pending', 'Denied'];
 const PAGE_SIZE = 8;
@@ -92,12 +70,12 @@ export default function BillingPage() {
   const claimStatusData = ALL_STATUSES.map(s => ({
     name: s,
     value: records.filter(r => r.claimStatus === s).length,
-    color: claimColors[s],
+    color: CLAIM_STATUS_COLORS[s].color,
   }));
 
   const providerMap: Record<string, { approved: number; partial: number; pending: number; denied: number }> = {};
   records.forEach(r => {
-    const name = providerShort[r.insuranceProvider] || r.insuranceProvider;
+    const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
     if (!providerMap[name]) providerMap[name] = { approved: 0, partial: 0, pending: 0, denied: 0 };
     const key = r.claimStatus.toLowerCase() as 'approved' | 'partial' | 'pending' | 'denied';
     providerMap[name][key]++;
@@ -105,10 +83,10 @@ export default function BillingPage() {
   const providerData = Object.entries(providerMap).map(([name, counts]) => ({ name, ...counts }));
 
   const kpis = [
-    { title: 'Total Billed', value: fmt(totalBilled), sub: `${records.length} records`, icon: <CreditCard size={20} />, color: '#3c83f6' },
-    { title: 'Insurance Settled', value: fmt(insuranceCoveredTotal), sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`, icon: <CheckCircle size={20} />, color: '#0ea5e9' },
-    { title: 'Patient Outstanding', value: fmt(patientDueTotal), sub: 'Across all visits', icon: <TrendingUp size={20} />, color: '#7c3bed' },
-    { title: 'Pending Claims', value: `${pendingRecords.length}`, sub: fmt(pendingAmount) + ' at risk', icon: <Clock size={20} />, color: '#f59e0b' },
+    { title: 'Total Billed', value: formatCompact(totalBilled), sub: `${records.length} records`, icon: <CreditCard size={20} />, color: '#3c83f6' },
+    { title: 'Insurance Settled', value: formatCompact(insuranceCoveredTotal), sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`, icon: <CheckCircle size={20} />, color: '#0ea5e9' },
+    { title: 'Patient Outstanding', value: formatCompact(patientDueTotal), sub: 'Across all visits', icon: <TrendingUp size={20} />, color: '#7c3bed' },
+    { title: 'Pending Claims', value: `${pendingRecords.length}`, sub: formatCompact(pendingAmount) + ' at risk', icon: <Clock size={20} />, color: '#f59e0b' },
   ];
 
   const activeFilters = statusFilter.length + providerFilter.length;
@@ -231,12 +209,12 @@ export default function BillingPage() {
               {leaderboard.map((r, i) => (
                 <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, color: i === 0 ? '#f59e0b' : 'var(--text-tertiary)', width: '18px', flexShrink: 0, textAlign: 'right' }}>#{i + 1}</span>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: 'white', background: 'var(--gradient-primary)', flexShrink: 0 }}>{r.patientAvatar}</div>
+                  <Avatar initials={r.patientAvatar} size={28} radius="50%" />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.patientName}</p>
                     <p style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>{r.department}</p>
                   </div>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: r.patientDue > 50000 ? 'var(--accent-red)' : 'var(--text-primary)', flexShrink: 0 }}>{fmt(r.patientDue)}</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: r.patientDue > 50000 ? 'var(--accent-red)' : 'var(--text-primary)', flexShrink: 0 }}>{formatCompact(r.patientDue)}</span>
                 </div>
               ))}
             </div>
@@ -255,15 +233,7 @@ export default function BillingPage() {
               </p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ position: 'relative' }}>
-                <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
-                <input
-                  value={search}
-                  onChange={e => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Search patient, doctor, procedure..."
-                  style={{ paddingLeft: '32px', paddingRight: '12px', paddingTop: '8px', paddingBottom: '8px', borderRadius: '10px', border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', fontSize: '13px', width: '260px', fontFamily: 'Poppins', outline: 'none' }}
-                />
-              </div>
+              <SearchInput value={search} onChange={v => { setSearch(v); setPage(1); }} placeholder="Search patient, doctor, procedure..." width={260} />
               <button
                 onClick={() => setFilterOpen(o => !o)}
                 style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '10px', border: `1px solid ${activeFilters > 0 ? 'var(--accent-blue)' : 'var(--border-primary)'}`, background: activeFilters > 0 ? 'rgba(60,131,246,0.08)' : 'var(--bg-secondary)', color: activeFilters > 0 ? 'var(--accent-blue)' : 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'Poppins' }}>
@@ -289,7 +259,7 @@ export default function BillingPage() {
                   const active = statusFilter.includes(s);
                   return (
                     <button key={s} onClick={() => toggleStatus(s)}
-                      style={{ padding: '4px 12px', borderRadius: '99px', border: `1px solid ${active ? claimColors[s] : 'var(--border-primary)'}`, background: active ? claimBg[s] : 'transparent', color: active ? claimColors[s] : 'var(--text-secondary)', fontSize: '12px', fontWeight: active ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', transition: 'all 150ms ease' }}>
+                      style={{ padding: '4px 12px', borderRadius: '99px', border: `1px solid ${active ? CLAIM_STATUS_COLORS[s].color : 'var(--border-primary)'}`, background: active ? CLAIM_STATUS_COLORS[s].bg : 'transparent', color: active ? CLAIM_STATUS_COLORS[s].color : 'var(--text-secondary)', fontSize: '12px', fontWeight: active ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', transition: 'all 150ms ease' }}>
                       {s}
                     </button>
                   );
@@ -303,7 +273,7 @@ export default function BillingPage() {
                     return (
                       <button key={p} onClick={() => toggleProvider(p)}
                         style={{ padding: '4px 12px', borderRadius: '99px', border: `1px solid ${active ? 'var(--accent-blue)' : 'var(--border-primary)'}`, background: active ? 'rgba(60,131,246,0.1)' : 'transparent', color: active ? 'var(--accent-blue)' : 'var(--text-secondary)', fontSize: '12px', fontWeight: active ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', transition: 'all 150ms ease' }}>
-                        {providerShort[p] || p}
+                        {PROVIDER_SHORT[p] || p}
                       </button>
                     );
                   })}
@@ -344,7 +314,7 @@ export default function BillingPage() {
                     onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}>
                     <td style={{ padding: '12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: 'white', background: 'var(--gradient-primary)', flexShrink: 0 }}>{r.patientAvatar}</div>
+                        <Avatar initials={r.patientAvatar} size={28} radius="50%" />
                         <span style={{ fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{r.patientName}</span>
                       </div>
                     </td>
@@ -354,10 +324,10 @@ export default function BillingPage() {
                       <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '2px' }}>{r.department}</p>
                     </td>
                     <td style={{ padding: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{r.doctor}</td>
-                    <td style={{ padding: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{providerShort[r.insuranceProvider] || r.insuranceProvider}</td>
+                    <td style={{ padding: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider}</td>
                     <td style={{ padding: '12px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>₹{r.totalAmount.toLocaleString('en-IN')}</td>
                     <td style={{ padding: '12px' }}>
-                      <span style={{ fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap', background: claimBg[r.claimStatus], color: claimColors[r.claimStatus] }}>{r.claimStatus}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap', background: CLAIM_STATUS_COLORS[r.claimStatus].bg, color: CLAIM_STATUS_COLORS[r.claimStatus].color }}>{r.claimStatus}</span>
                     </td>
                     <td style={{ padding: '12px', fontWeight: 600, whiteSpace: 'nowrap', color: r.patientDue > 50000 ? 'var(--accent-red)' : 'var(--text-primary)' }}>
                       ₹{r.patientDue.toLocaleString('en-IN')}
@@ -420,7 +390,7 @@ export default function BillingPage() {
               {/* Modal header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '44px', height: '44px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700, color: 'white', background: 'var(--gradient-primary)', flexShrink: 0 }}>{selectedRecord.patientAvatar}</div>
+                  <Avatar initials={selectedRecord.patientAvatar} size={44} radius="50%" />
                   <div>
                     <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)' }}>{selectedRecord.patientName}</p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
@@ -478,7 +448,7 @@ export default function BillingPage() {
                     return (
                       <button key={s}
                         onClick={() => dispatch(updateClaimStatus({ id: selectedRecord.id, status: s }))}
-                        style={{ padding: '6px 16px', borderRadius: '10px', border: `1px solid ${isActive ? claimColors[s] : 'var(--border-primary)'}`, background: isActive ? claimBg[s] : 'transparent', color: isActive ? claimColors[s] : 'var(--text-secondary)', fontSize: '13px', fontWeight: isActive ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', transition: 'all 150ms ease' }}>
+                        style={{ padding: '6px 16px', borderRadius: '10px', border: `1px solid ${isActive ? CLAIM_STATUS_COLORS[s].color : 'var(--border-primary)'}`, background: isActive ? CLAIM_STATUS_COLORS[s].bg : 'transparent', color: isActive ? CLAIM_STATUS_COLORS[s].color : 'var(--text-secondary)', fontSize: '13px', fontWeight: isActive ? 600 : 400, cursor: 'pointer', fontFamily: 'Poppins', transition: 'all 150ms ease' }}>
                         {s}
                       </button>
                     );

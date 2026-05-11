@@ -36,3 +36,16 @@ export function formatCurrency(amount: number): string {
     style: 'currency', currency: 'INR', maximumFractionDigits: 0
   }).format(amount);
 }
+
+export const formatCompact = (n: number) =>
+  n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${(n / 1000).toFixed(0)}K`;
+
+export const PROVIDER_SHORT: Record<string, string> = {
+  'Star Health Insurance': 'Star Health',
+  'HDFC ERGO Health': 'HDFC ERGO',
+  'Bajaj Allianz Health': 'Bajaj Allianz',
+  'Niva Bupa Health': 'Niva Bupa',
+  'New India Assurance': 'New India',
+  'ICICI Lombard Health': 'ICICI Lombard',
+  'United India Insurance': 'United India',
+};

@@ -13,7 +13,6 @@ import {
   Plus,
   Filter,
   Phone,
-  Search,
   X,
   UserX,
   ShieldCheck,
@@ -29,6 +28,9 @@ import {
 } from "@/features/appointments/appointmentsSlice";
 import { addToast } from "@/features/ui/uiSlice";
 import NewAppointmentModal from "@/components/NewAppointmentModal";
+import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/lib/constants";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { Avatar } from "@/components/ui/Avatar";
 
 const container = {
   hidden: { opacity: 0 },
@@ -39,50 +41,12 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
 
-const STATUS_CONFIG: Record<
-  AppointmentStatus,
-  { color: string; bg: string; icon: React.ReactNode; label: string }
-> = {
-  Confirmed: {
-    color: "#3c83f6",
-    bg: "rgba(60,131,246,0.1)",
-    icon: <CheckCircle size={13} />,
-    label: "Confirmed",
-  },
-  Pending: {
-    color: "#f59e0b",
-    bg: "rgba(245,158,11,0.1)",
-    icon: <AlertCircle size={13} />,
-    label: "Pending",
-  },
-  Completed: {
-    color: "#0ea5e9",
-    bg: "rgba(14,165,233,0.1)",
-    icon: <CheckCircle size={13} />,
-    label: "Completed",
-  },
-  Cancelled: {
-    color: "#6b7280",
-    bg: "rgba(107,114,128,0.1)",
-    icon: <XCircle size={13} />,
-    label: "Cancelled",
-  },
-  "No-Show": {
-    color: "#ef4444",
-    bg: "rgba(239,68,68,0.1)",
-    icon: <XCircle size={13} />,
-    label: "No-Show",
-  },
-};
-
-const TYPE_COLORS: Record<string, string> = {
-  Emergency: "#ef4444",
-  "New Patient": "#7c3bed",
-  "Follow-up": "#3c83f6",
-  "Routine Check": "#0ea5e9",
-  Consultation: "#f59e0b",
-  "Dialysis Review": "#38bdf8",
-  "Insulin Review": "#0ea5e9",
+const STATUS_CONFIG: Record<AppointmentStatus, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
+  Confirmed: { ...APPT_STATUS_COLORS.Confirmed, icon: <CheckCircle size={13} />, label: 'Confirmed' },
+  Pending:   { ...APPT_STATUS_COLORS.Pending,   icon: <AlertCircle size={13} />, label: 'Pending' },
+  Completed: { ...APPT_STATUS_COLORS.Completed, icon: <CheckCircle size={13} />, label: 'Completed' },
+  Cancelled: { ...APPT_STATUS_COLORS.Cancelled, icon: <XCircle size={13} />,    label: 'Cancelled' },
+  'No-Show': { ...APPT_STATUS_COLORS['No-Show'], icon: <XCircle size={13} />,   label: 'No-Show' },
 };
 
 function getWeekDays(baseDate: Date) {
@@ -526,61 +490,7 @@ export default function AppointmentsPage() {
           {/* Search + Filter bar */}
           <div style={{ marginBottom: "16px" }}>
             <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-              <div style={{ position: "relative", flex: 1 }}>
-                <Search
-                  size={15}
-                  style={{
-                    position: "absolute",
-                    left: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "var(--text-tertiary)",
-                    pointerEvents: "none",
-                  }}
-                />
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by patient, doctor, type, clinic, insurance…"
-                  style={{
-                    width: "100%",
-                    background: "var(--bg-secondary)",
-                    border: "1px solid var(--border-primary)",
-                    borderRadius: "12px",
-                    padding: "10px 36px 10px 38px",
-                    fontSize: "13px",
-                    color: "var(--text-primary)",
-                    outline: "none",
-                    fontFamily: "inherit",
-                    boxSizing: "border-box",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.borderColor = "var(--accent-blue)")
-                  }
-                  onBlur={(e) =>
-                    (e.target.style.borderColor = "var(--border-primary)")
-                  }
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "var(--text-tertiary)",
-                      display: "flex",
-                      padding: "2px",
-                    }}
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
+              <SearchInput value={searchQuery} onChange={setSearchQuery} placeholder="Search by patient, doctor, type, clinic, insurance…" />
               <button
                 onClick={() => setShowFilters((f) => !f)}
                 style={{
@@ -739,7 +649,7 @@ export default function AppointmentsPage() {
                           gap: "6px",
                         }}
                       >
-                        {["All", ...Object.keys(TYPE_COLORS)].map((t) => (
+                        {["All", ...Object.keys(APPT_TYPE_COLORS)].map((t) => (
                           <button
                             key={t}
                             onClick={() => setFilterType(t)}
@@ -753,7 +663,7 @@ export default function AppointmentsPage() {
                               transition: "all 150ms ease",
                               background:
                                 filterType === t
-                                  ? (TYPE_COLORS[t] ?? "var(--accent-blue)")
+                                  ? (APPT_TYPE_COLORS[t] ?? "var(--accent-blue)")
                                   : "var(--bg-tertiary)",
                               color:
                                 filterType === t
@@ -803,7 +713,7 @@ export default function AppointmentsPage() {
                 todayApps.map((app) => {
                   const status = STATUS_CONFIG[app.status];
                   const typeColor =
-                    TYPE_COLORS[app.type] || "var(--accent-blue)";
+                    APPT_TYPE_COLORS[app.type] || "var(--accent-blue)";
                   return (
                     <motion.div
                       key={app.id}
@@ -865,23 +775,7 @@ export default function AppointmentsPage() {
                               flexShrink: 0,
                             }}
                           />
-                          <div
-                            style={{
-                              width: "36px",
-                              height: "36px",
-                              borderRadius: "50%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "11px",
-                              fontWeight: 700,
-                              color: "white",
-                              flexShrink: 0,
-                              background: "var(--gradient-primary)",
-                            }}
-                          >
-                            {app.patientAvatar}
-                          </div>
+                          <Avatar initials={app.patientAvatar} size={36} radius="50%" />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div
                               style={{
@@ -1184,23 +1078,7 @@ export default function AppointmentsPage() {
                         gap: "10px",
                       }}
                     >
-                      <div
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "10px",
-                          fontWeight: 700,
-                          color: "white",
-                          background: "var(--gradient-primary)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {doc.split(" ").slice(-1)[0][0]}
-                      </div>
+                      <Avatar initials={doc.split(" ").slice(-1)[0][0]} size={30} radius="50%" />
                       <div>
                         <p
                           style={{
@@ -1303,23 +1181,7 @@ export default function AppointmentsPage() {
                         marginBottom: "8px",
                       }}
                     >
-                      <div
-                        style={{
-                          width: "24px",
-                          height: "24px",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "9px",
-                          fontWeight: 700,
-                          color: "white",
-                          background: "var(--gradient-primary)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {app.patientAvatar}
-                      </div>
+                      <Avatar initials={app.patientAvatar} size={24} radius="50%" />
                       <p
                         style={{
                           fontSize: "12px",
@@ -1566,22 +1428,7 @@ export default function AppointmentsPage() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "14px" }}
                 >
-                  <div
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "14px",
-                      fontWeight: 700,
-                      color: "white",
-                      background: "var(--gradient-primary)",
-                    }}
-                  >
-                    {selectedApp.patientAvatar}
-                  </div>
+                  <Avatar initials={selectedApp.patientAvatar} size={48} radius="16px" />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h2
                       style={{

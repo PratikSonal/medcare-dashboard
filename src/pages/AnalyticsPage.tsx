@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCountUp } from '@/hooks/useCountUp';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -10,6 +10,8 @@ import { metricsData, departmentStats, mockBillingData } from '@/lib/mockData';
 import { Badge } from '@/components/ui/Badge';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
+import { formatCompact, PROVIDER_SHORT } from '@/lib/utils';
+import { Avatar } from '@/components/ui/Avatar';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
@@ -22,35 +24,9 @@ const renderLabel = ({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadiu
   return <text x={cx + r * Math.cos(-midAngle * RADIAN)} y={cy + r * Math.sin(-midAngle * RADIAN)} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={600}>{`${(percent * 100).toFixed(0)}%`}</text>;
 };
 
-const providerShort: Record<string, string> = {
-  'Star Health Insurance': 'Star Health',
-  'HDFC ERGO Health': 'HDFC ERGO',
-  'Bajaj Allianz Health': 'Bajaj Allianz',
-  'Niva Bupa Health': 'Niva Bupa',
-  'New India Assurance': 'New India',
-  'ICICI Lombard Health': 'ICICI Lombard',
-  'United India Insurance': 'United India',
-};
-
-const fmt = (n: number) =>
-  n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${(n / 1000).toFixed(0)}K`;
 
 const PROC_COLORS = ['#3c83f6', '#7c3bed', '#0ea5e9', '#f59e0b', '#6366f1'];
 
-function useCountUp(target: number, duration = 1200) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    let current = 0;
-    const step = target / (duration / 16);
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(current));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target, duration]);
-  return count;
-}
 
 export default function AnalyticsPage() {
   const navigate = useNavigate();
@@ -70,7 +46,7 @@ export default function AnalyticsPage() {
 
   const providerMap: Record<string, { total: number; covered: number; due: number; claims: number }> = {};
   mockBillingData.forEach(r => {
-    const name = providerShort[r.insuranceProvider] || r.insuranceProvider;
+    const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
     if (!providerMap[name]) providerMap[name] = { total: 0, covered: 0, due: 0, claims: 0 };
     providerMap[name].total += r.totalAmount;
     providerMap[name].covered += r.insuranceCovered;
@@ -258,11 +234,11 @@ export default function AnalyticsPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                 <div>
                   <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>Insurance Settled</span>
-                  <p style={{ fontSize: '17px', fontWeight: 700, color: '#0ea5e9', marginTop: '2px' }}>{fmt(insuranceCovered)}</p>
+                  <p style={{ fontSize: '17px', fontWeight: 700, color: '#0ea5e9', marginTop: '2px' }}>{formatCompact(insuranceCovered)}</p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>Patient Outstanding</span>
-                  <p style={{ fontSize: '17px', fontWeight: 700, color: '#ef4444', marginTop: '2px' }}>{fmt(patientDue)}</p>
+                  <p style={{ fontSize: '17px', fontWeight: 700, color: '#ef4444', marginTop: '2px' }}>{formatCompact(patientDue)}</p>
                 </div>
               </div>
               <div style={{ height: '8px', borderRadius: '999px', background: 'var(--border-primary)', overflow: 'hidden' }}>
@@ -270,7 +246,7 @@ export default function AnalyticsPage() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
                 <span style={{ fontSize: '11px', color: '#0ea5e9', fontWeight: 600 }}>{coveragePct}% covered</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>Total: {fmt(totalBilled)}</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>Total: {formatCompact(totalBilled)}</span>
               </div>
             </div>
 
@@ -286,7 +262,7 @@ export default function AnalyticsPage() {
                 {providerData.map((p, i) => (
                   <tr key={p.name} style={{ borderBottom: i < providerData.length - 1 ? '1px solid var(--border-primary)' : 'none' }}>
                     <td style={{ padding: '10px 8px', fontWeight: 500, color: 'var(--text-primary)' }}>{p.name}</td>
-                    <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{fmt(p.total)}</td>
+                    <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{formatCompact(p.total)}</td>
                     <td style={{ padding: '10px 8px' }}>
                       <div style={{ width: '64px', height: '5px', borderRadius: '999px', background: 'var(--border-primary)', overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${p.rate}%`, background: p.rate > 60 ? '#0ea5e9' : p.rate > 30 ? '#f59e0b' : '#ef4444', borderRadius: '999px' }} />
@@ -344,9 +320,7 @@ export default function AnalyticsPage() {
                 <tr key={d.name} style={{ borderBottom: i < doctorData.length - 1 ? '1px solid var(--border-primary)' : 'none' }}>
                   <td style={{ padding: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '11px', fontWeight: 700, flexShrink: 0 }}>
-                        {d.name.split(' ').slice(1).map(n => n[0]).join('').slice(0, 2)}
-                      </div>
+                      <Avatar initials={d.name.split(' ').slice(1).map(n => n[0]).join('').slice(0, 2)} size={32} radius="50%" />
                       <span style={{ fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{d.name}</span>
                     </div>
                   </td>

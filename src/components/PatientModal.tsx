@@ -6,6 +6,8 @@ import { mockBillingData, mockPrescriptions } from '@/lib/mockData';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { getStatusBg, getStatusColor, formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
+import { APPT_STATUS_COLORS, APPT_TYPE_COLORS, CLAIM_STATUS_COLORS } from '@/lib/constants';
+import { Avatar } from '@/components/ui/Avatar';
 
 const PRESCRIPTION_COLORS = {
   Active: { color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
@@ -13,29 +15,12 @@ const PRESCRIPTION_COLORS = {
   Discontinued: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
 };
 
-const CLAIM_COLORS = {
-  Approved: { color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
-  Partial: { color: '#7c3bed', bg: 'rgba(124,59,237,0.1)' },
-  Pending: { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-  Denied: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-};
-
 const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
-  Confirmed: { color: '#3c83f6', bg: 'rgba(60,131,246,0.1)', icon: <CheckCircle size={11} /> },
-  Pending: { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: <AlertCircle size={11} /> },
-  Completed: { color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)', icon: <CheckCircle size={11} /> },
-  Cancelled: { color: '#6b7280', bg: 'rgba(107,114,128,0.1)', icon: <XCircle size={11} /> },
-  'No-Show': { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: <XCircle size={11} /> },
-};
-
-const APP_TYPE_COLORS: Record<string, string> = {
-  Emergency: '#ef4444',
-  'New Patient': '#7c3bed',
-  'Follow-up': '#3c83f6',
-  'Routine Check': '#0ea5e9',
-  Consultation: '#f59e0b',
-  'Dialysis Review': '#38bdf8',
-  'Insulin Review': '#0ea5e9',
+  Confirmed: { ...APPT_STATUS_COLORS.Confirmed, icon: <CheckCircle size={11} /> },
+  Pending:   { ...APPT_STATUS_COLORS.Pending,   icon: <AlertCircle size={11} /> },
+  Completed: { ...APPT_STATUS_COLORS.Completed, icon: <CheckCircle size={11} /> },
+  Cancelled: { ...APPT_STATUS_COLORS.Cancelled, icon: <XCircle size={11} /> },
+  'No-Show': { ...APPT_STATUS_COLORS['No-Show'], icon: <XCircle size={11} /> },
 };
 
 function VitalBadge({ icon, label, value, alert = false }: { icon: React.ReactNode; label: string; value: string | number; alert?: boolean }) {
@@ -85,7 +70,7 @@ export function PatientModal({ patient, onClose }: { patient: Patient; onClose: 
             <X size={16} />
           </button>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-            <div style={{ width: '60px', height: '60px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 700, color: 'white', background: 'var(--gradient-primary)', flexShrink: 0 }}>{patient.avatar}</div>
+            <Avatar initials={patient.avatar} size={60} radius="18px" />
             <div>
               <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)' }}>{patient.name}</h2>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>{patient.id} · {patient.age}y · {patient.gender} · {patient.bloodGroup}</p>
@@ -153,7 +138,7 @@ export function PatientModal({ patient, onClose }: { patient: Patient; onClose: 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {appointments.map(app => {
                       const sc = APP_STATUS[app.status];
-                      const typeColor = APP_TYPE_COLORS[app.type] || 'var(--accent-blue)';
+                      const typeColor = APPT_TYPE_COLORS[app.type] || 'var(--accent-blue)';
                       return (
                         <div key={app.id} style={{ padding: '16px', borderRadius: '14px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderLeft: `3px solid ${typeColor}` }}>
                           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' }}>
@@ -227,7 +212,7 @@ export function PatientModal({ patient, onClose }: { patient: Patient; onClose: 
                                 <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{r.procedure}</p>
                                 <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '2px' }}>{r.department} · {new Date(r.visitDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                               </div>
-                              <span style={{ fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: '8px', flexShrink: 0, background: CLAIM_COLORS[r.claimStatus].bg, color: CLAIM_COLORS[r.claimStatus].color }}>
+                              <span style={{ fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: '8px', flexShrink: 0, background: CLAIM_STATUS_COLORS[r.claimStatus].bg, color: CLAIM_STATUS_COLORS[r.claimStatus].color }}>
                                 {r.claimStatus}
                               </span>
                             </div>

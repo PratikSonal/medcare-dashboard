@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Grid3X3, List, Filter, X, ChevronDown, Activity, Heart, UserPlus } from 'lucide-react';
+import { Grid3X3, List, Filter, X, ChevronDown, Activity, Heart, UserPlus } from 'lucide-react';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Avatar } from '@/components/ui/Avatar';
 import { AddPatientModal } from '@/components/AddPatientModal';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setViewMode, setSearchQuery, setFilterStatus, setFilterDepartment, clearFilters, setSelectedPatient } from '@/features/patients/patientsSlice';
@@ -26,7 +28,7 @@ function PatientCard({ patient, onClick }: { patient: Patient; onClick: () => vo
       <div style={{ position: 'absolute', inset: 0, opacity: 0.15, background: 'var(--gradient-card)', pointerEvents: 'none' }} />
       <div style={{ position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: 'white', flexShrink: 0, background: 'var(--gradient-primary)' }}>{patient.avatar}</div>
+          <Avatar initials={patient.avatar} size={44} radius="14px" />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
               <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{patient.name}</h3>
@@ -70,7 +72,7 @@ function PatientListRow({ patient, onClick }: { patient: Patient; onClick: () =>
       onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}>
       <td style={{ padding: '14px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: 'white', flexShrink: 0, background: 'var(--gradient-primary)' }}>{patient.avatar}</div>
+          <Avatar initials={patient.avatar} size={36} radius="10px" />
           <div>
             <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{patient.name}</p>
             <p style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>{patient.id}</p>
@@ -129,14 +131,7 @@ export default function PatientDetailsPage() {
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '260px' }}>
-          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-          <input value={searchQuery} onChange={e => dispatch(setSearchQuery(e.target.value))}
-            placeholder="Search by name, diagnosis, doctor..."
-            style={{ width: '100%', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: '12px', padding: '10px 16px 10px 38px', fontSize: '14px', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit', transition: 'border-color 200ms ease' }}
-            onFocus={e => e.target.style.borderColor = 'var(--accent-blue)'}
-            onBlur={e => e.target.style.borderColor = 'var(--border-primary)'} />
-        </div>
+        <SearchInput value={searchQuery} onChange={v => dispatch(setSearchQuery(v))} placeholder="Search by name, diagnosis, doctor..." />
         <button onClick={() => setShowFilters(!showFilters)}
           style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '12px', fontSize: '13px', fontWeight: 500, border: `1px solid ${hasActiveFilters ? 'rgba(60,131,246,0.4)' : 'var(--border-primary)'}`, background: hasActiveFilters ? 'rgba(60,131,246,0.1)' : 'var(--bg-secondary)', color: hasActiveFilters ? 'var(--accent-blue)' : 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 200ms ease' }}>
           <Filter size={15} /> Filters {hasActiveFilters && <Badge variant="info">Active</Badge>}
