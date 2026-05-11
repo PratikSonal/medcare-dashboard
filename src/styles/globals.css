@@ -5,34 +5,8 @@
   --font-sans: 'Poppins', sans-serif;
 }
 
+/* ── Light mode is default ── */
 :root {
-  --bg-primary: #080c16;
-  --bg-secondary: #0c111d;
-  --bg-tertiary: #0f1729;
-  --bg-card: #0d1526;
-  --border-primary: #1d2839;
-  --border-accent: rgba(60, 131, 246, 0.3);
-  --text-primary: #f8fafc;
-  --text-secondary: #9ca3af;
-  --text-tertiary: #6b7280;
-  --accent-blue: #3c83f6;
-  --accent-blue-hover: #2563eb;
-  --accent-green: #10bc83;
-  --accent-green-hover: #0d9668;
-  --accent-purple: #7c3bed;
-  --accent-yellow: #f59e0b;
-  --accent-red: #ef4444;
-  --gradient-primary: linear-gradient(135deg, #3c83f6, #10bc83);
-  --gradient-hero: linear-gradient(135deg, #3c83f6, #7c3bed);
-  --gradient-card: linear-gradient(135deg, rgba(60,131,246,0.05), rgba(16,188,131,0.05));
-  --glow-blue: 0 0 20px rgba(60, 131, 246, 0.3);
-  --glow-green: 0 0 20px rgba(16, 188, 131, 0.3);
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --transition-slow: 400ms ease;
-}
-
-[data-theme="light"] {
   --bg-primary: #f0f4ff;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e8eef8;
@@ -42,22 +16,46 @@
   --text-primary: #0c111d;
   --text-secondary: #4b5563;
   --text-tertiary: #9ca3af;
+
+  --accent-blue: #3c83f6;
+  --accent-blue-hover: #2563eb;
+  --accent-cyan: #0ea5e9;
+  --accent-cyan-hover: #0284c7;
+  --accent-purple: #7c3bed;
+  --accent-yellow: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-green: #10bc83;
+
+  --gradient-primary: linear-gradient(135deg, #3c83f6, #0ea5e9);
+  --gradient-hero: linear-gradient(135deg, #3c83f6, #7c3bed);
+  --gradient-card: linear-gradient(135deg, rgba(60,131,246,0.05), rgba(14,165,233,0.05));
+
   --glow-blue: 0 0 20px rgba(60, 131, 246, 0.15);
-  --glow-green: 0 0 20px rgba(16, 188, 131, 0.15);
+  --glow-cyan: 0 0 20px rgba(14, 165, 233, 0.15);
+
+  --font-sans: 'Poppins', sans-serif;
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ── Dark mode override ── */
+[data-theme="dark"] {
+  --bg-primary: #080c16;
+  --bg-secondary: #0c111d;
+  --bg-tertiary: #0f1729;
+  --bg-card: #0d1526;
+  --border-primary: #1d2839;
+  --border-accent: rgba(60, 131, 246, 0.3);
+  --text-primary: #f8fafc;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --glow-blue: 0 0 20px rgba(60, 131, 246, 0.3);
+  --glow-cyan: 0 0 20px rgba(14, 165, 233, 0.3);
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--bg-primary);
@@ -72,26 +70,24 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
 
 .dot-grid {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(60,131,246,0.07) 1px, transparent 1px);
   background-size: 32px 32px;
 }
-
-[data-theme="light"] .dot-grid {
-  background-image: radial-gradient(circle, rgba(60,131,246,0.08) 1px, transparent 1px);
+[data-theme="dark"] .dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
 }
 
 .glow-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(60,131,246,0.6), transparent);
+  background: linear-gradient(90deg, transparent, rgba(60,131,246,0.5), rgba(14,165,233,0.5), transparent);
 }
 
 .glass-card {
   background: var(--bg-card);
   border: 1px solid var(--border-primary);
   backdrop-filter: blur(12px);
-  transition: all 250ms ease;
+  transition: all var(--transition-base);
 }
-
 .glass-card:hover {
   border-color: var(--border-accent);
   box-shadow: var(--glow-blue);
@@ -108,7 +104,6 @@ body {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
 .shimmer {
   background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
   background-size: 200% 100%;
@@ -125,7 +120,4 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-::selection {
-  background: rgba(60, 131, 246, 0.3);
-  color: var(--text-primary);
-}
+::selection { background: rgba(60, 131, 246, 0.3); color: var(--text-primary); }

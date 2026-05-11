@@ -11,7 +11,6 @@ import { showDailySummaryNotification } from '@/lib/notifications';
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
-// ── Animated Counter ──
 function useCountUp(target: number, duration = 1600) {
   const [count, setCount] = useState(0);
   const ref = useRef(false);
@@ -31,11 +30,12 @@ function useCountUp(target: number, duration = 1600) {
   return count;
 }
 
-function AnimatedStatCard({ title, value, rawValue, change, positive = true, icon, color = 'var(--accent-blue)', prefix = '', suffix = '' }:
-  { title: string; value: string; rawValue: number; change?: string; positive?: boolean; icon: React.ReactNode; color?: string; prefix?: string; suffix?: string }) {
+function AnimatedStatCard({ title, rawValue, change, positive = true, icon, color = 'var(--accent-blue)', prefix = '', suffix = '' }:
+  { title: string; rawValue: number; change?: string; positive?: boolean; icon: React.ReactNode; color?: string; prefix?: string; suffix?: string }) {
   const count = useCountUp(rawValue);
   return (
-    <motion.div variants={item} className="glass-card" style={{ borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: 'default', transition: 'all 250ms ease' }}
+    <motion.div variants={item} className="glass-card"
+      style={{ borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden' }}
       whileHover={{ y: -3, transition: { duration: 0.2 } }}>
       <div style={{ position: 'absolute', inset: 0, opacity: 0.05, background: `radial-gradient(circle at top right, ${color}, transparent)`, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -45,7 +45,7 @@ function AnimatedStatCard({ title, value, rawValue, change, positive = true, ico
             {prefix}{count}{suffix}
           </p>
           {change && (
-            <p style={{ fontSize: '12px', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px', color: positive ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+            <p style={{ fontSize: '12px', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px', color: positive ? '#0ea5e9' : 'var(--accent-red)' }}>
               <span>{positive ? '↑' : '↓'}</span>{change}
             </p>
           )}
@@ -96,10 +96,10 @@ export default function DashboardPage() {
 
       {/* Animated Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-        <AnimatedStatCard title="Total Patients" value={String(patients.length)} rawValue={patients.length} change="12% this month" positive icon={<Users size={20} />} color="var(--accent-blue)" />
-        <AnimatedStatCard title="Active Cases" value={String(activeCount)} rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="var(--accent-green)" />
-        <AnimatedStatCard title="Critical Alerts" value={String(criticalCount)} rawValue={criticalCount} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="var(--accent-red)" />
-        <AnimatedStatCard title="Appointments Today" value="42" rawValue={42} change="15% this week" positive icon={<Calendar size={20} />} color="var(--accent-purple)" />
+        <AnimatedStatCard title="Total Patients" rawValue={patients.length} change="12% this month" positive icon={<Users size={20} />} color="#3c83f6" />
+        <AnimatedStatCard title="Active Cases" rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="#0ea5e9" />
+        <AnimatedStatCard title="Critical Alerts" rawValue={criticalCount} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="var(--accent-red)" />
+        <AnimatedStatCard title="Appointments Today" rawValue={42} change="15% this week" positive icon={<Calendar size={20} />} color="#7c3bed" />
       </div>
 
       {/* Chart + Recent */}
@@ -120,21 +120,21 @@ export default function DashboardPage() {
                   <stop offset="95%" stopColor="#3c83f6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="rG" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10bc83" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#10bc83" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
               <XAxis dataKey="month" tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', borderRadius: '12px', color: 'var(--text-primary)', fontFamily: 'Poppins', fontSize: '12px' }} />
-              <Area type="monotone" dataKey="patients" stroke="#3c83f6" strokeWidth={2} fill="url(#pG)" dot={false} />
-              <Area type="monotone" dataKey="recovered" stroke="#10bc83" strokeWidth={2} fill="url(#rG)" dot={false} />
+              <Area type="monotone" dataKey="patients" name="Patients" stroke="#3c83f6" strokeWidth={2} fill="url(#pG)" dot={false} />
+              <Area type="monotone" dataKey="recovered" name="Recovered" stroke="#0ea5e9" strokeWidth={2} fill="url(#rG)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#3c83f6' }} /><span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Total Patients</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10bc83' }} /><span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Recovered</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#0ea5e9' }} /><span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Recovered</span></div>
           </div>
         </motion.div>
 
@@ -167,8 +167,8 @@ export default function DashboardPage() {
         {[
           { label: 'Discharged', value: patients.filter(p => p.status === 'Discharged').length, color: 'var(--text-tertiary)' },
           { label: 'Recovering', value: patients.filter(p => p.status === 'Recovering').length, color: 'var(--accent-yellow)' },
-          { label: 'Departments', value: [...new Set(patients.map(p => p.department))].length, color: 'var(--accent-purple)' },
-          { label: 'Doctors', value: [...new Set(patients.map(p => p.doctor))].length, color: 'var(--accent-blue)' },
+          { label: 'Departments', value: [...new Set(patients.map(p => p.department))].length, color: '#7c3bed' },
+          { label: 'Doctors', value: [...new Set(patients.map(p => p.doctor))].length, color: '#3c83f6' },
         ].map(stat => (
           <div key={stat.label} className="glass-card" style={{ borderRadius: '16px', padding: '16px', textAlign: 'center' }}>
             <p style={{ fontSize: '28px', fontWeight: 700, color: stat.color }}>{stat.value}</p>
@@ -180,7 +180,7 @@ export default function DashboardPage() {
       {/* Table */}
       <motion.div variants={item} className="glass-card" style={{ borderRadius: '20px', padding: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-          <Calendar size={16} style={{ color: 'var(--accent-blue)' }} />
+          <Calendar size={16} style={{ color: '#3c83f6' }} />
           <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>Patient Overview</h3>
         </div>
         <div style={{ overflowX: 'auto' }}>

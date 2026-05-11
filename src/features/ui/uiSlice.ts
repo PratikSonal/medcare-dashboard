@@ -8,7 +8,7 @@ interface UIState {
   unreadCount: number;
 }
 
-const savedTheme = (localStorage.getItem('medcare-theme') as Theme) || 'dark';
+const savedTheme = (localStorage.getItem('medcare-theme') as Theme) || 'light';
 
 const initialState: UIState = {
   theme: savedTheme,

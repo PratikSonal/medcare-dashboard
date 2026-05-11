@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/Badge';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
-
 const ttStyle = { contentStyle: { background: 'var(--bg-card)', border: '1px solid var(--border-primary)', borderRadius: '12px', color: 'var(--text-primary)', fontFamily: 'Poppins', fontSize: '12px' } };
 
 const RADIAN = Math.PI / 180;
@@ -26,7 +25,6 @@ export default function AnalyticsPage() {
   return (
     <motion.div variants={container} initial="hidden" animate="show" style={{ maxWidth: '1280px', margin: '0 auto' }}>
 
-      {/* Header */}
       <motion.div variants={item} style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
@@ -38,11 +36,11 @@ export default function AnalyticsPage() {
         <div className="glow-line" style={{ marginTop: '24px' }} />
       </motion.div>
 
-      {/* KPIs */}
+      {/* KPIs — replaced green with cyan */}
       <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-        <StatCard title="Total Patients" value={totalPatients.toLocaleString()} change="12.4% vs last period" positive icon={<Users size={20} />} color="var(--accent-blue)" />
-        <StatCard title="Total Revenue" value={`₹${(totalRevenue / 100000).toFixed(1)}L`} change="18.2% vs last period" positive icon={<DollarSign size={20} />} color="var(--accent-green)" />
-        <StatCard title="Appointments" value={totalAppointments.toLocaleString()} change="9.8% vs last period" positive icon={<Activity size={20} />} color="var(--accent-purple)" />
+        <StatCard title="Total Patients" value={totalPatients.toLocaleString()} change="12.4% vs last period" positive icon={<Users size={20} />} color="#3c83f6" />
+        <StatCard title="Total Revenue" value={`₹${(totalRevenue / 100000).toFixed(1)}L`} change="18.2% vs last period" positive icon={<DollarSign size={20} />} color="#0ea5e9" />
+        <StatCard title="Appointments" value={totalAppointments.toLocaleString()} change="9.8% vs last period" positive icon={<Activity size={20} />} color="#7c3bed" />
         <StatCard title="Recovery Rate" value={`${Math.round((totalRecovered / totalPatients) * 100)}%`} change="4.2% improvement" positive icon={<TrendingUp size={20} />} color="var(--accent-yellow)" />
       </motion.div>
 
@@ -60,7 +58,7 @@ export default function AnalyticsPage() {
               <YAxis tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={v => `₹${v / 1000}K`} />
               <Tooltip {...ttStyle} formatter={(v: number) => [`₹${(v / 1000).toFixed(0)}K`, 'Revenue']} cursor={{ fill: 'rgba(60,131,246,0.05)' }} />
               <Bar dataKey="revenue" radius={[6, 6, 0, 0]}>
-                {metricsData.map((_, i) => <Cell key={i} fill={i === metricsData.length - 1 ? '#3c83f6' : 'rgba(60,131,246,0.4)'} />)}
+                {metricsData.map((_, i) => <Cell key={i} fill={i === metricsData.length - 1 ? '#3c83f6' : 'rgba(60,131,246,0.35)'} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -93,7 +91,7 @@ export default function AnalyticsPage() {
         </motion.div>
       </div>
 
-      {/* Row 2 */}
+      {/* Row 2 — all green replaced with cyan */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
         <motion.div variants={item} className="glass-card" style={{ borderRadius: '20px', padding: '24px' }}>
           <div style={{ marginBottom: '24px' }}>
@@ -108,7 +106,7 @@ export default function AnalyticsPage() {
               <Tooltip {...ttStyle} />
               <Legend wrapperStyle={{ fontSize: '12px', color: 'var(--text-secondary)' }} />
               <Line type="monotone" dataKey="appointments" name="Appointments" stroke="#7c3bed" strokeWidth={2} dot={{ fill: '#7c3bed', r: 4 }} />
-              <Line type="monotone" dataKey="recovered" name="Recovered" stroke="#10bc83" strokeWidth={2} dot={{ fill: '#10bc83', r: 4 }} />
+              <Line type="monotone" dataKey="recovered" name="Recovered" stroke="#0ea5e9" strokeWidth={2} dot={{ fill: '#0ea5e9', r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </motion.div>
@@ -122,15 +120,15 @@ export default function AnalyticsPage() {
             <AreaChart data={metricsData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="vG" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10bc83" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#10bc83" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
               <XAxis dataKey="month" tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <Tooltip {...ttStyle} />
-              <Area type="monotone" dataKey="patients" name="Patients" stroke="#10bc83" strokeWidth={2} fill="url(#vG)" dot={false} />
+              <Area type="monotone" dataKey="patients" name="Patients" stroke="#0ea5e9" strokeWidth={2} fill="url(#vG)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
