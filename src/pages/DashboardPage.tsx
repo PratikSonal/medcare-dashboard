@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Users, Activity, AlertTriangle, Calendar, CreditCard, UserCheck, Building2, ShieldCheck, ChevronRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Badge } from '@/components/ui/Badge';
-import { metricsData, mockBillingData, todayAppointmentCount, mockAppointments } from '@/lib/mockData';
+import { metricsData, mockBillingData } from '@/lib/mockData';
 import { getStatusBg, getStatusColor } from '@/lib/utils';
 import { showDailySummaryNotification } from '@/lib/notifications';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
@@ -97,6 +97,7 @@ export default function DashboardPage() {
   const [chartPeriod, setChartPeriod] = useState<'3M' | '6M' | 'All'>('All');
 
   const patients = useAppSelector(s => s.patients.patients);
+  const appointments = useAppSelector(s => s.appointments.appointments);
   const criticalPatients = patients.filter(p => p.status === 'Critical');
   const activeCount = patients.filter(p => p.status === 'Active').length;
 
@@ -105,7 +106,7 @@ export default function DashboardPage() {
   const approvedClaims = mockBillingData.filter(r => r.claimStatus === 'Approved').length;
   const approvalRate = Math.round((approvedClaims / mockBillingData.length) * 100);
 
-  const todayAppointments = mockAppointments.filter(a => a.date === '2026-05-11');
+  const todayAppointments = appointments.filter(a => a.date === '2026-05-11');
   const chartData = chartPeriod === '3M' ? metricsData.slice(-3) : chartPeriod === '6M' ? metricsData.slice(-6) : metricsData;
 
   useEffect(() => {
@@ -136,7 +137,7 @@ export default function DashboardPage() {
           onClick={() => { dispatch(setFilterStatus('Active')); navigate('/patients'); }} />
         <AnimatedStatCard title="Critical Alerts" rawValue={criticalPatients.length} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="var(--accent-red)"
           onClick={() => { dispatch(setFilterStatus('Critical')); navigate('/patients'); }} />
-        <AnimatedStatCard title="Appointments Today" rawValue={todayAppointmentCount} change="vs 6 yesterday" positive icon={<Calendar size={20} />} color="#7c3bed"
+        <AnimatedStatCard title="Appointments Today" rawValue={todayAppointments.length} change="vs 6 yesterday" positive icon={<Calendar size={20} />} color="#7c3bed"
           onClick={() => navigate('/appointments')} />
         <RevenueStatCard title="Revenue Billed" value={`₹${(totalBilled / 100000).toFixed(1)}L`} sub={`${pendingClaims} claims pending`} icon={<CreditCard size={20} />} color="#f59e0b"
           onClick={() => navigate('/billing')} />

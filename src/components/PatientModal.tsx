@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FileText, Shield, Pill, Calendar, Phone, Mail, MapPin, Heart, Thermometer, Wind, Activity, AlertTriangle, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 import type { Patient } from '@/types';
-import { mockBillingData, mockPrescriptions, mockAppointments } from '@/lib/mockData';
+import { mockBillingData, mockPrescriptions } from '@/lib/mockData';
+import { useAppSelector } from '@/hooks/useAppDispatch';
 import { getStatusBg, getStatusColor, formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 
@@ -50,9 +51,10 @@ function VitalBadge({ icon, label, value, alert = false }: { icon: React.ReactNo
 export function PatientModal({ patient, onClose }: { patient: Patient; onClose: () => void }) {
   const [tab, setTab] = useState<'overview' | 'appointments' | 'billing' | 'prescriptions'>('overview');
 
+  const allAppointments = useAppSelector(s => s.appointments.appointments);
   const billingRecords = mockBillingData.filter(r => r.patientId === patient.id);
   const prescriptions = mockPrescriptions.filter(r => r.patientId === patient.id);
-  const appointments = mockAppointments.filter(a => a.patientId === patient.id);
+  const appointments = allAppointments.filter(a => a.patientId === patient.id);
   const billing = billingRecords[0];
 
   const tabs = [

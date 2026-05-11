@@ -31,16 +31,21 @@ Live at: `pratiksonal.github.io` | GitHub: `medcare-dashboard` (public repo)
 ```
 src/
 ├── components/
-│   ├── ui/           — Badge, Button, Card, Input
-│   └── layout/       — Sidebar, Navbar, AppLayout
+│   ├── ui/               — Badge, Button, Card, Input
+│   ├── layout/           — Sidebar, Navbar, AppLayout
+│   ├── AddPatientModal   — 3-step add patient form
+│   ├── NewAppointmentModal — new appointment + conflict detection
+│   ├── PatientModal      — patient detail tabs (overview/appts/billing/rx)
+│   └── ToastContainer    — toast notification renderer
 ├── features/
-│   ├── auth/         — authSlice.ts
-│   ├── patients/     — patientsSlice.ts
-│   └── ui/           — uiSlice.ts (theme, sidebar, notifications)
+│   ├── auth/             — authSlice.ts
+│   ├── appointments/     — appointmentsSlice.ts (addAppointment)
+│   ├── patients/         — patientsSlice.ts (addPatient, setSelectedPatient, filters)
+│   └── ui/               — uiSlice.ts (theme, sidebar, notifications, toasts)
 ├── hooks/            — useAppDispatch.ts
 ├── lib/              — firebase.ts, mockData.ts, notifications.ts, utils.ts
 ├── pages/            — LoginPage, RegisterPage, DashboardPage, AnalyticsPage,
-│                       PatientDetailsPage, AppointmentsPage, ProtectedRoute
+│                       PatientDetailsPage, AppointmentsPage, BillingPage, ProtectedRoute
 ├── store/            — index.ts
 ├── styles/           — globals.css
 └── types/            — index.ts
@@ -144,24 +149,41 @@ VITE_FIREBASE_MEASUREMENT_ID=G-VRL533H0TN
 - Area chart: patients vs recovered (blue + cyan)
 - Recent patients list + full table
 - Quick stats: Discharged, Recovering, Departments, Doctors
+- "Appointments Today" KPI reads from Redux (reactive to new bookings)
 
 ### AnalyticsPage (`/analytics`)
+- KPI cards with count-up animation
 - Bar chart: revenue by month
-- Pie chart: patients by department
+- Pie chart: patients by department (all 8 departments shown)
 - Line chart: appointments vs recovered
 - Area chart: patient volume trend
+- Financial Breakdown: provider coverage table + top procedures
+- Doctor Performance table (dynamic from Redux patients)
 - All chart colours: blue/cyan/purple/yellow — no green
 
 ### PatientDetailsPage (`/patients`)
 - Grid/list view toggle (stored in Redux)
-- Search + filter by status
-- Patient modal with vitals
+- Search + collapsible filter panel (status pills)
+- Add Patient button → `AddPatientModal` (3-step: Personal → Medical → Vitals)
+- Patient count shows `filteredPatients.length of patients.length`
+- Patient modal with vitals, appointments, billing, prescriptions tabs
 
 ### AppointmentsPage (`/appointments`)
-- Week calendar strip
-- Appointment list with intake + insurance badges
-- Doctor sidebar with schedule progress
-- Time slot grid + detail modal
+- Week calendar strip with dot indicators
+- Stats cards (Total/Confirmed/Pending/No-Shows) — clickable to filter
+- Search input + collapsible filter panel (status + appointment type pills)
+- Appointment list sorted by time, with intake + insurance badges
+- "New Appointment" button → `NewAppointmentModal`
+- Doctor schedules sidebar with progress bars
+- Action Required sidebar (pending intake/insurance)
+- Time slots panel: dynamic from Redux appointments, sorted by time
+- Appointment detail modal with "View Patient" action
+
+### BillingPage (`/billing`)
+- KPI cards: Total Billed, Insurance Settled, Patient Outstanding, Pending Claims
+- Stacked bar chart: claims by status per provider
+- Donut chart: claim status distribution
+- Billing records table — click row to open patient profile
 
 ---
 
@@ -173,12 +195,34 @@ Three push notification scenarios:
 
 ---
 
+## Redux State Shape
+```ts
+store: {
+  auth:         { user }
+  patients:     { patients[], filteredPatients[], selectedPatient, filterStatus, viewMode, searchQuery }
+  appointments: { appointments[] }   // seeded from mockAppointments, mutable via addAppointment
+  ui:           { theme, sidebarOpen, notifications[], toasts[] }
+}
+```
+
+### Key actions
+| Slice | Action | Effect |
+|---|---|---|
+| patients | `addPatient(patient)` | Push + re-apply filters |
+| patients | `setSelectedPatient(patient)` | Opens PatientModal globally via AppLayout |
+| appointments | `addAppointment(appointment)` | Push; all consumers react immediately |
+| ui | `addToast({ message, type })` | Auto-dismissed after 3.5s |
+
+---
+
 ## Mock Data
 - **20 patients** — all Indian names, realistic diagnoses, departments, doctors
+- **12 appointments** — spread across 2026-05-11 to 2026-05-13
 - **Doctors**: Dr. Priya Sharma, Dr. Arjun Nair, Dr. Sneha Iyer, Dr. Vikram Rao, Dr. Rahul Gupta, Dr. Meera Pillai
 - **Departments**: Cardiology, Neurology, Pulmonology, Endocrinology, Orthopedics, Surgery, Nephrology, etc.
 - **metricsData**: 7 months (Nov 2025 – May 2026)
 - **departmentStats**: 8 departments with blues/indigos colour palette
+- `mockAppointments` and `mockPatients` seed Redux on init — do **not** read them directly in components, always use `useAppSelector`
 
 ---
 
@@ -197,6 +241,23 @@ Discharged → gray   var(--text-tertiary)
 - [ ] Deploy to Vercel (add VITE_* env vars in dashboard)
 - [ ] Write README.md
 - [ ] Submit GitHub repo + live link + fill RagaAI application form
+
+## Key Behavioural Rules
+
+### Appointments
+- New appointments dispatched via `addAppointment` show up immediately in: AppointmentsPage list + time slots panel, DashboardPage "Appointments Today" KPI, PatientModal appointments tab
+- Appointment list and time slots panel are both sorted by `time` (string `localeCompare`)
+- Booking is **blocked** when the selected time slot conflicts with an existing doctor or patient appointment — user must pick a conflict-free slot
+
+### NewAppointmentModal conflict detection
+- Teams-style horizontal timeline: doctor track (red blocks) + patient track (purple blocks)
+- Proposed appointment shown as blue block, turns red on overlap
+- Conflict = any overlap between `[slotStart, slotStart+duration)` and an existing appointment's `[start, start+duration)`
+- Click anywhere on a track to snap the proposed time to that position (30-min snapping)
+- Slot picker buttons show red dot badge + red text for any conflicting slot
+
+### PayloadAction imports in slices
+Always use `import { createSlice, type PayloadAction }` — `type` keyword required or Vite throws at runtime because `PayloadAction` has no runtime value.
 
 ---
 
