@@ -63,17 +63,20 @@ export const PatientModal = ({ patient, onClose }: Props) => {
       >
         {/* Header */}
         <div className="p-6 border-b border-border-primary shrink-0 relative">
-          {patient.status === 'Critical' && (
-            <div className="flex items-center gap-2 py-[10px] px-[14px] rounded-[12px] mb-4 text-[13px] bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.3)] text-accent-red">
-              <AlertTriangle size={14} /> Critical patient — immediate attention required
+          {patient.status === 'Critical' ? (
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex-1 flex items-center gap-2 py-[10px] px-[14px] rounded-[12px] text-[13px] bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.3)] text-accent-red">
+                <AlertTriangle size={14} /> Critical patient — immediate attention required
+              </div>
+              <button onClick={onClose} className="shrink-0 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary">
+                <X size={16} />
+              </button>
             </div>
+          ) : (
+            <button onClick={onClose} className="absolute top-6 right-6 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary">
+              <X size={16} />
+            </button>
           )}
-          <button
-            onClick={onClose}
-            className="absolute top-6 right-6 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary"
-          >
-            <X size={16} />
-          </button>
           <div className="flex items-start gap-4">
             <Avatar initials={patient.avatar} size={60} radius="18px" />
             <div>

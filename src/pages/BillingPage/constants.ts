@@ -13,6 +13,8 @@ export const ttStyle = {
     fontFamily: 'Poppins',
     fontSize: '12px',
   },
+  labelStyle: { color: 'var(--text-primary)', fontFamily: 'Poppins' },
+  itemStyle:  { color: 'var(--text-secondary)', fontFamily: 'Poppins' },
 };
 
 export const ALL_STATUSES: ClaimStatus[] = ['Approved', 'Partial', 'Pending', 'Denied'];

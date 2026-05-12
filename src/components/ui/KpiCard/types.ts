@@ -1,4 +1,4 @@
-import type { Variants } from 'framer-motion';
+import type { Variants } from "framer-motion";
 
 export interface KpiCardProps {
   title: string;
@@ -16,6 +16,6 @@ export interface KpiCardProps {
   onClick?: () => void;
   showArrow?: boolean;
   active?: boolean;
-  size?: 'md' | 'sm';
+  size?: "md" | "sm";
   variants?: Variants;
 }
