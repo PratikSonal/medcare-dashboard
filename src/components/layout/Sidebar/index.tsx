@@ -39,7 +39,7 @@ export const Sidebar = () => {
       {/* Nav */}
       <nav className="flex-1 px-2 py-1 flex flex-col gap-[2px] overflow-y-auto">
         {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} className="no-underline">
+          <NavLink key={to} to={to} className="no-underline" onClick={() => { document.documentElement.scrollTop = 0; }}>
             {({ isActive }) => (
               <div className={cn('flex items-center gap-3 px-3 py-[10px] rounded-12 cursor-pointer whitespace-nowrap', styles.navItem, isActive && styles.active)}>
                 <Icon size={18} className="shrink-0" />

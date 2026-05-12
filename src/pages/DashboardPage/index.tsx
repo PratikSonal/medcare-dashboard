@@ -182,22 +182,13 @@ const DashboardPage = () => {
 
       {/* Quick Stats */}
       <motion.div variants={item} className="grid grid-cols-5 gap-4 mb-6">
-        {[
-          { label: 'Discharged',    value: patients.filter(p => p.status === 'Discharged').length, color: 'var(--text-tertiary)',  icon: <UserCheck size={16} />,  desc: 'Patients released' },
-          { label: 'Recovering',    value: patients.filter(p => p.status === 'Recovering').length, color: 'var(--accent-yellow)', icon: <Activity size={16} />,   desc: 'In recovery phase' },
-          { label: 'Departments',   value: [...new Set(patients.map(p => p.department))].length,   color: '#7c3bed',              icon: <Building2 size={16} />,  desc: 'Active specialties' },
-          { label: 'Doctors',       value: [...new Set(patients.map(p => p.doctor))].length,       color: '#3c83f6',              icon: <Users size={16} />,      desc: 'Attending physicians' },
-          { label: 'Claim Approval',value: `${approvalRate}%`,                                     color: '#0ea5e9',              icon: <ShieldCheck size={16} />,desc: 'Insurance approved' },
-        ].map(stat => (
-          <div key={stat.label} className="glass-card rounded-16 p-4">
-            <div className="flex items-start justify-between mb-[10px]">
-              <p className="text-xs font-medium text-text-secondary">{stat.label}</p>
-              <div className="p-[6px] rounded-[8px] shrink-0" style={{ background: `${stat.color}18`, color: stat.color }}>{stat.icon}</div>
-            </div>
-            <p className="text-[28px] font-bold leading-none" style={{ color: stat.color }}>{stat.value}</p>
-            <p className="text-[11px] text-text-tertiary mt-[6px]">{stat.desc}</p>
-          </div>
-        ))}
+        <KpiCard size="sm" title="Discharged" rawValue={patients.filter(p => p.status === 'Discharged').length} sub="Patients released" icon={<UserCheck size={16} />} color="var(--text-tertiary)"
+          onClick={() => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); }} />
+        <KpiCard size="sm" title="Recovering" rawValue={patients.filter(p => p.status === 'Recovering').length} sub="In recovery phase" icon={<Activity size={16} />} color="var(--accent-yellow)"
+          onClick={() => { dispatch(setFilterStatus('Recovering')); navigate('/patients'); }} />
+        <KpiCard size="sm" title="Departments" rawValue={[...new Set(patients.map(p => p.department))].length} sub="Active specialties" icon={<Building2 size={16} />} color="#7c3bed" />
+        <KpiCard size="sm" title="Doctors" rawValue={[...new Set(patients.map(p => p.doctor))].length} sub="Attending physicians" icon={<Users size={16} />} color="#3c83f6" />
+        <KpiCard size="sm" title="Claim Approval" rawValue={approvalRate} suffix="%" sub="Insurance approved" icon={<ShieldCheck size={16} />} color="#0ea5e9" />
       </motion.div>
 
       {/* Today's Appointments */}

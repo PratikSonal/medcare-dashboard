@@ -161,7 +161,7 @@ const AppointmentsPage = () => {
     <div className="max-w-[1280px] mx-auto">
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
@@ -207,7 +207,7 @@ const AppointmentsPage = () => {
             <KpiCard
               size="sm"
               title={s.label}
-              value={String(s.value)}
+              rawValue={s.value}
               sub={s.desc}
               icon={s.icon}
               color={s.color}

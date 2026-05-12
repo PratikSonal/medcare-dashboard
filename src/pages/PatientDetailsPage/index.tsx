@@ -200,7 +200,7 @@ const PatientDetailsPage = () => {
   return (
     <div className="max-w-[1280px] mx-auto">
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
