@@ -44,24 +44,26 @@ const BillingPage = () => {
   const safePage = Math.min(page, totalPages);
   const pagedRecords = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
-  const totalBilled = records.reduce((s, r) => s + r.totalAmount, 0);
-  const insuranceCoveredTotal = records.reduce((s, r) => s + r.insuranceCovered, 0);
-  const patientDueTotal = records.reduce((s, r) => s + r.patientDue, 0);
-  const pendingRecords = records.filter(r => r.claimStatus === 'Pending');
-  const pendingAmount = pendingRecords.reduce((s, r) => s + r.totalAmount, 0);
+  const totalBilled = useMemo(() => records.reduce((s, r) => s + r.totalAmount, 0), [records]);
+  const insuranceCoveredTotal = useMemo(() => records.reduce((s, r) => s + r.insuranceCovered, 0), [records]);
+  const patientDueTotal = useMemo(() => records.reduce((s, r) => s + r.patientDue, 0), [records]);
+  const pendingRecords = useMemo(() => records.filter(r => r.claimStatus === 'Pending'), [records]);
+  const pendingAmount = useMemo(() => pendingRecords.reduce((s, r) => s + r.totalAmount, 0), [pendingRecords]);
 
   const leaderboard = useMemo(() => [...records].sort((a, b) => b.patientDue - a.patientDue).slice(0, 5), [records]);
 
-  const claimStatusData = ALL_STATUSES.map(s => ({ name: s, value: records.filter(r => r.claimStatus === s).length, color: CLAIM_STATUS_COLORS[s].color }));
+  const claimStatusData = useMemo(() => ALL_STATUSES.map(s => ({ name: s, value: records.filter(r => r.claimStatus === s).length, color: CLAIM_STATUS_COLORS[s].color })), [records]);
 
-  const providerMap: Record<string, { approved: number; partial: number; pending: number; denied: number }> = {};
-  records.forEach(r => {
-    const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
-    if (!providerMap[name]) providerMap[name] = { approved: 0, partial: 0, pending: 0, denied: 0 };
-    const key = r.claimStatus.toLowerCase() as 'approved' | 'partial' | 'pending' | 'denied';
-    providerMap[name][key]++;
-  });
-  const providerData = Object.entries(providerMap).map(([name, counts]) => ({ name, ...counts }));
+  const providerData = useMemo(() => {
+    const map: Record<string, { approved: number; partial: number; pending: number; denied: number }> = {};
+    records.forEach(r => {
+      const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
+      if (!map[name]) map[name] = { approved: 0, partial: 0, pending: 0, denied: 0 };
+      const key = r.claimStatus.toLowerCase() as 'approved' | 'partial' | 'pending' | 'denied';
+      map[name][key]++;
+    });
+    return Object.entries(map).map(([name, counts]) => ({ name, ...counts }));
+  }, [records]);
 
   const kpis = [
     { title: 'Total Billed',         rawValue: totalBilled,            format: formatCompact, sub: `${records.length} records`,                                            icon: <CreditCard size={20} />,  color: '#3c83f6' },

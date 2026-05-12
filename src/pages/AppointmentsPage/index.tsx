@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
@@ -79,30 +79,44 @@ const AppointmentsPage = () => {
   const [selectedApp, setSelectedApp] = useState<Appointment | null>(null);
   const [showNewAppModal, setShowNewAppModal] = useState(false);
 
-  const baseDate = new Date("2026-05-11");
-  baseDate.setDate(baseDate.getDate() + weekOffset * 7);
-  const weekDays = getWeekDays(baseDate);
+  const { baseDate, weekDays } = useMemo(() => {
+    const d = new Date("2026-05-11");
+    d.setDate(d.getDate() + weekOffset * 7);
+    return { baseDate: d, weekDays: getWeekDays(d) };
+  }, [weekOffset]);
 
-  const dateKey = formatDateKey(selectedDate);
-  const todayApps = appointments
-    .filter((a) => {
-      if (a.date !== dateKey) return false;
-      if (filterStatus !== "All" && a.status !== filterStatus) return false;
-      if (filterType !== "All" && a.type !== filterType) return false;
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        return (
-          a.patientName.toLowerCase().includes(q) ||
-          a.doctor.toLowerCase().includes(q) ||
-          a.type.toLowerCase().includes(q) ||
-          a.clinicName.toLowerCase().includes(q) ||
-          a.department.toLowerCase().includes(q) ||
-          a.insuranceProvider.toLowerCase().includes(q)
-        );
-      }
-      return true;
-    })
-    .sort((a, b) => a.time.localeCompare(b.time));
+  const dateKey = useMemo(() => formatDateKey(selectedDate), [selectedDate]);
+
+  const todayAll = useMemo(
+    () =>
+      appointments
+        .filter((a) => a.date === dateKey)
+        .sort((a, b) => a.time.localeCompare(b.time)),
+    [appointments, dateKey],
+  );
+
+  const todayApps = useMemo(
+    () =>
+      todayAll
+        .filter((a) => {
+          if (filterStatus !== "All" && a.status !== filterStatus) return false;
+          if (filterType !== "All" && a.type !== filterType) return false;
+          if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            return (
+              a.patientName.toLowerCase().includes(q) ||
+              a.doctor.toLowerCase().includes(q) ||
+              a.type.toLowerCase().includes(q) ||
+              a.clinicName.toLowerCase().includes(q) ||
+              a.department.toLowerCase().includes(q) ||
+              a.insuranceProvider.toLowerCase().includes(q)
+            );
+          }
+          return true;
+        })
+        .sort((a, b) => a.time.localeCompare(b.time)),
+    [todayAll, filterStatus, filterType, searchQuery],
+  );
 
   const hasActiveFilters = filterStatus !== "All" || filterType !== "All";
   const clearFilters = () => {
@@ -110,45 +124,48 @@ const AppointmentsPage = () => {
     setFilterType("All");
   };
 
-  const todayAll = appointments
-    .filter((a) => a.date === dateKey)
-    .sort((a, b) => a.time.localeCompare(b.time));
-  const doctors = [...new Set(appointments.map((a) => a.doctor))];
+  const doctors = useMemo(
+    () => [...new Set(appointments.map((a) => a.doctor))],
+    [appointments],
+  );
 
-  const stats = [
-    {
-      label: "Total Today",
-      value: todayAll.length,
-      color: "#3c83f6",
-      icon: <Calendar size={20} />,
-      desc: "All scheduled visits",
-      filter: "All",
-    },
-    {
-      label: "Confirmed",
-      value: todayAll.filter((a) => a.status === "Confirmed").length,
-      color: "#0ea5e9",
-      icon: <CheckCircle size={20} />,
-      desc: "Ready to proceed",
-      filter: "Confirmed",
-    },
-    {
-      label: "Pending",
-      value: todayAll.filter((a) => a.status === "Pending").length,
-      color: "#f59e0b",
-      icon: <AlertCircle size={20} />,
-      desc: "Awaiting confirmation",
-      filter: "Pending",
-    },
-    {
-      label: "No-Shows",
-      value: todayAll.filter((a) => a.status === "No-Show").length,
-      color: "#ef4444",
-      icon: <XCircle size={20} />,
-      desc: "Did not attend",
-      filter: "No-Show",
-    },
-  ];
+  const stats = useMemo(
+    () => [
+      {
+        label: "Total Today",
+        value: todayAll.length,
+        color: "#3c83f6",
+        icon: <Calendar size={20} />,
+        desc: "All scheduled visits",
+        filter: "All",
+      },
+      {
+        label: "Confirmed",
+        value: todayAll.filter((a) => a.status === "Confirmed").length,
+        color: "#0ea5e9",
+        icon: <CheckCircle size={20} />,
+        desc: "Ready to proceed",
+        filter: "Confirmed",
+      },
+      {
+        label: "Pending",
+        value: todayAll.filter((a) => a.status === "Pending").length,
+        color: "#f59e0b",
+        icon: <AlertCircle size={20} />,
+        desc: "Awaiting confirmation",
+        filter: "Pending",
+      },
+      {
+        label: "No-Shows",
+        value: todayAll.filter((a) => a.status === "No-Show").length,
+        color: "#ef4444",
+        icon: <XCircle size={20} />,
+        desc: "Did not attend",
+        filter: "No-Show",
+      },
+    ],
+    [todayAll],
+  );
 
   const handleViewPatient = () => {
     if (!selectedApp) return;

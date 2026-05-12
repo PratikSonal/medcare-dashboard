@@ -1,4 +1,4 @@
-import { useCountUp } from '@/hooks/useCountUp';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -16,6 +16,32 @@ import { setFilterStatus, clearFilters } from '@/features/patients/patientsSlice
 import { formatCompact, PROVIDER_SHORT } from '@/lib/utils';
 import { container, item, ttStyle, RADIAN, PROC_COLORS } from './constants';
 
+// Module-level constants — computed once from static imported data
+const totalPatients = metricsData.reduce((s, d) => s + d.patients, 0);
+const totalRevenue = metricsData.reduce((s, d) => s + d.revenue, 0);
+const totalAppointments = metricsData.reduce((s, d) => s + d.appointments, 0);
+const totalRecovered = metricsData.reduce((s, d) => s + d.recovered, 0);
+const recoveryRate = Math.round((totalRecovered / totalPatients) * 100);
+const totalBilled = mockBillingData.reduce((s, r) => s + r.totalAmount, 0);
+const insuranceCovered = mockBillingData.reduce((s, r) => s + r.insuranceCovered, 0);
+const patientDue = mockBillingData.reduce((s, r) => s + r.patientDue, 0);
+const coveragePct = Math.round((insuranceCovered / totalBilled) * 100);
+const topProcedures = [...mockBillingData].sort((a, b) => b.totalAmount - a.totalAmount).slice(0, 5);
+const providerData = (() => {
+  const map: Record<string, { total: number; covered: number; due: number; claims: number }> = {};
+  mockBillingData.forEach(r => {
+    const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
+    if (!map[name]) map[name] = { total: 0, covered: 0, due: 0, claims: 0 };
+    map[name].total += r.totalAmount;
+    map[name].covered += r.insuranceCovered;
+    map[name].due += r.patientDue;
+    map[name].claims++;
+  });
+  return Object.entries(map)
+    .map(([name, d]) => ({ name, ...d, rate: Math.round((d.covered / d.total) * 100) }))
+    .sort((a, b) => b.total - a.total);
+})();
+
 const renderLabel = ({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 }: { cx?: number; cy?: number; midAngle?: number; innerRadius?: number; outerRadius?: number; percent?: number }) => {
   if (percent < 0.06) return null;
   const r = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -27,56 +53,28 @@ const AnalyticsPage = () => {
   const dispatch = useAppDispatch();
 
   const patients = useAppSelector(s => s.patients.patients);
-  const totalPatients = metricsData.reduce((s, d) => s + d.patients, 0);
-  const totalRevenue = metricsData.reduce((s, d) => s + d.revenue, 0);
-  const totalAppointments = metricsData.reduce((s, d) => s + d.appointments, 0);
-  const totalRecovered = metricsData.reduce((s, d) => s + d.recovered, 0);
-  const recoveryRate = Math.round((totalRecovered / totalPatients) * 100);
 
-  const totalBilled = mockBillingData.reduce((s, r) => s + r.totalAmount, 0);
-  const insuranceCovered = mockBillingData.reduce((s, r) => s + r.insuranceCovered, 0);
-  const patientDue = mockBillingData.reduce((s, r) => s + r.patientDue, 0);
-  const coveragePct = Math.round((insuranceCovered / totalBilled) * 100);
-
-  const providerMap: Record<string, { total: number; covered: number; due: number; claims: number }> = {};
-  mockBillingData.forEach(r => {
-    const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
-    if (!providerMap[name]) providerMap[name] = { total: 0, covered: 0, due: 0, claims: 0 };
-    providerMap[name].total += r.totalAmount;
-    providerMap[name].covered += r.insuranceCovered;
-    providerMap[name].due += r.patientDue;
-    providerMap[name].claims++;
-  });
-  const providerData = Object.entries(providerMap)
-    .map(([name, d]) => ({ name, ...d, rate: Math.round((d.covered / d.total) * 100) }))
-    .sort((a, b) => b.total - a.total);
-
-  const topProcedures = [...mockBillingData].sort((a, b) => b.totalAmount - a.totalAmount).slice(0, 5);
-
-  const doctorMap: Record<string, { total: number; active: number; critical: number; recovering: number; discharged: number; depts: Set<string> }> = {};
-  patients.forEach(p => {
-    if (!doctorMap[p.doctor]) doctorMap[p.doctor] = { total: 0, active: 0, critical: 0, recovering: 0, discharged: 0, depts: new Set() };
-    doctorMap[p.doctor].total++;
-    doctorMap[p.doctor].depts.add(p.department);
-    if (p.status === 'Active') doctorMap[p.doctor].active++;
-    else if (p.status === 'Critical') doctorMap[p.doctor].critical++;
-    else if (p.status === 'Recovering') doctorMap[p.doctor].recovering++;
-    else if (p.status === 'Discharged') doctorMap[p.doctor].discharged++;
-  });
-  const doctorData = Object.entries(doctorMap)
-    .map(([name, d]) => ({ name, ...d, depts: Array.from(d.depts) }))
-    .sort((a, b) => b.total - a.total);
-
-  const patientsCount = useCountUp(totalPatients);
-  const revenueCount = useCountUp(Math.round(totalRevenue / 10000));
-  const appointmentsCount = useCountUp(totalAppointments);
-  const rateCount = useCountUp(recoveryRate);
+  const doctorData = useMemo(() => {
+    const map: Record<string, { total: number; active: number; critical: number; recovering: number; discharged: number; depts: Set<string> }> = {};
+    patients.forEach(p => {
+      if (!map[p.doctor]) map[p.doctor] = { total: 0, active: 0, critical: 0, recovering: 0, discharged: 0, depts: new Set() };
+      map[p.doctor].total++;
+      map[p.doctor].depts.add(p.department);
+      if (p.status === 'Active') map[p.doctor].active++;
+      else if (p.status === 'Critical') map[p.doctor].critical++;
+      else if (p.status === 'Recovering') map[p.doctor].recovering++;
+      else if (p.status === 'Discharged') map[p.doctor].discharged++;
+    });
+    return Object.entries(map)
+      .map(([name, d]) => ({ name, ...d, depts: Array.from(d.depts) }))
+      .sort((a, b) => b.total - a.total);
+  }, [patients]);
 
   const kpis = [
-    { title: 'Total Patients',  display: patientsCount.toLocaleString(),         sub: '7-month period',                             icon: <Users size={20} />,      color: '#3c83f6', onClick: () => { dispatch(clearFilters()); navigate('/patients'); } },
-    { title: 'Total Revenue',   display: `₹${(revenueCount / 10).toFixed(1)}L`,  sub: 'Nov 2025 – May 2026',                        icon: <DollarSign size={20} />, color: '#0ea5e9', onClick: () => navigate('/billing') },
-    { title: 'Appointments',    display: appointmentsCount.toLocaleString(),      sub: 'All scheduled visits',                       icon: <Activity size={20} />,   color: '#7c3bed', onClick: () => navigate('/appointments') },
-    { title: 'Recovery Rate',   display: `${rateCount}%`,                         sub: `${totalRecovered.toLocaleString()} patients recovered`, icon: <TrendingUp size={20} />, color: '#f59e0b', onClick: () => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); } },
+    { title: 'Total Patients', rawValue: totalPatients,                        sub: '7-month period',                                        icon: <Users size={20} />,      color: '#3c83f6', onClick: () => { dispatch(clearFilters()); navigate('/patients'); } },
+    { title: 'Total Revenue',  rawValue: Math.round(totalRevenue / 10000),     format: (n: number) => `₹${(n / 10).toFixed(1)}L`,            icon: <DollarSign size={20} />, color: '#0ea5e9', sub: 'Nov 2025 – May 2026',                                   onClick: () => navigate('/billing') },
+    { title: 'Appointments',   rawValue: totalAppointments,                    sub: 'All scheduled visits',                                  icon: <Activity size={20} />,   color: '#7c3bed', onClick: () => navigate('/appointments') },
+    { title: 'Recovery Rate',  rawValue: recoveryRate, suffix: '%',            sub: `${totalRecovered.toLocaleString()} patients recovered`, icon: <TrendingUp size={20} />, color: '#f59e0b', onClick: () => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); } },
   ];
 
   return (
@@ -97,7 +95,7 @@ const AnalyticsPage = () => {
       {/* KPI Cards */}
       <motion.div variants={item} className="grid gap-4 mb-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         {kpis.map(k => (
-          <KpiCard key={k.title} value={k.display} sub={k.sub} icon={k.icon} color={k.color} onClick={k.onClick} title={k.title} showArrow />
+          <KpiCard key={k.title} rawValue={k.rawValue} format={k.format} suffix={k.suffix} sub={k.sub} icon={k.icon} color={k.color} onClick={k.onClick} title={k.title} showArrow />
         ))}
       </motion.div>
 

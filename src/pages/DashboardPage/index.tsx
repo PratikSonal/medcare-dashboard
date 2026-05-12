@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Activity, AlertTriangle, Calendar, CreditCard, UserCheck, Building2, ShieldCheck, ChevronRight } from 'lucide-react';
@@ -14,6 +14,11 @@ import { setSelectedPatient, setFilterStatus, clearFilters } from '@/features/pa
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from '@/lib/constants';
 import { container, item } from './constants';
 
+// Module-level constants — computed once from static imported data
+const totalBilled = mockBillingData.reduce((s, r) => s + r.totalAmount, 0);
+const pendingClaims = mockBillingData.filter(r => r.claimStatus === 'Pending').length;
+const approvalRate = Math.round((mockBillingData.filter(r => r.claimStatus === 'Approved').length / mockBillingData.length) * 100);
+
 const DashboardPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -21,16 +26,15 @@ const DashboardPage = () => {
 
   const patients = useAppSelector(s => s.patients.patients);
   const appointments = useAppSelector(s => s.appointments.appointments);
-  const criticalPatients = patients.filter(p => p.status === 'Critical');
-  const activeCount = patients.filter(p => p.status === 'Active').length;
 
-  const totalBilled = mockBillingData.reduce((s, r) => s + r.totalAmount, 0);
-  const pendingClaims = mockBillingData.filter(r => r.claimStatus === 'Pending').length;
-  const approvedClaims = mockBillingData.filter(r => r.claimStatus === 'Approved').length;
-  const approvalRate = Math.round((approvedClaims / mockBillingData.length) * 100);
-
-  const todayAppointments = appointments.filter(a => a.date === '2026-05-11');
-  const chartData = chartPeriod === '3M' ? metricsData.slice(-3) : chartPeriod === '6M' ? metricsData.slice(-6) : metricsData;
+  const criticalPatients = useMemo(() => patients.filter(p => p.status === 'Critical'), [patients]);
+  const activeCount = useMemo(() => patients.filter(p => p.status === 'Active').length, [patients]);
+  const dischargedCount = useMemo(() => patients.filter(p => p.status === 'Discharged').length, [patients]);
+  const recoveringCount = useMemo(() => patients.filter(p => p.status === 'Recovering').length, [patients]);
+  const departmentCount = useMemo(() => new Set(patients.map(p => p.department)).size, [patients]);
+  const doctorCount = useMemo(() => new Set(patients.map(p => p.doctor)).size, [patients]);
+  const todayAppointments = useMemo(() => appointments.filter(a => a.date === '2026-05-11'), [appointments]);
+  const chartData = useMemo(() => chartPeriod === '3M' ? metricsData.slice(-3) : chartPeriod === '6M' ? metricsData.slice(-6) : metricsData, [chartPeriod]);
 
   useEffect(() => {
     const t = setTimeout(() => showDailySummaryNotification(patients.length, criticalPatients.length), 5000);
@@ -182,12 +186,12 @@ const DashboardPage = () => {
 
       {/* Quick Stats */}
       <motion.div variants={item} className="grid grid-cols-5 gap-4 mb-6">
-        <KpiCard size="sm" title="Discharged" rawValue={patients.filter(p => p.status === 'Discharged').length} sub="Patients released" icon={<UserCheck size={20} />} color="#9ca3af"
+        <KpiCard size="sm" title="Discharged" rawValue={dischargedCount} sub="Patients released" icon={<UserCheck size={20} />} color="#9ca3af"
           onClick={() => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); }} />
-        <KpiCard size="sm" title="Recovering" rawValue={patients.filter(p => p.status === 'Recovering').length} sub="In recovery phase" icon={<Activity size={20} />} color="#f59e0b"
+        <KpiCard size="sm" title="Recovering" rawValue={recoveringCount} sub="In recovery phase" icon={<Activity size={20} />} color="#f59e0b"
           onClick={() => { dispatch(setFilterStatus('Recovering')); navigate('/patients'); }} />
-        <KpiCard size="sm" title="Departments" rawValue={[...new Set(patients.map(p => p.department))].length} sub="Active specialties" icon={<Building2 size={20} />} color="#7c3bed" />
-        <KpiCard size="sm" title="Doctors" rawValue={[...new Set(patients.map(p => p.doctor))].length} sub="Attending physicians" icon={<Users size={20} />} color="#3c83f6" />
+        <KpiCard size="sm" title="Departments" rawValue={departmentCount} sub="Active specialties" icon={<Building2 size={20} />} color="#7c3bed" />
+        <KpiCard size="sm" title="Doctors" rawValue={doctorCount} sub="Attending physicians" icon={<Users size={20} />} color="#3c83f6" />
         <KpiCard size="sm" title="Claim Approval" rawValue={approvalRate} suffix="%" sub="Insurance approved" icon={<ShieldCheck size={20} />} color="#0ea5e9" />
       </motion.div>
 
