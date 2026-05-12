@@ -17,13 +17,14 @@
   background: transparent;
   cursor: pointer;
   color: var(--text-secondary);
-  transition: background 200ms ease, color 200ms ease;
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
   position: relative;
   flex-shrink: 0;
 
   &:hover {
     background: var(--bg-tertiary);
     color: var(--text-primary);
+    transform: scale(1.2);
   }
 }
 
@@ -44,6 +45,23 @@
     color: var(--accent-blue);
     font-weight: 600;
   }
+}
+
+@keyframes bell-ring {
+  0%    { transform: rotate(0deg); }
+  5%    { transform: rotate(18deg); }
+  12%   { transform: rotate(-15deg); }
+  18%   { transform: rotate(12deg); }
+  24%   { transform: rotate(-8deg); }
+  30%   { transform: rotate(4deg); }
+  35%   { transform: rotate(0deg); }
+  100%  { transform: rotate(0deg); }
+}
+
+.bellRing {
+  display: inline-flex;
+  transform-origin: top center;
+  animation: bell-ring 3s ease-in-out infinite;
 }
 
 .notifItem {

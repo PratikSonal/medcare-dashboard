@@ -60,7 +60,7 @@ export const KpiCard = ({
           <motion.div
             animate={{ scale: hovered ? 1.1 : 1 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className={cn('shrink-0', sm ? 'p-[6px] rounded-[8px]' : 'p-3 rounded-12')}
+            className={cn('shrink-0', sm ? 'p-[10px] rounded-[10px]' : 'p-3 rounded-12')}
             style={{ background: iconBg ? `${color}18` : 'transparent', color }}
           >
             {icon}

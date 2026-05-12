@@ -77,7 +77,9 @@ export const Navbar = () => {
         {/* Notifications */}
         <div className="relative">
           <button onClick={() => setShowNotifs(!showNotifs)} className={styles.iconBtn}>
-            <Bell size={15} />
+            <span className={unreadCount > 0 ? styles.bellRing : undefined}>
+              <Bell size={15} />
+            </span>
             {unreadCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }}

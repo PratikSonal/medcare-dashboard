@@ -182,13 +182,13 @@ const DashboardPage = () => {
 
       {/* Quick Stats */}
       <motion.div variants={item} className="grid grid-cols-5 gap-4 mb-6">
-        <KpiCard size="sm" title="Discharged" rawValue={patients.filter(p => p.status === 'Discharged').length} sub="Patients released" icon={<UserCheck size={16} />} color="var(--text-tertiary)"
+        <KpiCard size="sm" title="Discharged" rawValue={patients.filter(p => p.status === 'Discharged').length} sub="Patients released" icon={<UserCheck size={20} />} color="#9ca3af"
           onClick={() => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); }} />
-        <KpiCard size="sm" title="Recovering" rawValue={patients.filter(p => p.status === 'Recovering').length} sub="In recovery phase" icon={<Activity size={16} />} color="var(--accent-yellow)"
+        <KpiCard size="sm" title="Recovering" rawValue={patients.filter(p => p.status === 'Recovering').length} sub="In recovery phase" icon={<Activity size={20} />} color="#f59e0b"
           onClick={() => { dispatch(setFilterStatus('Recovering')); navigate('/patients'); }} />
-        <KpiCard size="sm" title="Departments" rawValue={[...new Set(patients.map(p => p.department))].length} sub="Active specialties" icon={<Building2 size={16} />} color="#7c3bed" />
-        <KpiCard size="sm" title="Doctors" rawValue={[...new Set(patients.map(p => p.doctor))].length} sub="Attending physicians" icon={<Users size={16} />} color="#3c83f6" />
-        <KpiCard size="sm" title="Claim Approval" rawValue={approvalRate} suffix="%" sub="Insurance approved" icon={<ShieldCheck size={16} />} color="#0ea5e9" />
+        <KpiCard size="sm" title="Departments" rawValue={[...new Set(patients.map(p => p.department))].length} sub="Active specialties" icon={<Building2 size={20} />} color="#7c3bed" />
+        <KpiCard size="sm" title="Doctors" rawValue={[...new Set(patients.map(p => p.doctor))].length} sub="Attending physicians" icon={<Users size={20} />} color="#3c83f6" />
+        <KpiCard size="sm" title="Claim Approval" rawValue={approvalRate} suffix="%" sub="Insurance approved" icon={<ShieldCheck size={20} />} color="#0ea5e9" />
       </motion.div>
 
       {/* Today's Appointments */}
