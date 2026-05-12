@@ -98,7 +98,7 @@ export const Navbar = () => {
                   </div>
 
                   {/* List */}
-                  <div className="max-h-80 overflow-y-auto">
+                  <div className="max-h-80 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                     {visible.length === 0 ? (
                       <div className="py-8 px-4 text-center text-text-tertiary text-[13px]">
                         No unread notifications
