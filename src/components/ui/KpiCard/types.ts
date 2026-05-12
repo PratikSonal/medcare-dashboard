@@ -12,6 +12,7 @@ export interface KpiCardProps {
   positive?: boolean;
   icon: React.ReactNode;
   color?: string;
+  iconBg?: boolean;
   onClick?: () => void;
   showArrow?: boolean;
   active?: boolean;

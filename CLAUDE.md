@@ -98,8 +98,8 @@ public/sw.js          — Service Worker (push notifications)
 - Dot-grid background: `radial-gradient(circle, rgba(...) 1px, transparent 1px)`
 
 ### Layout
-- **Sidebar**: Floating rounded card (`borderRadius: 20px`, `left: 12px`, `top: 12px`, `height: calc(100vh - 24px)`)
-- **Navbar**: Themed pill (`borderRadius: 999px`, uses `var(--bg-card)` + `var(--border-primary)`) — raga.ai inspired, floats at top, respects light/dark theme
+- **Sidebar**: Floating rounded card (`borderRadius: 20px`, `left: 12px`, `top: 12px`, `height: calc(100vh - 24px)`). Nav item clicks call `document.documentElement.scrollTop = 0` for instant scroll-to-top on route change.
+- **Navbar**: Themed pill (`borderRadius: 999px`, uses `var(--bg-card)` + `var(--border-primary)`) — raga.ai inspired, floats at top, respects light/dark theme. Left section shows gradient avatar (user initial) + staggered "Welcome, [name]" animation. Right section: theme toggle + notifications.
 - **AppLayout**: `marginLeft` animates with sidebar open/closed state
 
 ### Login Page
@@ -149,8 +149,9 @@ VITE_FIREBASE_MEASUREMENT_ID=G-VRL533H0TN
 - Animated stat counters (count-up on mount)
 - Area chart: patients vs recovered (blue + cyan)
 - Recent patients list + full table
-- Quick stats: Discharged, Recovering, Departments, Doctors
+- Quick stats: Discharged, Recovering, Departments, Doctors, Claim Approval — all use `KpiCard size="sm"`; Discharged + Recovering navigate to filtered patients on click
 - "Appointments Today" KPI reads from Redux (reactive to new bookings)
+- Critical patients banner: pulsing red border (`alert-pulse`), staggered card entry, avatar radar-ping (`ping-red`), hover x+y lift
 
 ### AnalyticsPage (`/analytics`)
 - KPI cards with count-up animation
@@ -165,17 +166,17 @@ VITE_FIREBASE_MEASUREMENT_ID=G-VRL533H0TN
 ### PatientDetailsPage (`/patients`)
 - Grid/list view toggle (stored in Redux)
 - Search + collapsible filter panel (status pills)
-- Add Patient button → `AddPatientModal` (3-step: Personal → Medical → Vitals)
+- Add Patient button: gradient (`var(--gradient-primary)`), icon scales 1.2x on button hover via Framer Motion named variant (`whileHover="hover"` + child `motion.span` variants)
 - Patient count shows `filteredPatients.length of patients.length`
 - Patient modal with vitals, appointments, billing, prescriptions tabs
 
 ### AppointmentsPage (`/appointments`)
 - Week calendar strip with density badge (count, colour-coded: cyan < 4, yellow 4–5, red ≥ 6)
-- Stats cards (Total/Confirmed/Pending/No-Shows) — clickable to filter
+- Stats cards (Total/Confirmed/Pending/No-Shows) — `KpiCard size="sm"` with `rawValue` (count-up), `active` prop highlights selected filter
 - Search input + collapsible filter panel (status + appointment type pills)
 - Appointment list sorted by time, with intake + insurance badges
 - Inline card status actions: Pending → Confirm / No-show / Cancel; Confirmed → No-show / Cancel
-- "New Appointment" button → `NewAppointmentModal`
+- New Appointment button: gradient (`var(--gradient-primary)`), icon scales 1.2x on hover via named variant propagation
 - Doctor schedules sidebar with progress bars
 - Action Required sidebar — "Complete Intake" / "Verify Insurance" buttons dispatch Redux directly
 - Time slots panel: dynamic from Redux appointments, sorted by time
@@ -184,7 +185,7 @@ VITE_FIREBASE_MEASUREMENT_ID=G-VRL533H0TN
 ### BillingPage (`/billing`)
 - KPI cards: Total Billed, Insurance Settled, Patient Outstanding, Pending Claims — all from Redux
 - 3-column charts row: Provider Performance bar chart | Claim Status donut | Outstanding Balance leaderboard (top 5 by patientDue)
-- Billing records: search (patient / doctor / procedure / provider) + collapsible filter (Status pills + Provider pills) + pagination (8/page)
+- Billing records: search (patient / doctor / procedure / provider) + collapsible filter (Status pills + Provider pills) + pagination (10/page)
 - Click any row → billing detail modal: financial breakdown, claim status update pills (dispatches `updateClaimStatus`), "View Patient Profile" action
 - Modal uses `selectedRecordId` + `records.find()` pattern — auto-updates on Redux dispatch without closing
 
@@ -279,6 +280,34 @@ Always use `import { createSlice, type PayloadAction }` — `type` keyword requi
 - **RagaAI**: Vertical AI agent suites. Key modules: Smart Scheduling, Patient Intake, Revenue Cycle. Stats: 46.5% claim denial reduction, 170% booking growth, 99.9% uptime.
 - **Innovaccer**: Horizontal data OS, $250M ARR. Platform: Gravity™ (400+ EHR connectors).
 - **Design inspiration**: raga.ai — deep navy, dot-grid bg, floating dark navbar pill, glassmorphism cards.
+
+---
+
+## Animation Patterns
+
+### Hover shift (list rows & sidebar nav)
+All interactive rows/items use `whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}` on `motion.div` / `motion.tr`. Sidebar uses pure CSS `transform: translateX(4px)` in SCSS.
+
+### KpiCard hover
+- Card lifts `y: -3` via `whileHover`
+- Icon scales 1.1× driven by `onHoverStart`/`onHoverEnd` → `useState(hovered)` → `animate={{ scale: hovered ? 1.1 : 1 }}` on inner `motion.div`
+- `iconBg={false}` prop suppresses the `${color}18` background box when needed
+
+### Button icon scale (Add Patient / New Appointment)
+Named variant propagation: `<motion.button whileHover="hover" initial="rest">` + `<motion.span variants={{ rest: { scale: 1 }, hover: { scale: 1.2 } }}>`. Parent hover state cascades to child automatically.
+
+### Critical patients banner (`globals.css` keyframes)
+- `alert-pulse` — slow red glow breathe on the outer container (3s loop)
+- `ping-red` — radar-ping ring scaling outward from the avatar (2s loop)
+
+### glass-card shadow
+Default shadow `0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)` gives 3D lift. Dark mode: `0 2px 10px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)`. Hover replaces with `var(--glow-blue)` which is more prominent.
+
+### Page entry direction
+All page header animations use `initial={{ opacity: 0, y: 10 }}` (slides up). Never use `y: -10` — it makes content appear to fall from above.
+
+### CSS variable + hex-alpha limitation
+`${color}18` only works for hex colors (e.g. `#3c83f618`). Silently fails for `var(--accent-red)` etc. Always pass hex values to KpiCard `color` prop when icon background is needed.
 
 ---
 

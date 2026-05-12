@@ -19,10 +19,13 @@ export const Navbar = () => {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(s => s.ui.theme);
   const { notifications, unreadCount } = useAppSelector(s => s.ui);
+  const user = useAppSelector(s => s.auth.user);
   const [showNotifs, setShowNotifs] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
 
   const visible = filter === 'unread' ? notifications.filter(n => !n.read) : notifications;
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Doctor';
+  const initial = displayName[0].toUpperCase();
 
   return (
     <motion.header
@@ -34,6 +37,37 @@ export const Navbar = () => {
       )}
       style={{ left: '284px' }}
     >
+      {/* Welcome section */}
+      <div className="flex items-center gap-[10px]">
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 22, delay: 0.1 }}
+          className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+          style={{ background: 'var(--gradient-primary)' }}
+        >
+          {initial}
+        </motion.div>
+        <div className="flex items-center gap-[5px]">
+          <motion.span
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, delay: 0.2 }}
+            className="text-[13px] text-text-secondary"
+          >
+            Welcome,
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, delay: 0.32 }}
+            className="text-[13px] font-semibold text-text-primary"
+          >
+            {displayName}
+          </motion.span>
+        </div>
+      </div>
+
       <div className="flex items-center gap-1 ml-auto">
         {/* Theme toggle */}
         <button onClick={() => dispatch(toggleTheme())} className={styles.iconBtn}>

@@ -179,13 +179,21 @@ const AppointmentsPage = () => {
               })}
             </p>
           </div>
-          <button
+          <motion.button
             onClick={() => setShowNewAppModal(true)}
+            whileHover="hover"
+            initial="rest"
             className="flex items-center gap-2 py-[10px] px-5 rounded-[12px] border-0 text-white font-semibold cursor-pointer font-sans text-sm"
             style={{ background: "var(--gradient-primary)" }}
           >
-            <Plus size={16} /> New Appointment
-          </button>
+            <motion.span
+              variants={{ rest: { scale: 1 }, hover: { scale: 1.2, transition: { duration: 0.2, ease: 'easeOut' } } }}
+              style={{ display: 'inline-flex' }}
+            >
+              <Plus size={16} />
+            </motion.span>
+            New Appointment
+          </motion.button>
         </div>
         <div className="glow-line mt-5" />
       </motion.div>

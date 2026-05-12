@@ -58,7 +58,7 @@ const DashboardPage = () => {
           onClick={() => { dispatch(clearFilters()); navigate('/patients'); }} />
         <KpiCard variants={item} title="Active Cases" rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="#0ea5e9"
           onClick={() => { dispatch(setFilterStatus('Active')); navigate('/patients'); }} />
-        <KpiCard variants={item} title="Critical Alerts" rawValue={criticalPatients.length} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="var(--accent-red)"
+        <KpiCard variants={item} title="Critical Alerts" rawValue={criticalPatients.length} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="#ef4444"
           onClick={() => { dispatch(setFilterStatus('Critical')); navigate('/patients'); }} />
         <KpiCard variants={item} title="Appointments Today" rawValue={todayAppointments.length} change="vs 6 yesterday" positive icon={<Calendar size={20} />} color="#7c3bed"
           onClick={() => navigate('/appointments')} />

@@ -214,12 +214,21 @@ const PatientDetailsPage = () => {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <motion.button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans bg-accent-blue text-white shadow-[0_4px_14px_rgba(60,131,246,0.3)]"
+              whileHover="hover"
+              initial="rest"
+              className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white"
+              style={{ background: 'var(--gradient-primary)', boxShadow: '0 4px 14px rgba(60,131,246,0.3)' }}
             >
-              <UserPlus size={15} /> Add Patient
-            </button>
+              <motion.span
+                variants={{ rest: { scale: 1 }, hover: { scale: 1.2, transition: { duration: 0.2, ease: 'easeOut' } } }}
+                style={{ display: 'inline-flex' }}
+              >
+                <UserPlus size={15} />
+              </motion.span>
+              Add Patient
+            </motion.button>
             <div className="flex items-center gap-1 p-1 rounded-[12px] bg-bg-secondary border border-border-primary">
               {[
                 {

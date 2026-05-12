@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -6,8 +7,9 @@ import type { KpiCardProps } from './types';
 
 export const KpiCard = ({
   title, value, rawValue, prefix = '', suffix = '', format, sub, change, positive = true,
-  icon, color = 'var(--accent-blue)', onClick, showArrow, active, size = 'md', variants,
+  icon, color = 'var(--accent-blue)', iconBg = true, onClick, showArrow, active, size = 'md', variants,
 }: KpiCardProps) => {
+  const [hovered, setHovered] = useState(false);
   const count = useCountUp(rawValue ?? 0);
   const displayValue = rawValue !== undefined
     ? (format ? format(count) : `${prefix}${count}${suffix}`)
@@ -20,6 +22,8 @@ export const KpiCard = ({
       variants={variants}
       className={cn('glass-card relative overflow-hidden', sm ? 'rounded-16 p-[18px]' : 'rounded-20 p-6')}
       whileHover={{ y: -3, transition: { duration: 0.2 } }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
       onClick={onClick}
       style={{
         cursor: onClick ? 'pointer' : 'default',
@@ -53,12 +57,14 @@ export const KpiCard = ({
           ) : null}
         </div>
         <div className="flex flex-col items-end gap-2">
-          <div
+          <motion.div
+            animate={{ scale: hovered ? 1.1 : 1 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             className={cn('shrink-0', sm ? 'p-[6px] rounded-[8px]' : 'p-3 rounded-12')}
-            style={{ background: `${color}18`, color }}
+            style={{ background: iconBg ? `${color}18` : 'transparent', color }}
           >
             {icon}
-          </div>
+          </motion.div>
           {showArrow && (
             <div className="flex items-center gap-[3px] text-accent-cyan text-[11px]">
               View <ChevronRight size={12} />
