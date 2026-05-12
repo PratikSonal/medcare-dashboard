@@ -247,7 +247,8 @@ Discharged → gray   var(--text-tertiary)
 
 ## Pending / Next Steps
 - [ ] Deploy to Vercel (add VITE_* env vars in dashboard)
-- [ ] Write README.md
+- [x] Write README.md
+- [x] Add .env.example
 - [ ] Submit GitHub repo + live link + fill RagaAI application form
 - [ ] Overdue appointment highlight on cards (explicitly deferred)
 
