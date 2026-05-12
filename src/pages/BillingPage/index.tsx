@@ -13,15 +13,9 @@ import { updateClaimStatus } from '@/features/billing/billingSlice';
 import type { ClaimStatus } from '@/types';
 import { formatCompact, PROVIDER_SHORT } from '@/lib/utils';
 import { CLAIM_STATUS_COLORS } from '@/lib/constants';
+import { container, item, ttStyle, ALL_STATUSES, PAGE_SIZE } from './constants';
 
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
-const ttStyle = { contentStyle: { background: 'var(--bg-card)', border: '1px solid var(--border-primary)', borderRadius: '12px', color: 'var(--text-primary)', fontFamily: 'Poppins', fontSize: '12px' } };
-
-const ALL_STATUSES: ClaimStatus[] = ['Approved', 'Partial', 'Pending', 'Denied'];
-const PAGE_SIZE = 8;
-
-export default function BillingPage() {
+const BillingPage = () => {
   const dispatch = useAppDispatch();
   const records = useAppSelector(s => s.billing.records);
   const patients = useAppSelector(s => s.patients.patients);
@@ -414,4 +408,6 @@ export default function BillingPage() {
       </AnimatePresence>
     </>
   );
-}
+};
+
+export default BillingPage;

@@ -32,15 +32,8 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { Avatar } from "@/components/ui/Avatar";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { cn } from "@/lib/utils";
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.06 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
-};
+import { container, item, ALL_STATUSES, DAY_NAMES } from "./constants";
+import { getWeekDays, formatDateKey } from "./helpers";
 
 const STATUS_CONFIG: Record<
   AppointmentStatus,
@@ -73,23 +66,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-function getWeekDays(baseDate: Date) {
-  const days = [];
-  const start = new Date(baseDate);
-  start.setDate(start.getDate() - start.getDay() + 1);
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(start);
-    d.setDate(start.getDate() + i);
-    days.push(d);
-  }
-  return days;
-}
-
-function formatDateKey(d: Date) {
-  return d.toISOString().split("T")[0];
-}
-
-export default function AppointmentsPage() {
+const AppointmentsPage = () => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector((s) => s.patients.patients);
   const appointments = useAppSelector((s) => s.appointments.appointments);
@@ -137,15 +114,6 @@ export default function AppointmentsPage() {
     .filter((a) => a.date === dateKey)
     .sort((a, b) => a.time.localeCompare(b.time));
   const doctors = [...new Set(appointments.map((a) => a.doctor))];
-
-  const allStatuses: AppointmentStatus[] = [
-    "Confirmed",
-    "Pending",
-    "Completed",
-    "Cancelled",
-    "No-Show",
-  ];
-  const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const stats = [
     {
@@ -314,7 +282,7 @@ export default function AppointmentsPage() {
                         isSelected ? "text-accent-blue" : "text-text-tertiary",
                       )}
                     >
-                      {dayNames[i]}
+                      {DAY_NAMES[i]}
                     </span>
                     <span
                       className={cn(
@@ -403,7 +371,7 @@ export default function AppointmentsPage() {
                         Status
                       </p>
                       <div className="flex flex-wrap gap-[6px]">
-                        {["All", ...allStatuses].map((s) => (
+                        {["All", ...ALL_STATUSES].map((s) => (
                           <button
                             key={s}
                             onClick={() => setFilterStatus(s)}
@@ -1016,4 +984,6 @@ export default function AppointmentsPage() {
       </AnimatePresence>
     </div>
   );
-}
+};
+
+export default AppointmentsPage;

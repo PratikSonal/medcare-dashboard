@@ -12,11 +12,9 @@ import { showDailySummaryNotification } from '@/lib/notifications';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setSelectedPatient, setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from '@/lib/constants';
+import { container, item } from './constants';
 
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
-
-export default function DashboardPage() {
+const DashboardPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [chartPeriod, setChartPeriod] = useState<'3M' | '6M' | 'All'>('All');
@@ -251,4 +249,6 @@ export default function DashboardPage() {
       </motion.div>
     </motion.div>
   );
-}
+};
+
+export default DashboardPage;

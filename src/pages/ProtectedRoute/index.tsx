@@ -5,12 +5,12 @@ import { setUser } from '@/features/auth/authSlice';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, loading } = useAppSelector(s => s.auth);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, user => {
       if (user) {
         dispatch(setUser({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL }));
       } else {
@@ -36,4 +36,4 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-}
+};

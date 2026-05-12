@@ -7,7 +7,7 @@ import { auth } from '@/lib/firebase';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { setLoading, setError } from '@/features/auth/authSlice';
 
-export default function RegisterPage() {
+const RegisterPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
@@ -92,7 +92,6 @@ export default function RegisterPage() {
               </div>
 
               <form onSubmit={handleRegister} className="flex flex-col gap-[14px]">
-                {/* Name */}
                 <div className="flex flex-col gap-[6px]">
                   <label style={{ fontSize: '13px', fontWeight: 500, color: '#64748b' }}>Full name</label>
                   <div className="relative">
@@ -110,7 +109,6 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                {/* Email */}
                 <div className="flex flex-col gap-[6px]">
                   <label style={{ fontSize: '13px', fontWeight: 500, color: '#64748b' }}>Email address</label>
                   <div className="relative">
@@ -128,7 +126,6 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                {/* Password */}
                 <div className="flex flex-col gap-[6px]">
                   <label style={{ fontSize: '13px', fontWeight: 500, color: '#64748b' }}>Password</label>
                   <div className="relative">
@@ -154,7 +151,6 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                {/* Error */}
                 {error && (
                   <motion.div
                     initial={{ opacity: 0, y: -6 }}
@@ -192,4 +188,6 @@ export default function RegisterPage() {
       </motion.div>
     </div>
   );
-}
+};
+
+export default RegisterPage;

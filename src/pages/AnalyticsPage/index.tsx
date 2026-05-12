@@ -14,21 +14,15 @@ import { Avatar } from '@/components/ui/Avatar';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { setFilterStatus, clearFilters } from '@/features/patients/patientsSlice';
 import { formatCompact, PROVIDER_SHORT } from '@/lib/utils';
+import { container, item, ttStyle, RADIAN, PROC_COLORS } from './constants';
 
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
-const ttStyle = { contentStyle: { background: 'var(--bg-card)', border: '1px solid var(--border-primary)', borderRadius: '12px', color: 'var(--text-primary)', fontFamily: 'Poppins', fontSize: '12px' } };
-
-const RADIAN = Math.PI / 180;
 const renderLabel = ({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 }: { cx?: number; cy?: number; midAngle?: number; innerRadius?: number; outerRadius?: number; percent?: number }) => {
   if (percent < 0.06) return null;
   const r = innerRadius + (outerRadius - innerRadius) * 0.5;
   return <text x={cx + r * Math.cos(-midAngle * RADIAN)} y={cy + r * Math.sin(-midAngle * RADIAN)} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={600}>{`${(percent * 100).toFixed(0)}%`}</text>;
 };
 
-const PROC_COLORS = ['#3c83f6', '#7c3bed', '#0ea5e9', '#f59e0b', '#6366f1'];
-
-export default function AnalyticsPage() {
+const AnalyticsPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -79,10 +73,10 @@ export default function AnalyticsPage() {
   const rateCount = useCountUp(recoveryRate);
 
   const kpis = [
-    { title: 'Total Patients',  display: patientsCount.toLocaleString(),          sub: '7-month period',                             icon: <Users size={20} />,      color: '#3c83f6', onClick: () => { dispatch(clearFilters()); navigate('/patients'); } },
-    { title: 'Total Revenue',   display: `₹${(revenueCount / 10).toFixed(1)}L`,   sub: 'Nov 2025 – May 2026',                        icon: <DollarSign size={20} />, color: '#0ea5e9', onClick: () => navigate('/billing') },
-    { title: 'Appointments',    display: appointmentsCount.toLocaleString(),       sub: 'All scheduled visits',                       icon: <Activity size={20} />,   color: '#7c3bed', onClick: () => navigate('/appointments') },
-    { title: 'Recovery Rate',   display: `${rateCount}%`,                          sub: `${totalRecovered.toLocaleString()} patients recovered`, icon: <TrendingUp size={20} />, color: '#f59e0b', onClick: () => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); } },
+    { title: 'Total Patients',  display: patientsCount.toLocaleString(),         sub: '7-month period',                             icon: <Users size={20} />,      color: '#3c83f6', onClick: () => { dispatch(clearFilters()); navigate('/patients'); } },
+    { title: 'Total Revenue',   display: `₹${(revenueCount / 10).toFixed(1)}L`,  sub: 'Nov 2025 – May 2026',                        icon: <DollarSign size={20} />, color: '#0ea5e9', onClick: () => navigate('/billing') },
+    { title: 'Appointments',    display: appointmentsCount.toLocaleString(),      sub: 'All scheduled visits',                       icon: <Activity size={20} />,   color: '#7c3bed', onClick: () => navigate('/appointments') },
+    { title: 'Recovery Rate',   display: `${rateCount}%`,                         sub: `${totalRecovered.toLocaleString()} patients recovered`, icon: <TrendingUp size={20} />, color: '#f59e0b', onClick: () => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); } },
   ];
 
   return (
@@ -204,7 +198,6 @@ export default function AnalyticsPage() {
           <p className="text-[13px] text-text-secondary mt-[2px]">Insurance coverage and billing analysis</p>
         </div>
         <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 340px' }}>
-          {/* Provider Coverage Table */}
           <div className="glass-card rounded-20 p-6">
             <h3 className="text-[15px] font-semibold text-text-primary mb-1">Provider Coverage Analysis</h3>
             <p className="text-xs text-text-secondary mb-5">Total billed vs. insurance settled per provider</p>
@@ -252,7 +245,6 @@ export default function AnalyticsPage() {
             </table>
           </div>
 
-          {/* Top Procedures */}
           <div className="glass-card rounded-20 p-6">
             <h3 className="text-[15px] font-semibold text-text-primary mb-1">Top Procedures</h3>
             <p className="text-xs text-text-secondary mb-5">Highest billed procedures this period</p>
@@ -330,4 +322,6 @@ export default function AnalyticsPage() {
 
     </motion.div>
   );
-}
+};
+
+export default AnalyticsPage;

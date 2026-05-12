@@ -27,38 +27,15 @@ import type { Patient } from "@/types";
 import { getStatusBg, getStatusColor, formatDate, cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DEPARTMENTS, STATUSES, container, item } from "./constants";
 
-const DEPARTMENTS = [
-  "All",
-  "Cardiology",
-  "Neurology",
-  "Pulmonology",
-  "Endocrinology",
-  "Orthopedics",
-  "Surgery",
-  "Nephrology",
-  "Internal Medicine",
-  "Gastroenterology",
-  "Rheumatology",
-];
-const STATUSES = ["All", "Active", "Critical", "Recovering", "Discharged"];
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.05 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-};
-
-function PatientCard({
+const PatientCard = ({
   patient,
   onClick,
 }: {
   patient: Patient;
   onClick: () => void;
-}) {
+}) => {
   const isCritical = patient.status === "Critical";
   return (
     <motion.div
@@ -145,63 +122,61 @@ function PatientCard({
       </div>
     </motion.div>
   );
-}
+};
 
-function PatientListRow({
+const PatientListRow = ({
   patient,
   onClick,
 }: {
   patient: Patient;
   onClick: () => void;
-}) {
-  return (
-    <motion.tr
-      variants={item}
-      onClick={onClick}
-      className="cursor-pointer border-b border-border-primary transition-colors duration-200 hover:bg-bg-tertiary"
-    >
-      <td className="py-[14px] px-4">
-        <div className="flex items-center gap-[10px]">
-          <Avatar initials={patient.avatar} size={36} radius="10px" />
-          <div>
-            <p className="text-sm font-medium text-text-primary">
-              {patient.name}
-            </p>
-            <p className="text-[11px] text-text-tertiary">{patient.id}</p>
-          </div>
+}) => (
+  <motion.tr
+    variants={item}
+    onClick={onClick}
+    className="cursor-pointer border-b border-border-primary transition-colors duration-200 hover:bg-bg-tertiary"
+  >
+    <td className="py-[14px] px-4">
+      <div className="flex items-center gap-[10px]">
+        <Avatar initials={patient.avatar} size={36} radius="10px" />
+        <div>
+          <p className="text-sm font-medium text-text-primary">
+            {patient.name}
+          </p>
+          <p className="text-[11px] text-text-tertiary">{patient.id}</p>
         </div>
-      </td>
-      <td className="py-[14px] px-4 text-[13px] text-text-secondary">
-        {patient.age}y · {patient.gender}
-      </td>
-      <td className="py-[14px] px-4 text-[13px] text-text-secondary">
-        {patient.diagnosis}
-      </td>
-      <td className="py-[14px] px-4 text-[13px] text-text-secondary">
-        {patient.department}
-      </td>
-      <td className="py-[14px] px-4 text-[13px] text-text-secondary">
-        {patient.doctor}
-      </td>
-      <td className="py-[14px] px-4">
-        <span
-          className="text-xs font-medium py-1 px-[10px] rounded-[8px]"
-          style={{
-            background: getStatusBg(patient.status),
-            color: getStatusColor(patient.status),
-          }}
-        >
-          {patient.status}
-        </span>
-      </td>
-      <td className="py-[14px] px-4 text-[13px] text-text-secondary">
-        {formatDate(patient.lastVisit)}
-      </td>
-    </motion.tr>
-  );
-}
+      </div>
+    </td>
+    <td className="py-[14px] px-4 text-[13px] text-text-secondary">
+      {patient.age}y · {patient.gender}
+    </td>
+    <td className="py-[14px] px-4 text-[13px] text-text-secondary">
+      {patient.diagnosis}
+    </td>
+    <td className="py-[14px] px-4 text-[13px] text-text-secondary">
+      {patient.department}
+    </td>
+    <td className="py-[14px] px-4 text-[13px] text-text-secondary">
+      {patient.doctor}
+    </td>
+    <td className="py-[14px] px-4">
+      <span
+        className="text-xs font-medium py-1 px-[10px] rounded-[8px]"
+        style={{
+          background: getStatusBg(patient.status),
+          color: getStatusColor(patient.status),
+        }}
+      >
+        {patient.status}
+      </span>
+    </td>
+    <td className="py-[14px] px-4 text-[13px] text-text-secondary">
+      {formatDate(patient.lastVisit)}
+    </td>
+  </motion.tr>
+);
 
-export default function PatientDetailsPage() {
+const PatientDetailsPage = () => {
   const dispatch = useAppDispatch();
   const {
     patients,
@@ -472,4 +447,6 @@ export default function PatientDetailsPage() {
       </AnimatePresence>
     </div>
   );
-}
+};
+
+export default PatientDetailsPage;
