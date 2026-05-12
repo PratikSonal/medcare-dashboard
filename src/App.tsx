@@ -1,21 +1,21 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { store } from '@/store';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { ProtectedRoute } from '@/pages/ProtectedRoute';
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "@/store";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { ProtectedRoute } from "@/pages/ProtectedRoute";
 
-const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
-const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
-const PatientDetailsPage = lazy(() => import('@/pages/PatientDetailsPage'));
-const AppointmentsPage = lazy(() => import('@/pages/AppointmentsPage'));
-const BillingPage = lazy(() => import('@/pages/BillingPage'));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage/index.tsx"));
+const PatientDetailsPage = lazy(() => import("@/pages/PatientDetailsPage"));
+const AppointmentsPage = lazy(() => import("@/pages/AppointmentsPage"));
+const BillingPage = lazy(() => import("@/pages/BillingPage"));
 
 function ThemeInitializer() {
   useEffect(() => {
-    const theme = localStorage.getItem('medcare-theme') || 'light';
-    document.documentElement.setAttribute('data-theme', theme);
+    const theme = localStorage.getItem("medcare-theme") || "light";
+    document.documentElement.setAttribute("data-theme", theme);
   }, []);
   return null;
 }
@@ -28,7 +28,14 @@ function AppRoutes() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<LoginPage />} />
-          <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
