@@ -170,7 +170,7 @@ const BillingPage = () => {
             <p className="text-[13px] text-text-secondary mb-4">Top 5 by patient due amount</p>
             <div className="flex flex-col gap-3">
               {leaderboard.map((r, i) => (
-                <div key={r.id} className="flex items-center gap-[10px]">
+                <motion.div key={r.id} whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }} className="flex items-center gap-[10px] px-2 py-1 -mx-2 rounded-[10px] cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary">
                   <span className={cn('text-[11px] font-bold w-[18px] shrink-0 text-right', i === 0 ? 'text-accent-yellow' : 'text-text-tertiary')}>#{i + 1}</span>
                   <Avatar initials={r.patientAvatar} size={28} radius="50%" />
                   <div className="flex-1 min-w-0">
@@ -178,7 +178,7 @@ const BillingPage = () => {
                     <p className="text-[11px] text-text-tertiary">{r.department}</p>
                   </div>
                   <span className={cn('text-xs font-bold shrink-0', r.patientDue > 50000 ? 'text-accent-red' : 'text-text-primary')}>{formatCompact(r.patientDue)}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -260,7 +260,8 @@ const BillingPage = () => {
                 {pagedRecords.length === 0 ? (
                   <tr><td colSpan={8} className="py-12 text-center text-text-tertiary text-sm">No records match your search or filters.</td></tr>
                 ) : pagedRecords.map((r, i) => (
-                  <tr key={r.id} onClick={() => setSelectedRecordId(r.id)}
+                  <motion.tr key={r.id} onClick={() => setSelectedRecordId(r.id)}
+                    whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}
                     className={cn('cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary', i < pagedRecords.length - 1 && 'border-b border-border-primary')}>
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
@@ -282,7 +283,7 @@ const BillingPage = () => {
                     <td className={cn('px-3 py-3 font-semibold whitespace-nowrap', r.patientDue > 50000 ? 'text-accent-red' : 'text-text-primary')}>
                       ₹{r.patientDue.toLocaleString('en-IN')}
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>

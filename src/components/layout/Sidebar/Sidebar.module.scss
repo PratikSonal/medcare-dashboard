@@ -7,11 +7,12 @@
 }
 
 .navItem {
-  transition: background 200ms ease, color 200ms ease;
+  transition: background 200ms ease, color 200ms ease, transform 300ms ease;
 
   &:hover {
     background: var(--bg-tertiary);
     color: var(--text-primary);
+    transform: translateX(4px);
   }
 
   &.active {
@@ -21,6 +22,7 @@
     &:hover {
       background: rgba(60, 131, 246, 0.1);
       color: var(--accent-blue);
+      transform: translateX(4px);
     }
   }
 }

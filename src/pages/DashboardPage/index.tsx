@@ -150,6 +150,7 @@ const DashboardPage = () => {
           <div className="flex flex-col gap-[6px]">
             {patients.slice(0, 6).map((patient, i) => (
               <motion.div key={patient.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
+                whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}
                 onClick={() => dispatch(setSelectedPatient(patient))}
                 className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-12 cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary">
                 <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ background: 'var(--gradient-primary)' }}>{patient.avatar}</div>
@@ -210,8 +211,9 @@ const DashboardPage = () => {
                 const typeColor = APPT_TYPE_COLORS[app.type] || 'var(--accent-blue)';
                 const patient = patients.find(p => p.id === app.patientId);
                 return (
-                  <tr key={app.id}
+                  <motion.tr key={app.id}
                     onClick={() => patient && dispatch(setSelectedPatient(patient))}
+                    whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}
                     className={cn('cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary', i < todayAppointments.length - 1 && 'border-b border-border-primary')}>
                     <td className="px-3 py-3 font-bold text-text-primary whitespace-nowrap">{app.time}</td>
                     <td className="px-3 py-3">
@@ -240,7 +242,7 @@ const DashboardPage = () => {
                     <td className="px-3 py-3">
                       <span className="text-[11px] font-medium px-2 py-[3px] rounded-[8px] whitespace-nowrap" style={{ background: sc.bg, color: sc.color }}>{app.status}</span>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>

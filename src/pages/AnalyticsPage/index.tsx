@@ -230,7 +230,7 @@ const AnalyticsPage = () => {
               </thead>
               <tbody>
                 {providerData.map((p, i) => (
-                  <tr key={p.name} className={cn(i < providerData.length - 1 && 'border-b border-border-primary')}>
+                  <motion.tr key={p.name} whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }} className={cn('cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary', i < providerData.length - 1 && 'border-b border-border-primary')}>
                     <td className="px-2 py-[10px] font-medium text-text-primary">{p.name}</td>
                     <td className="px-2 py-[10px] text-text-secondary">{formatCompact(p.total)}</td>
                     <td className="px-2 py-[10px]">
@@ -239,7 +239,7 @@ const AnalyticsPage = () => {
                       </div>
                     </td>
                     <td className="px-2 py-[10px] font-bold" style={{ color: p.rate > 60 ? '#0ea5e9' : p.rate > 30 ? '#f59e0b' : '#ef4444' }}>{p.rate}%</td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
@@ -250,7 +250,7 @@ const AnalyticsPage = () => {
             <p className="text-xs text-text-secondary mb-5">Highest billed procedures this period</p>
             <div className="flex flex-col gap-4">
               {topProcedures.map((p, i) => (
-                <div key={p.id} className="flex gap-3 items-start">
+                <motion.div key={p.id} whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }} className="flex gap-3 items-start px-3 py-2 -mx-3 rounded-[12px] cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary">
                   <div className="w-6 h-6 rounded-[8px] flex items-center justify-center text-[10px] font-bold shrink-0" style={{ background: PROC_COLORS[i] + '20', color: PROC_COLORS[i] }}>{i + 1}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{p.procedure}</p>
@@ -262,7 +262,7 @@ const AnalyticsPage = () => {
                       <span className="text-[11px] font-semibold text-text-primary whitespace-nowrap">₹{p.totalAmount.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -286,7 +286,7 @@ const AnalyticsPage = () => {
             </thead>
             <tbody>
               {doctorData.map((d, i) => (
-                <tr key={d.name} className={cn(i < doctorData.length - 1 && 'border-b border-border-primary')}>
+                <motion.tr key={d.name} whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }} className={cn('cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary', i < doctorData.length - 1 && 'border-b border-border-primary')}>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-[10px]">
                       <Avatar initials={d.name.split(' ').slice(1).map(n => n[0]).join('').slice(0, 2)} size={32} radius="50%" />
@@ -313,7 +313,7 @@ const AnalyticsPage = () => {
                       ))}
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>

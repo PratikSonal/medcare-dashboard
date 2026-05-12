@@ -134,6 +134,7 @@ const PatientListRow = ({
   <motion.tr
     variants={item}
     onClick={onClick}
+    whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}
     className="cursor-pointer border-b border-border-primary transition-colors duration-200 hover:bg-bg-tertiary"
   >
     <td className="py-[14px] px-4">

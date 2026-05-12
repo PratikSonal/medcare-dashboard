@@ -631,8 +631,9 @@ const AppointmentsPage = () => {
                   (a) => a.status === "Confirmed",
                 ).length;
                 return (
-                  <div
+                  <motion.div
                     key={doc}
+                    whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}
                     className="flex items-center justify-between py-[10px] px-3 rounded-[12px] bg-bg-tertiary"
                   >
                     <div className="flex items-center gap-[10px]">
@@ -664,7 +665,7 @@ const AppointmentsPage = () => {
                         {confirmed}/{docApps.length}
                       </span>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -684,8 +685,9 @@ const AppointmentsPage = () => {
               {todayAll
                 .filter((a) => !a.intakeComplete || !a.insuranceVerified)
                 .map((app) => (
-                  <div
+                  <motion.div
                     key={app.id}
+                    whileHover={{ x: 4, transition: { duration: 0.3, ease: 'easeOut' } }}
                     className="p-3 rounded-[12px] bg-[rgba(245,158,11,0.06)] border border-[rgba(245,158,11,0.2)]"
                   >
                     <div className="flex items-center gap-2 mb-2">
@@ -745,7 +747,7 @@ const AppointmentsPage = () => {
                         </button>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               {todayAll.filter((a) => !a.intakeComplete || !a.insuranceVerified)
                 .length === 0 && (

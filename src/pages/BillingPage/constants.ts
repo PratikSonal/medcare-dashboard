@@ -16,4 +16,4 @@ export const ttStyle = {
 };
 
 export const ALL_STATUSES: ClaimStatus[] = ['Approved', 'Partial', 'Pending', 'Denied'];
-export const PAGE_SIZE = 8;
+export const PAGE_SIZE = 10;
