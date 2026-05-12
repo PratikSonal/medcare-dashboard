@@ -12,7 +12,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
+  if (event.request.mode !== 'navigate') return;
+  event.respondWith(
+    caches.match('/index.html').then((response) => response || fetch(event.request))
+  );
 });
 
 self.addEventListener('push', (event) => {
