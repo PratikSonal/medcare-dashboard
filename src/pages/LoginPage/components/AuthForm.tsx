@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
@@ -39,16 +39,16 @@ export const AuthForm = () => {
     setLocalError('');
   }, [isRegister]);
 
-  const validate = () => {
+  const validate = useCallback(() => {
     if (isRegister && !name.trim()) { setLocalError('Full name is required'); return false; }
     if (!email) { setLocalError('Email is required'); return false; }
     if (!/\S+@\S+\.\S+/.test(email)) { setLocalError('Enter a valid email'); return false; }
     if (!password) { setLocalError('Password is required'); return false; }
     if (password.length < 6) { setLocalError('Password must be at least 6 characters'); return false; }
     return true;
-  };
+  }, [isRegister, name, email, password]);
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLocalError('');
     if (!validate()) return;
@@ -73,7 +73,7 @@ export const AuthForm = () => {
     } finally {
       setLocalLoading(false);
     }
-  };
+  }, [validate, isRegister, name, email, password, navigate, dispatch]);
 
   return (
     <motion.div

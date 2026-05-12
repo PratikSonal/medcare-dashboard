@@ -19,14 +19,17 @@ const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactN
 };
 
 const VitalBadge = ({ icon, label, value, alert = false }: { icon: React.ReactNode; label: string; value: string | number; alert?: boolean }) => (
-  <div className={cn(
-    'flex flex-col items-center p-3 rounded-[12px]',
-    alert ? 'bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)]' : 'bg-bg-tertiary border border-border-primary'
-  )}>
+  <motion.div
+    whileHover={{ scale: 1.1, transition: { duration: 0.2, ease: 'easeOut' } }}
+    className={cn(
+      'flex flex-col items-center p-3 rounded-[12px] cursor-default',
+      alert ? 'bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)]' : 'bg-bg-tertiary border border-border-primary'
+    )}
+  >
     <div className={cn(alert ? 'text-accent-red' : 'text-accent-blue')}>{icon}</div>
     <p className="text-[10px] text-text-tertiary mt-1 text-center">{label}</p>
     <p className="text-xs font-bold text-text-primary mt-[2px] text-center">{value}</p>
-  </div>
+  </motion.div>
 );
 
 export const PatientModal = ({ patient, onClose }: Props) => {

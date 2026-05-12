@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
@@ -27,16 +27,16 @@ export const RegisterCard = () => {
   const [error, setLocalError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const validate = () => {
+  const validate = useCallback(() => {
     if (!name.trim()) { setLocalError('Full name is required'); return false; }
     if (!email) { setLocalError('Email is required'); return false; }
     if (!/\S+@\S+\.\S+/.test(email)) { setLocalError('Enter a valid email'); return false; }
     if (!password) { setLocalError('Password is required'); return false; }
     if (password.length < 6) { setLocalError('Password must be at least 6 characters'); return false; }
     return true;
-  };
+  }, [name, email, password]);
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = useCallback(async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLocalError('');
     if (!validate()) return;
@@ -55,7 +55,7 @@ export const RegisterCard = () => {
     } finally {
       setLocalLoading(false);
     }
-  };
+  }, [validate, name, email, password, navigate, dispatch]);
 
   return (
     <div style={{ background: '#0a1120', border: '0.5px solid #0f1f3d', borderRadius: '12px', padding: '36px' }}>
