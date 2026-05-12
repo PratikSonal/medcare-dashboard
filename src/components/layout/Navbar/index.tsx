@@ -148,8 +148,8 @@ export const Navbar = () => {
                           style={{ background: !n.read ? 'rgba(60,131,246,0.04)' : 'transparent' }}
                         >
                           <div
-                            className="w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0"
-                            style={{ background: typeConfig[n.type].bg, color: typeConfig[n.type].color }}
+                            className={cn('w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0', styles.iconBox)}
+                            style={{ '--notif-color': typeConfig[n.type].color, background: typeConfig[n.type].bg, color: typeConfig[n.type].color } as React.CSSProperties}
                           >
                             {typeConfig[n.type].icon}
                           </div>

@@ -42,6 +42,13 @@ const providerData = (() => {
     .sort((a, b) => b.total - a.total);
 })();
 
+const STATUS_CELLS: { key: 'active' | 'critical' | 'recovering' | 'discharged'; bg: string; color: string }[] = [
+  { key: 'active',     bg: 'rgba(14,165,233,0.1)',  color: '#0ea5e9' },
+  { key: 'critical',   bg: 'rgba(239,68,68,0.1)',   color: '#ef4444' },
+  { key: 'recovering', bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b' },
+  { key: 'discharged', bg: 'rgba(107,114,128,0.1)', color: 'var(--text-tertiary)' },
+];
+
 const renderLabel = ({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 }: { cx?: number; cy?: number; midAngle?: number; innerRadius?: number; outerRadius?: number; percent?: number }) => {
   if (percent < 0.06) return null;
   const r = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -292,18 +299,11 @@ const AnalyticsPage = () => {
                     </div>
                   </td>
                   <td className="px-3 py-3"><span className="text-[15px] font-bold text-text-primary">{d.total}</span></td>
-                  <td className="px-3 py-3">
-                    {d.active ? <span className="text-xs font-semibold px-2 py-[3px] rounded-[6px] bg-[rgba(14,165,233,0.1)] text-[#0ea5e9]">{d.active}</span> : <span className="text-xs text-text-tertiary">—</span>}
-                  </td>
-                  <td className="px-3 py-3">
-                    {d.critical ? <span className="text-xs font-semibold px-2 py-[3px] rounded-[6px] bg-[rgba(239,68,68,0.1)] text-[#ef4444]">{d.critical}</span> : <span className="text-xs text-text-tertiary">—</span>}
-                  </td>
-                  <td className="px-3 py-3">
-                    {d.recovering ? <span className="text-xs font-semibold px-2 py-[3px] rounded-[6px] bg-[rgba(245,158,11,0.1)] text-[#f59e0b]">{d.recovering}</span> : <span className="text-xs text-text-tertiary">—</span>}
-                  </td>
-                  <td className="px-3 py-3">
-                    {d.discharged ? <span className="text-xs font-semibold px-2 py-[3px] rounded-[6px] bg-[rgba(107,114,128,0.1)] text-text-tertiary">{d.discharged}</span> : <span className="text-xs text-text-tertiary">—</span>}
-                  </td>
+                  {STATUS_CELLS.map(({ key, bg, color }) => (
+                    <td key={key} className="px-3 py-3">
+                      {d[key] ? <span className="text-xs font-semibold px-2 py-[3px] rounded-[6px]" style={{ background: bg, color }}>{d[key]}</span> : <span className="text-xs text-text-tertiary">—</span>}
+                    </td>
+                  ))}
                   <td className="px-3 py-3">
                     <div className="flex flex-wrap gap-1">
                       {d.depts.map(dept => (

@@ -71,4 +71,13 @@
   &:hover {
     background: var(--bg-tertiary) !important;
   }
+
+  &:hover .iconBox {
+    background: var(--notif-color) !important;
+    color: #fff !important;
+  }
+}
+
+.iconBox {
+  transition: background 200ms ease, color 200ms ease;
 }

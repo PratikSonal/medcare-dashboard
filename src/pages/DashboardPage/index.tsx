@@ -36,6 +36,22 @@ const DashboardPage = () => {
   const todayAppointments = useMemo(() => appointments.filter(a => a.date === '2026-05-11'), [appointments]);
   const chartData = useMemo(() => chartPeriod === '3M' ? metricsData.slice(-3) : chartPeriod === '6M' ? metricsData.slice(-6) : metricsData, [chartPeriod]);
 
+  const kpis = [
+    { title: 'Total Patients',     rawValue: patients.length,          change: '12% this month',  positive: true,  icon: <Users size={20} />,        color: '#3c83f6', onClick: () => { dispatch(clearFilters()); navigate('/patients'); } },
+    { title: 'Active Cases',       rawValue: activeCount,              change: '8% this week',    positive: true,  icon: <Activity size={20} />,      color: '#0ea5e9', onClick: () => { dispatch(setFilterStatus('Active')); navigate('/patients'); } },
+    { title: 'Critical Alerts',    rawValue: criticalPatients.length,  change: '2 new today',     positive: false, icon: <AlertTriangle size={20} />, color: '#ef4444', onClick: () => { dispatch(setFilterStatus('Critical')); navigate('/patients'); } },
+    { title: 'Appointments Today', rawValue: todayAppointments.length, change: 'vs 6 yesterday',  positive: true,  icon: <Calendar size={20} />,      color: '#7c3bed', onClick: () => navigate('/appointments') },
+    { title: 'Revenue Billed',     value: `₹${(totalBilled / 100000).toFixed(1)}L`, sub: `${pendingClaims} claims pending`, icon: <CreditCard size={20} />, color: '#f59e0b', onClick: () => navigate('/billing') },
+  ];
+
+  const quickStats = [
+    { title: 'Discharged',     rawValue: dischargedCount,  sub: 'Patients released',    icon: <UserCheck size={20} />, color: '#9ca3af', onClick: () => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); } },
+    { title: 'Recovering',     rawValue: recoveringCount,  sub: 'In recovery phase',    icon: <Activity size={20} />,  color: '#f59e0b', onClick: () => { dispatch(setFilterStatus('Recovering')); navigate('/patients'); } },
+    { title: 'Departments',    rawValue: departmentCount,  sub: 'Active specialties',   icon: <Building2 size={20} />, color: '#7c3bed' },
+    { title: 'Doctors',        rawValue: doctorCount,      sub: 'Attending physicians', icon: <Users size={20} />,     color: '#3c83f6' },
+    { title: 'Claim Approval', rawValue: approvalRate,     suffix: '%', sub: 'Insurance approved', icon: <ShieldCheck size={20} />, color: '#0ea5e9' },
+  ];
+
   useEffect(() => {
     const t = setTimeout(() => showDailySummaryNotification(patients.length, criticalPatients.length), 5000);
     return () => clearTimeout(t);
@@ -58,16 +74,7 @@ const DashboardPage = () => {
 
       {/* KPI Cards */}
       <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-        <KpiCard variants={item} title="Total Patients" rawValue={patients.length} change="12% this month" positive icon={<Users size={20} />} color="#3c83f6"
-          onClick={() => { dispatch(clearFilters()); navigate('/patients'); }} />
-        <KpiCard variants={item} title="Active Cases" rawValue={activeCount} change="8% this week" positive icon={<Activity size={20} />} color="#0ea5e9"
-          onClick={() => { dispatch(setFilterStatus('Active')); navigate('/patients'); }} />
-        <KpiCard variants={item} title="Critical Alerts" rawValue={criticalPatients.length} change="2 new today" positive={false} icon={<AlertTriangle size={20} />} color="#ef4444"
-          onClick={() => { dispatch(setFilterStatus('Critical')); navigate('/patients'); }} />
-        <KpiCard variants={item} title="Appointments Today" rawValue={todayAppointments.length} change="vs 6 yesterday" positive icon={<Calendar size={20} />} color="#7c3bed"
-          onClick={() => navigate('/appointments')} />
-        <KpiCard variants={item} title="Revenue Billed" value={`₹${(totalBilled / 100000).toFixed(1)}L`} sub={`${pendingClaims} claims pending`} icon={<CreditCard size={20} />} color="#f59e0b"
-          onClick={() => navigate('/billing')} />
+        {kpis.map(k => <KpiCard key={k.title} variants={item} {...k} />)}
       </div>
 
       {/* Critical Patients Alert */}
@@ -186,13 +193,7 @@ const DashboardPage = () => {
 
       {/* Quick Stats */}
       <motion.div variants={item} className="grid grid-cols-5 gap-4 mb-6">
-        <KpiCard size="sm" title="Discharged" rawValue={dischargedCount} sub="Patients released" icon={<UserCheck size={20} />} color="#9ca3af"
-          onClick={() => { dispatch(setFilterStatus('Discharged')); navigate('/patients'); }} />
-        <KpiCard size="sm" title="Recovering" rawValue={recoveringCount} sub="In recovery phase" icon={<Activity size={20} />} color="#f59e0b"
-          onClick={() => { dispatch(setFilterStatus('Recovering')); navigate('/patients'); }} />
-        <KpiCard size="sm" title="Departments" rawValue={departmentCount} sub="Active specialties" icon={<Building2 size={20} />} color="#7c3bed" />
-        <KpiCard size="sm" title="Doctors" rawValue={doctorCount} sub="Attending physicians" icon={<Users size={20} />} color="#3c83f6" />
-        <KpiCard size="sm" title="Claim Approval" rawValue={approvalRate} suffix="%" sub="Insurance approved" icon={<ShieldCheck size={20} />} color="#0ea5e9" />
+        {quickStats.map(s => <KpiCard key={s.title} size="sm" {...s} />)}
       </motion.div>
 
       {/* Today's Appointments */}
