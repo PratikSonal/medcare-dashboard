@@ -3,14 +3,14 @@ import type { User } from "@/types/auth";
 
 interface AuthState {
   user: User | null;
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
-  loading: true,
+  isLoading: true,
   error: null,
   isAuthenticated: false,
 };
@@ -22,15 +22,15 @@ const authSlice = createSlice({
     setUser(state, action: PayloadAction<User | null>) {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
-      state.loading = false;
+      state.isLoading = false;
       state.error = null;
     },
     setLoading(state, action: PayloadAction<boolean>) {
-      state.loading = action.payload;
+      state.isLoading = action.payload;
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
-      state.loading = false;
+      state.isLoading = false;
     },
     clearError(state) {
       state.error = null;
@@ -38,7 +38,7 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;
-      state.loading = false;
+      state.isLoading = false;
       state.error = null;
     },
   },

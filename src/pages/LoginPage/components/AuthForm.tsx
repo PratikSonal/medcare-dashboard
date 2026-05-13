@@ -33,7 +33,7 @@ export const AuthForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLocalLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setLocalError] = useState("");
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export const AuthForm = () => {
       e.preventDefault();
       setLocalError("");
       if (!validate()) return;
-      setLocalLoading(true);
+      setIsLoading(true);
       dispatch(setLoading(true));
       try {
         if (isRegister) {
@@ -95,7 +95,7 @@ export const AuthForm = () => {
         setLocalError(msg);
         dispatch(setError(msg));
       } finally {
-        setLocalLoading(false);
+        setIsLoading(false);
       }
     },
     [validate, isRegister, name, email, password, navigate, dispatch],
@@ -218,7 +218,7 @@ export const AuthForm = () => {
 
               <Button
                 type="submit"
-                loading={loading}
+                loading={isLoading}
                 className="w-full mt-[6px]"
                 style={{
                   padding: "13px",
@@ -228,7 +228,7 @@ export const AuthForm = () => {
                   border: "none",
                   color: "white",
                   fontWeight: 600,
-                  cursor: loading ? "not-allowed" : "pointer",
+                  cursor: isLoading ? "not-allowed" : "pointer",
                   fontFamily: "inherit",
                 }}
               >

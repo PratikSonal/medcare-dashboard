@@ -68,6 +68,6 @@ export const buildPatient = (form: FormData, maxId: number): Patient => {
 };
 
 export const getNextId = (patients: { id: string }[]): string => {
-  const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1))));
+  const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1), 10)));
   return `P${String(maxId + 1).padStart(3, "0")}`;
 };

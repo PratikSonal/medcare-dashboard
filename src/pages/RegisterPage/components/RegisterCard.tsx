@@ -28,7 +28,7 @@ export const RegisterCard = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLocalLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setLocalError] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -61,7 +61,7 @@ export const RegisterCard = () => {
       e.preventDefault();
       setLocalError("");
       if (!validate()) return;
-      setLocalLoading(true);
+      setIsLoading(true);
       dispatch(setLoading(true));
       try {
         const result = await createUserWithEmailAndPassword(auth, email, password);
@@ -74,7 +74,7 @@ export const RegisterCard = () => {
         setLocalError(msg);
         dispatch(setError(msg));
       } finally {
-        setLocalLoading(false);
+        setIsLoading(false);
       }
     },
     [validate, name, email, password, navigate, dispatch],
@@ -230,14 +230,14 @@ export const RegisterCard = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full py-3 rounded-[8px] border-0 text-sm font-semibold font-sans mt-1 transition-[background] duration-200 disabled:cursor-not-allowed"
               style={{
-                background: loading ? "#1e3a5f" : "#2563eb",
-                color: loading ? "#475569" : "white",
+                background: isLoading ? "#1e3a5f" : "#2563eb",
+                color: isLoading ? "#475569" : "white",
               }}
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {isLoading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 

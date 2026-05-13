@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/Avatar";
-import { useAppSelector } from "@/hooks/useAppDispatch";
 import { item, STATUS_CELLS } from "../constants";
 
 export const DoctorPerformance = () => {

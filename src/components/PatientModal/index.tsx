@@ -208,7 +208,7 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                       icon={<Activity size={16} />}
                       label="BP"
                       value={patient.vitals.bloodPressure}
-                      alert={parseInt(patient.vitals.bloodPressure) > 140}
+                      alert={parseInt(patient.vitals.bloodPressure, 10) > 140}
                     />
                     <VitalBadge
                       icon={<Thermometer size={16} />}

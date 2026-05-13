@@ -7,7 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
-  const { isAuthenticated, loading } = useAppSelector(s => s.auth);
+  const { isAuthenticated, isLoading } = useAppSelector(s => s.auth);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
     return () => unsub();
   }, [dispatch]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div
         className="min-h-screen flex items-center justify-center dot-grid"

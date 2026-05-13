@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import type { FilterBarProps } from "./types";
 import { Filter, ChevronDown, X } from "lucide-react";
 import { APPT_TYPE_COLORS } from "@/lib/constants";
-import { SearchInput } from "@/components/ui/SearchInput";
 import { cn } from "@/lib/utils";
+import { SearchInput } from "@/components/ui/SearchInput";
 import { ALL_STATUSES } from "../constants";
+import type { FilterBarProps } from "./types";
 
 export const FilterBar = ({
   searchQuery,

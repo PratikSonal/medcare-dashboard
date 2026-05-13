@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X, ChevronDown } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import {
   setSearchQuery,
   setFilterStatus,

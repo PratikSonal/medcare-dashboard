@@ -2,10 +2,10 @@ export const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
       const reg = await navigator.serviceWorker.register("/sw.js");
-      console.log("[MedCare SW] Registered:", reg.scope);
+      if (import.meta.env.DEV) console.log("[MedCare SW] Registered:", reg.scope);
       return reg;
     } catch (err) {
-      console.error("[MedCare SW] Registration failed:", err);
+      if (import.meta.env.DEV) console.error("[MedCare SW] Registration failed:", err);
     }
   }
 };

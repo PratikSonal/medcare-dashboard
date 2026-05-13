@@ -44,8 +44,18 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 
 ---
 
+## P3 — Import Order & Naming
+
+- [ ] **Install `eslint-plugin-simple-import-sort`** — automates import ordering so violations are caught at lint time. Add to `eslint.config.js` with rules `simple-import-sort/imports` and `simple-import-sort/exports`, then run `eslint --fix` once to sort all files. Enforced order: (1) React, (2) third-party, (3) `@/hooks` → `@/lib` → `@/components`, (4) relative, (5) `import type` last.
+- [ ] **`RegisterPage/components/RegisterCard.tsx` import order** — Firebase auth imports, local `@/lib/firebase`, hooks, and features are interleaved rather than grouped. Defer until `simple-import-sort` is installed so the fix is automated.
+- [ ] **`AnalyticsPage/components/ChartsRow.tsx` import order** — lucide-react appears after a block of recharts imports; should be grouped with all third-party libraries first.
+
+---
+
 ## P3 — Technical Debt
 
+- [ ] **`patientsSlice.isLoading` is dead state** — the `isLoading` field exists in `PatientsState` but is never set by any reducer action and never read by any consumer. Either wire it up to actual async data fetching or remove it entirely.
+- [ ] **Hardcoded demo date `"2026-05-11"`** — appears in `AppointmentsPage/index.tsx` (×2), `DashboardPage/index.tsx`, and `AppointmentsTable.tsx`. Extract to a shared constant (`src/lib/constants.ts`) as `TODAY_DEMO_DATE` so all filter comparisons reference one place.
 - [ ] **Fragile ID generation in `AddPatientModal`** — `Math.max(...patients.map(p => parseInt(p.id.slice(1))))` silently returns `NaN` on format mismatch, `-Infinity` on empty array, and stack overflows at scale. Replace with `crypto.randomUUID()`.
 - [ ] **Module-scope calculations in `DashboardPage`** — some derived values execute at import time by reading `mockBillingData` directly at the top level. Move inside the component or into selectors.
 - [ ] **`inputCls` helper defined inside component body** — in `AddPatientModal`, re-defined on every render. Move outside the component.

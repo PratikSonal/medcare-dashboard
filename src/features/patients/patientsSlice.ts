@@ -11,7 +11,7 @@ interface PatientsState {
   searchQuery: string;
   filterStatus: string;
   filterDepartment: string;
-  loading: boolean;
+  isLoading: boolean;
 }
 
 const initialState: PatientsState = {
@@ -22,7 +22,7 @@ const initialState: PatientsState = {
   searchQuery: "",
   filterStatus: "All",
   filterDepartment: "All",
-  loading: false,
+  isLoading: false,
 };
 
 const applyFilters = (state: PatientsState) => {

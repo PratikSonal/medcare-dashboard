@@ -1,6 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Theme, Notification, Toast } from "./types";
 
+const MS_30_MIN = 30 * 60 * 1000;
+const MS_1_HOUR = 60 * 60 * 1000;
+const MS_2_HOURS = 2 * 60 * 60 * 1000;
+
 interface UIState {
   theme: Theme;
   sidebarOpen: boolean;
@@ -30,7 +34,7 @@ const initialState: UIState = {
       title: "New Admission",
       message: "Lakshmi Naidu admitted to Neurology department.",
       type: "info",
-      timestamp: new Date(Date.now() - 1800000).toISOString(),
+      timestamp: new Date(Date.now() - MS_30_MIN).toISOString(),
       read: false,
     },
     {
@@ -38,7 +42,7 @@ const initialState: UIState = {
       title: "Lab Results Ready",
       message: "Blood panel results for Sanya Kapoor are available.",
       type: "success",
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      timestamp: new Date(Date.now() - MS_1_HOUR).toISOString(),
       read: true,
     },
     {
@@ -46,7 +50,7 @@ const initialState: UIState = {
       title: "Appointment Reminder",
       message: "Dr. Sneha Iyer has 3 appointments in 30 minutes.",
       type: "warning",
-      timestamp: new Date(Date.now() - 7200000).toISOString(),
+      timestamp: new Date(Date.now() - MS_2_HOURS).toISOString(),
       read: true,
     },
   ],

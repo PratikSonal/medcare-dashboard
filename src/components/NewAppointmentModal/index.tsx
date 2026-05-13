@@ -105,7 +105,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
     null,
   );
 
-  const up = (k: keyof FormState, v: FormState[keyof FormState]) =>
+  const updateField = (k: keyof FormState, v: FormState[keyof FormState]) =>
     setForm(f => ({ ...f, [k]: v }));
 
   const fieldCls = (k: keyof FormState) =>
@@ -126,7 +126,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
     const rawMin = TSTART + ((e.clientX - rect.left) / rect.width) * TDUR;
     const snapped = Math.round(rawMin / 30) * 30;
     const clamped = Math.max(TSTART, Math.min(TEND - form.duration, snapped));
-    up("time", minToTime(clamped));
+    updateField("time", minToTime(clamped));
     setErrors(err => ({ ...err, time: false }));
   };
 
@@ -197,7 +197,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               <select
                 value={form.patientId}
                 onChange={e => {
-                  up("patientId", e.target.value);
+                  updateField("patientId", e.target.value);
                   setErrors(err => ({ ...err, patientId: false }));
                 }}
                 className={fieldCls("patientId")}
@@ -218,7 +218,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               <select
                 value={form.doctor}
                 onChange={e => {
-                  up("doctor", e.target.value);
+                  updateField("doctor", e.target.value);
                   setErrors(err => ({ ...err, doctor: false }));
                 }}
                 className={fieldCls("doctor")}
@@ -239,7 +239,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               <input
                 type="date"
                 value={form.date}
-                onChange={e => up("date", e.target.value)}
+                onChange={e => updateField("date", e.target.value)}
                 className={fieldCls("date")}
               />
             </div>
@@ -250,7 +250,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               </label>
               <select
                 value={form.type}
-                onChange={e => up("type", e.target.value as FormState["type"])}
+                onChange={e => updateField("type", e.target.value as FormState["type"])}
                 className={fieldCls("type")}
               >
                 {TYPES.map(t => (
@@ -269,7 +269,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
                 {DURATIONS.map(d => (
                   <button
                     key={d}
-                    onClick={() => up("duration", d)}
+                    onClick={() => updateField("duration", d)}
                     className={cn(
                       "flex-1 py-[10px] rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-[120ms]",
                       form.duration === d
@@ -289,7 +289,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               </label>
               <textarea
                 value={form.notes}
-                onChange={e => up("notes", e.target.value)}
+                onChange={e => updateField("notes", e.target.value)}
                 placeholder="Optional clinical notes…"
                 rows={2}
                 className="w-full bg-bg-tertiary border border-border-primary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border resize-none leading-[1.5] focus:border-accent-blue transition-colors duration-150"
@@ -385,7 +385,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
                 <button
                   key={slot}
                   onClick={() => {
-                    up("time", slot);
+                    updateField("time", slot);
                     setErrors(err => ({ ...err, time: false }));
                   }}
                   className={cn(

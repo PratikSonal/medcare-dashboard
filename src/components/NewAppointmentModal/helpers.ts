@@ -48,7 +48,8 @@ export const buildAppointment = (
   patients: Patient[],
   appointments: Appointment[],
 ): Appointment => {
-  const pt = patients.find(p => p.id === form.patientId)!;
+  const pt = patients.find(p => p.id === form.patientId);
+  if (!pt) throw new Error(`buildAppointment: patient "${form.patientId}" not found — ensure form is validated first`);
   const existingDoc = appointments.find(a => a.doctor === form.doctor);
   const existingPat = appointments.find(a => a.patientId === form.patientId);
 

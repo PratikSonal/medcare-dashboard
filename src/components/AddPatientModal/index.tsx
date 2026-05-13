@@ -66,7 +66,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
 
   const submit = () => {
     if (!validate(2)) return;
-    const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1))));
+    const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1), 10)));
     const patient = buildPatient(form, maxId);
     dispatch(addPatient(patient));
     dispatch(addToast({ message: `${patient.name} added successfully`, type: "success" }));
