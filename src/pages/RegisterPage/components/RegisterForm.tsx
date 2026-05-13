@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { useAuth } from "@/hooks/useAuth";
-import { validateRegisterForm } from "@/lib/validators";
+import { registerSchema } from "@/lib/validators";
 
 export const RegisterForm = () => {
   const { register, isLoading, error, clearError } = useAuth();
@@ -23,9 +23,9 @@ export const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fieldError = validateRegisterForm(name, email, password);
-    if (fieldError) {
-      setValidationError(fieldError);
+    const result = registerSchema.safeParse({ name, email, password });
+    if (!result.success) {
+      setValidationError(result.error.issues[0].message);
       return;
     }
     setValidationError(null);

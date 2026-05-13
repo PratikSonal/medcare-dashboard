@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { useAuth } from "@/hooks/useAuth";
-import { validateLoginForm } from "@/lib/validators";
+import { loginSchema } from "@/lib/validators";
 
 export const LoginForm = () => {
   const { signIn, isLoading, error, clearError } = useAuth();
@@ -21,9 +21,9 @@ export const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fieldError = validateLoginForm(email, password);
-    if (fieldError) {
-      setValidationError(fieldError);
+    const result = loginSchema.safeParse({ email, password });
+    if (!result.success) {
+      setValidationError(result.error.issues[0].message);
       return;
     }
     setValidationError(null);

@@ -9,10 +9,11 @@ Live at: `medcare-dashboard.vercel.app` (pending) | GitHub: `medcare-dashboard` 
 ## Tech Stack
 | Layer | Choice |
 |---|---|
-| Framework | React + TypeScript + Vite |
+| Framework | React 18 + TypeScript + Vite |
 | State | Redux Toolkit (Feature-Sliced Design) |
-| Styling | Tailwind v4 + inline styles (Tailwind scanning unreliable in v4) |
-| Auth | Firebase Authentication (Email/Password) |
+| Styling | Tailwind v3 (`@tailwind base/components/utilities`) + CSS custom properties |
+| Validation | Zod (`loginSchema`, `registerSchema` in `src/lib/validators.ts`) |
+| Auth | Firebase Authentication (Email/Password) via `useAuth` hook |
 | Animation | Framer Motion |
 | Charts | Recharts |
 | Icons | Lucide React |
@@ -31,25 +32,47 @@ Live at: `medcare-dashboard.vercel.app` (pending) | GitHub: `medcare-dashboard` 
 ```
 src/
 ├── components/
-│   ├── ui/               — Badge, Button, Card, Input
-│   ├── layout/           — Sidebar, Navbar, AppLayout
+│   ├── ui/               — Badge, Button, Card, Input, AuthInput, KpiCard, Avatar, SearchInput
+│   ├── layout/
+│   │   ├── AppLayout/    — authenticated shell (sidebar + navbar + outlet)
+│   │   ├── LoginLayout/  — unauthenticated shell (LeftPanel + slot); used by LoginPage + RegisterPage
+│   │   │   ├── index.tsx
+│   │   │   ├── LeftPanel.tsx
+│   │   │   ├── constants.ts  — carousel slides data
+│   │   │   └── types.ts      — Slide interface
+│   │   ├── Navbar/
+│   │   └── Sidebar/
 │   ├── AddPatientModal   — 3-step add patient form
 │   ├── NewAppointmentModal — new appointment + conflict detection
 │   ├── PatientModal      — patient detail tabs (overview/appts/billing/rx)
 │   └── ToastContainer    — toast notification renderer
 ├── features/
 │   ├── auth/             — authSlice.ts
-│   ├── appointments/     — appointmentsSlice.ts (addAppointment, updateAppointmentStatus, updateAppointmentChecks)
-│   ├── billing/          — billingSlice.ts (updateClaimStatus)
-│   ├── patients/         — patientsSlice.ts (addPatient, setSelectedPatient, filters)
+│   ├── appointments/     — appointmentsSlice.ts
+│   ├── billing/          — billingSlice.ts
+│   ├── patients/         — patientsSlice.ts
 │   └── ui/               — uiSlice.ts (theme, sidebar, notifications, toasts)
-├── hooks/            — useAppDispatch.ts
-├── lib/              — firebase.ts, mockData.ts, notifications.ts, utils.ts
-├── pages/            — LoginPage, RegisterPage, DashboardPage, AnalyticsPage,
-│                       PatientDetailsPage, AppointmentsPage, BillingPage, ProtectedRoute
-├── store/            — index.ts
-├── styles/           — globals.css
-└── types/            — index.ts
+├── hooks/
+│   ├── useAppDispatch.ts — typed Redux hooks
+│   ├── useAuth.ts        — provider-agnostic auth hook (re-exports useFirebaseAuth)
+│   ├── useCountUp.ts     — animated number counter
+│   └── useFirebaseAuth.ts — Firebase implementation (signIn, register, isLoading, error)
+├── lib/
+│   ├── errorMessages.ts  — Firebase error code → human string map
+│   ├── firebase.ts       — Firebase app init
+│   ├── mockData.ts       — seed data for Redux slices
+│   ├── notifications.ts  — push notification helpers
+│   ├── utils.ts          — cn(), formatDate(), status color helpers
+│   └── validators.ts     — Zod schemas (loginSchema, registerSchema)
+├── pages/
+│   ├── LoginPage/        — LoginLayout + LoginForm
+│   ├── RegisterPage/     — LoginLayout + RegisterForm
+│   ├── DashboardPage, AnalyticsPage, PatientDetailsPage, AppointmentsPage, BillingPage
+│   └── ProtectedRoute/   — Firebase auth state guard
+├── routes/           — AppRouter (lazy page imports, BrowserRouter)
+├── store/            — Redux store config
+├── styles/           — globals.css (CSS variables, keyframes, utility classes)
+└── types/            — shared TypeScript types
 public/sw.js          — Service Worker (push notifications)
 ```
 
@@ -93,20 +116,28 @@ public/sw.js          — Service Worker (push notifications)
 ## Key Decisions
 
 ### Styling
-- Use **inline styles throughout** — Tailwind v4 arbitrary values are unreliable
+- **Tailwind v3** for all static values — arbitrary values like `w-[400px]`, `grid-cols-[1fr_320px]`, `shadow-[...]`, `max-h-[calc(100vh-48px)]` all work correctly (spaces → underscores inside `[]`)
+- **Inline styles only for dynamic runtime values**: computed colors (`` `${color}18` ``), gradient CSS variables (`var(--gradient-primary)`), runtime-calculated positions/widths (progress bars, carousel dot widths, pointer-event positioning)
 - CSS variables for all design tokens so light/dark mode works automatically
-- Dot-grid background: `radial-gradient(circle, rgba(...) 1px, transparent 1px)`
+- Dot-grid background: `radial-gradient(circle, rgba(...) 1px, transparent 1px)` — applied via `.dot-grid` utility class in `globals.css`
 
 ### Layout
 - **Sidebar**: Floating rounded card (`borderRadius: 20px`, `left: 12px`, `top: 12px`, `height: calc(100vh - 24px)`). Nav item clicks call `document.documentElement.scrollTop = 0` for instant scroll-to-top on route change.
 - **Navbar**: Themed pill (`borderRadius: 999px`, uses `var(--bg-card)` + `var(--border-primary)`) — raga.ai inspired, floats at top, respects light/dark theme. Left section shows gradient avatar (user initial) + staggered "Welcome, [name]" animation. Right section: theme toggle + notifications.
 - **AppLayout**: `marginLeft` animates with sidebar open/closed state
 
+### Auth Architecture
+- `useAuth.ts` is a one-line re-export of `useFirebaseAuth` — components only ever import `useAuth`, never the provider directly. To swap Firebase for Clerk/Auth0/Supabase: change one import in `useAuth.ts`, nothing else.
+- `useFirebaseAuth` owns all Firebase calls, `isLoading` local state, and error mapping. Redux `authSlice` receives the error string via `dispatch(setError(msg))` but loading is **not** tracked in Redux — form-submit loading lives in local state only (avoids the "stuck-true" bug where `setLoading(true)` was called but the `finally` block never ran).
+- `LoginLayout` is the unauthenticated shell: `<LeftPanel />` (always dark, private to `LoginLayout`) + a right-side children slot. Both `LoginPage` and `RegisterPage` compose it.
+- `AuthInput` (`src/components/ui/AuthInput/`) — generic labeled input with `htmlFor`/`id` a11y pairing, `icon`, `headerRight` (for "Forgot password?"), and `rightElement` (for show/hide toggle) slots.
+- Zod schemas in `src/lib/validators.ts`: `loginSchema` (email + password), `registerSchema` extends `loginSchema` with `name`. Both forms call `schema.safeParse()` before submitting; `result.error.issues[0].message` surfaces the first validation error.
+
 ### Login Page
-- **Left panel**: Always dark (`#0c111d`) regardless of theme — hardcoded hex values, not CSS vars
+- **Left panel**: Always dark (`#0c111d`) regardless of theme — the 5 remaining hex color values (`#0c111d`, `#1d2839`, `#f8fafc`, `#9ca3af`, `#4b5563`) are intentional (panel is always dark; tracked for CSS var migration in fix.md P2)
 - **Right panel**: Follows theme (uses CSS vars)
-- **Layout**: Three-zone flex — logo pinned top, content centred (`flex: 1, justifyContent: center`), compliance pinned bottom
-- **Carousel**: 6 slides, 3s auto-advance, fixed height `120px` container with `overflow: hidden` to prevent layout shift
+- **Layout**: Three-zone flex — logo pinned top, content centred (`flex: 1`), compliance pinned bottom
+- **Carousel**: 6 slides, 3s auto-advance, fixed `h-[120px]` container with `overflow-hidden` to prevent layout shift
 - **Carousel design**: Large raw icon (56px, no box) left-aligned + stat + headline + description
 - **Compliance line**: `HIPAA Certified · SOC 2 Type II · FHIR Ready` — dot-separated, rendered `<span>` circles (not Unicode)
 
@@ -136,14 +167,16 @@ VITE_FIREBASE_MEASUREMENT_ID=G-VRL533H0TN
 ## Pages
 
 ### LoginPage (`/login`)
-- Split panel: dark left (carousel) + themed right (form)
-- Carousel: 6 feature slides, 3s interval, fixed-height animated container
-- Form: email + password, Firebase auth, error states, show/hide password
+- Composes `LoginLayout` (dark left carousel + themed right slot) + `LoginForm`
+- `LoginLayout` is the shared unauthenticated shell; `LeftPanel` is a private implementation detail inside it
+- `LoginForm`: email + password, Zod validation (`loginSchema`), show/hide password, "Forgot password?" button (currently unimplemented — tracked in fix.md P1)
+- Auth handled by `useAuth()` → `useFirebaseAuth` → `signInWithEmailAndPassword`; errors mapped via `getFirebaseErrorMessage()` in `src/lib/errorMessages.ts`
 
 ### RegisterPage (`/register`)
-- Centered card layout
-- Creates Firebase user + sets `displayName`
-- Same colour tokens as login right panel
+- Same split-panel layout as LoginPage — composes `LoginLayout` (dark left carousel + themed right slot)
+- Right panel: `RegisterForm` — name + email + password fields, Zod validation (`registerSchema`), show/hide password toggle
+- Creates Firebase user + sets `displayName` via `updateProfile`
+- Form structure mirrors `LoginForm`; both use `useAuth()` → `useFirebaseAuth`
 
 ### DashboardPage (`/dashboard`)
 - Animated stat counters (count-up on mount)
@@ -320,8 +353,8 @@ VS Code reformats files on save (Prettier). After any file write, the exact whit
 sed -i "" "s/oldValue/newValue/" src/pages/LoginPage.tsx
 ```
 
-### Tailwind v4 scanning
-Do not use Tailwind arbitrary values like `w-[400px]`. Use inline styles for all custom sizing. Tailwind is only used for the base reset and responsive utilities like `lg:flex`.
+### Tailwind v3 arbitrary values
+Arbitrary values work correctly — use them freely: `w-[400px]`, `grid-cols-[1fr_320px]`, `gap-[14px]`, `text-[26px]`, etc. Spaces inside brackets must be underscores: `grid-cols-[1fr_320px]` not `grid-cols-[1fr 320px]`. Inline styles are reserved for values computed at runtime (props, state, event coordinates).
 
 ### Theme on login left panel
 The login left panel hardcodes dark hex values directly — **do not change these to CSS variables** or the panel will switch with the theme. The intent is: left panel always dark, right panel follows theme.

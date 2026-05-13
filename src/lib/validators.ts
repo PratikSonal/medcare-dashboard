@@ -1,20 +1,13 @@
-const EMAIL_REGEX = /\S+@\S+\.\S+/;
+import { z } from "zod";
 
-export const isValidEmail = (email: string): boolean => EMAIL_REGEX.test(email);
+export const loginSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Enter a valid email"),
+  password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
+});
 
-export const validateLoginForm = (email: string, password: string): string | null => {
-  if (!email) return "Email is required";
-  if (!isValidEmail(email)) return "Enter a valid email";
-  if (!password) return "Password is required";
-  if (password.length < 6) return "Password must be at least 6 characters";
-  return null;
-};
+export const registerSchema = loginSchema.extend({
+  name: z.string().min(1, "Full name is required"),
+});
 
-export const validateRegisterForm = (
-  name: string,
-  email: string,
-  password: string,
-): string | null => {
-  if (!name.trim()) return "Full name is required";
-  return validateLoginForm(email, password);
-};
+export type LoginFields = z.infer<typeof loginSchema>;
+export type RegisterFields = z.infer<typeof registerSchema>;
