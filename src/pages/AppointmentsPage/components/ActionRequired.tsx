@@ -1,16 +1,12 @@
 import { motion } from "framer-motion";
 import { ClipboardCheck, ShieldCheck } from "lucide-react";
-import type { Appointment } from "@/features/appointments/types";
+import type { ActionRequiredProps } from "./types";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { updateAppointmentChecks } from "@/features/appointments/appointmentsSlice";
 import { addToast } from "@/features/ui/uiSlice";
 import { Avatar } from "@/components/ui/Avatar";
 
-interface Props {
-  todayAll: Appointment[];
-}
-
-export const ActionRequired = ({ todayAll }: Props) => {
+export const ActionRequired = ({ todayAll }: ActionRequiredProps) => {
   const dispatch = useAppDispatch();
   const pending = todayAll.filter(a => !a.intakeComplete || !a.insuranceVerified);
 

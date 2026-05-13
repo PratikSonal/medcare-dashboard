@@ -1,14 +1,10 @@
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
-import type { Appointment } from "@/features/appointments/types";
+import type { TimeSlotsProps } from "./types";
 import { cn } from "@/lib/utils";
 import { STATUS_CONFIG } from "../statusConfig";
 
-interface Props {
-  todayAll: Appointment[];
-}
-
-export const TimeSlots = ({ todayAll }: Props) => (
+export const TimeSlots = ({ todayAll }: TimeSlotsProps) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}

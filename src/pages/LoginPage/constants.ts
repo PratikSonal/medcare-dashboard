@@ -1,13 +1,5 @@
 import { Shield, Zap, Brain, Heart, TrendingUp, Clock } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
-export interface Slide {
-  icon: LucideIcon;
-  color: string;
-  stat: string;
-  headline: string;
-  description: string;
-}
+import type { Slide } from "./types";
 
 export const slides: Slide[] = [
   {

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import type { BillingRecord } from "@/features/billing/types";
+import type { BillingDetailModalProps } from "./types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { updateClaimStatus } from "@/features/billing/billingSlice";
@@ -8,12 +8,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { CLAIM_STATUS_COLORS } from "@/lib/constants";
 import { ALL_STATUSES } from "../constants";
 
-interface Props {
-  record: BillingRecord | null;
-  onClose: () => void;
-}
-
-export const BillingDetailModal = ({ record, onClose }: Props) => {
+export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps) => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
 

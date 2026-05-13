@@ -1,5 +1,15 @@
 import type { PatientStatus, BloodGroup } from "@/features/patients/types";
 
+export interface FieldProps {
+  label: string;
+  error?: boolean;
+  children: React.ReactNode;
+}
+
+export interface AddPatientModalProps {
+  onClose: () => void;
+}
+
 export type FormData = {
   name: string;
   age: string;

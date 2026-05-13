@@ -25,7 +25,7 @@ const initialState: PatientsState = {
   loading: false,
 };
 
-function applyFilters(state: PatientsState) {
+const applyFilters = (state: PatientsState) => {
   let result = [...state.patients];
   if (state.searchQuery) {
     const q = state.searchQuery.toLowerCase();

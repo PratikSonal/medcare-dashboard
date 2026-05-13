@@ -1,18 +1,10 @@
 import { motion } from "framer-motion";
+import type { WeekStripProps } from "./types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
 import { DAY_NAMES } from "../constants";
 import { formatDateKey } from "../helpers";
-
-interface Props {
-  weekDays: Date[];
-  baseDate: Date;
-  selectedDate: Date;
-  onSelectDate: (d: Date) => void;
-  onPrevWeek: () => void;
-  onNextWeek: () => void;
-}
 
 export const WeekStrip = ({
   weekDays,
@@ -21,7 +13,7 @@ export const WeekStrip = ({
   onSelectDate,
   onPrevWeek,
   onNextWeek,
-}: Props) => {
+}: WeekStripProps) => {
   const appointments = useAppSelector(s => s.appointments.appointments);
 
   return (

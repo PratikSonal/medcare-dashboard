@@ -6,7 +6,7 @@ import { setUser } from "@/features/auth/authSlice";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
-export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
   const { isAuthenticated, loading } = useAppSelector(s => s.auth);
   const dispatch = useAppDispatch();
 

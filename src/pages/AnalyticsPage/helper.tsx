@@ -1,4 +1,5 @@
 import { RADIAN } from "./constants";
+import type { PieLabelProps } from "./types";
 
 export const renderLabel = ({
   cx = 0,
@@ -7,14 +8,7 @@ export const renderLabel = ({
   innerRadius = 0,
   outerRadius = 0,
   percent = 0,
-}: {
-  cx?: number;
-  cy?: number;
-  midAngle?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  percent?: number;
-}) => {
+}: PieLabelProps) => {
   if (percent < 0.06) return null;
   const r = innerRadius + (outerRadius - innerRadius) * 0.5;
   return (

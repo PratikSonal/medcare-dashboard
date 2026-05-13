@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, CheckCircle, XCircle, Phone, UserX } from "lucide-react";
-import type { Appointment } from "@/features/appointments/types";
+import type { AppointmentListProps } from "./types";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { updateAppointmentStatus } from "@/features/appointments/appointmentsSlice";
 import { addToast } from "@/features/ui/uiSlice";
@@ -10,14 +10,12 @@ import { cn } from "@/lib/utils";
 import { container, item } from "../constants";
 import { STATUS_CONFIG } from "../statusConfig";
 
-interface Props {
-  todayApps: Appointment[];
-  dateKey: string;
-  filterStatus: string;
-  onSelectApp: (app: Appointment) => void;
-}
-
-export const AppointmentList = ({ todayApps, dateKey, filterStatus, onSelectApp }: Props) => {
+export const AppointmentList = ({
+  todayApps,
+  dateKey,
+  filterStatus,
+  onSelectApp,
+}: AppointmentListProps) => {
   const dispatch = useAppDispatch();
 
   return (

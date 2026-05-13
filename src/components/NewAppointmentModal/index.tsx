@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { X, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
-import type { Appointment } from "@/features/appointments/types";
 import { useAppSelector, useAppDispatch } from "@/hooks/useAppDispatch";
 import { addToast, addNotification } from "@/features/ui/uiSlice";
 import { addAppointment } from "@/features/appointments/appointmentsSlice";
 import { cn } from "@/lib/utils";
-import type { Props, FormState } from "./types";
+import type { Props, FormState, TrackRowProps } from "./types";
 import {
   TSTART,
   TEND,
@@ -26,18 +25,6 @@ import {
   validateForm,
   buildAppointment,
 } from "./helpers";
-
-interface TrackRowProps {
-  label: string;
-  busy: Appointment[];
-  color: string;
-  colorRgb: string;
-  formTime: string;
-  duration: number;
-  hasConflict: boolean;
-  onTimelineClick: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onBlockHover: (block: { x: number; y: number; text: string } | null) => void;
-}
 
 const TrackRow = ({
   label,

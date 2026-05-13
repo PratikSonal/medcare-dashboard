@@ -1,18 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone } from "lucide-react";
-import type { Appointment } from "@/features/appointments/types";
+import type { AppointmentDetailModalProps } from "./types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { Avatar } from "@/components/ui/Avatar";
 import { cn } from "@/lib/utils";
 import { STATUS_CONFIG } from "../statusConfig";
 
-interface Props {
-  app: Appointment | null;
-  onClose: () => void;
-}
-
-export const AppointmentDetailModal = ({ app, onClose }: Props) => {
+export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalProps) => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
 

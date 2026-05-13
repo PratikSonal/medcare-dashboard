@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { Activity, Heart } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { getStatusBg, getStatusColor, formatDate, cn } from "@/lib/utils";
-import type { Patient } from "@/features/patients/types";
+import type { PatientCardProps, PatientGridProps } from "./types";
 import { container, item } from "../constants";
 
-const PatientCard = ({ patient, onClick }: { patient: Patient; onClick: () => void }) => {
+const PatientCard = ({ patient, onClick }: PatientCardProps) => {
   const isCritical = patient.status === "Critical";
   return (
     <motion.div
@@ -94,13 +94,7 @@ const PatientCard = ({ patient, onClick }: { patient: Patient; onClick: () => vo
   );
 };
 
-export const PatientGrid = ({
-  filteredPatients,
-  onPatientClick,
-}: {
-  filteredPatients: Patient[];
-  onPatientClick: (patient: Patient) => void;
-}) => (
+export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridProps) => (
   <motion.div
     key="grid"
     variants={container}

@@ -1,19 +1,16 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
-export function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("en-IN", {
+export const formatDate = (dateString: string): string =>
+  new Date(dateString).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   });
-}
 
-export function getStatusColor(status: string): string {
+export const getStatusColor = (status: string): string => {
   switch (status) {
     case "Active":
       return "#0ea5e9";
@@ -26,9 +23,9 @@ export function getStatusColor(status: string): string {
     default:
       return "var(--text-tertiary)";
   }
-}
+};
 
-export function getStatusBg(status: string): string {
+export const getStatusBg = (status: string): string => {
   switch (status) {
     case "Active":
       return "rgba(14, 165, 233, 0.1)";
@@ -41,15 +38,14 @@ export function getStatusBg(status: string): string {
     default:
       return "rgba(107, 114, 128, 0.1)";
   }
-}
+};
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-IN", {
+export const formatCurrency = (amount: number): string =>
+  new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount);
-}
 
 export const formatCompact = (n: number) =>
   n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${(n / 1000).toFixed(0)}K`;

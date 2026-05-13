@@ -1,8 +1,14 @@
 .navbar {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
   [data-theme="dark"] & {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.35), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.35),
+      0 8px 32px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -17,7 +23,10 @@
   background: transparent;
   cursor: pointer;
   color: var(--text-secondary);
-  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+  transition:
+    background 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
   position: relative;
   flex-shrink: 0;
 
@@ -48,14 +57,30 @@
 }
 
 @keyframes bell-ring {
-  0%    { transform: rotate(0deg); }
-  5%    { transform: rotate(18deg); }
-  12%   { transform: rotate(-15deg); }
-  18%   { transform: rotate(12deg); }
-  24%   { transform: rotate(-8deg); }
-  30%   { transform: rotate(4deg); }
-  35%   { transform: rotate(0deg); }
-  100%  { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  5% {
+    transform: rotate(18deg);
+  }
+  12% {
+    transform: rotate(-15deg);
+  }
+  18% {
+    transform: rotate(12deg);
+  }
+  24% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(4deg);
+  }
+  35% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .bellRing {
@@ -79,5 +104,7 @@
 }
 
 .iconBox {
-  transition: background 200ms ease, color 200ms ease;
+  transition:
+    background 200ms ease,
+    color 200ms ease;
 }

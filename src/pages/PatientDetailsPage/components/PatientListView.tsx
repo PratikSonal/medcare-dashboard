@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { Avatar } from "@/components/ui/Avatar";
 import { getStatusBg, getStatusColor, formatDate } from "@/lib/utils";
-import type { Patient } from "@/features/patients/types";
+import type { PatientListRowProps, PatientListViewProps } from "./types";
 import { container, item } from "../constants";
 
-const PatientListRow = ({ patient, onClick }: { patient: Patient; onClick: () => void }) => (
+const PatientListRow = ({ patient, onClick }: PatientListRowProps) => (
   <motion.tr
     variants={item}
     onClick={onClick}
@@ -40,13 +40,7 @@ const PatientListRow = ({ patient, onClick }: { patient: Patient; onClick: () =>
   </motion.tr>
 );
 
-export const PatientListView = ({
-  filteredPatients,
-  onPatientClick,
-}: {
-  filteredPatients: Patient[];
-  onPatientClick: (patient: Patient) => void;
-}) => (
+export const PatientListView = ({ filteredPatients, onPatientClick }: PatientListViewProps) => (
   <motion.div
     key="list"
     initial={{ opacity: 0 }}

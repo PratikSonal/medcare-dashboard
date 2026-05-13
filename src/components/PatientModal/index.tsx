@@ -24,7 +24,7 @@ import { Badge } from "@/components/ui/Badge";
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS, CLAIM_STATUS_COLORS } from "@/lib/constants";
 import { Avatar } from "@/components/ui/Avatar";
 import { mockBillingData, mockPrescriptions } from "@/lib/mockData";
-import type { Props, TabId } from "./types";
+import type { Props, TabId, VitalBadgeProps } from "./types";
 import { PRESCRIPTION_COLORS } from "./constants";
 
 const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
@@ -35,17 +35,7 @@ const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactN
   "No-Show": { ...APPT_STATUS_COLORS["No-Show"], icon: <XCircle size={11} /> },
 };
 
-const VitalBadge = ({
-  icon,
-  label,
-  value,
-  alert = false,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string | number;
-  alert?: boolean;
-}) => (
+const VitalBadge = ({ icon, label, value, alert = false }: VitalBadgeProps) => (
   <motion.div
     whileHover={{ scale: 1.1, transition: { duration: 0.2, ease: "easeOut" } }}
     className={cn(

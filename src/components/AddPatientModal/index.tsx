@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { addPatient } from "@/features/patients/patientsSlice";
 import { addToast } from "@/features/ui/uiSlice";
 import { cn } from "@/lib/utils";
-import type { FormData } from "./types";
+import type { FormData, FieldProps, AddPatientModalProps } from "./types";
 import {
   DEPARTMENTS,
   DOCTORS,
@@ -17,15 +17,7 @@ import {
 } from "./constants";
 import { validateStep, buildPatient, getNextId } from "./helpers";
 
-const Field = ({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: boolean;
-  children: React.ReactNode;
-}) => {
+const Field = ({ label, error, children }: FieldProps) => {
   return (
     <div>
       <label
@@ -42,7 +34,7 @@ const Field = ({
   );
 };
 
-export function AddPatientModal({ onClose }: { onClose: () => void }) {
+export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
   const [step, setStep] = useState(0);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useCountUp(target: number, duration = 1400) {
+export const useCountUp = (target: number, duration = 1400) => {
   const [count, setCount] = useState(0);
   useEffect(() => {
     let current = 0;
@@ -15,4 +15,4 @@ export function useCountUp(target: number, duration = 1400) {
     return () => clearInterval(timer);
   }, [target, duration]);
   return count;
-}
+};

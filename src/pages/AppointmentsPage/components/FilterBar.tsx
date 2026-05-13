@@ -1,22 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
+import type { FilterBarProps } from "./types";
 import { Filter, ChevronDown, X } from "lucide-react";
 import { APPT_TYPE_COLORS } from "@/lib/constants";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { cn } from "@/lib/utils";
 import { ALL_STATUSES } from "../constants";
-
-interface Props {
-  searchQuery: string;
-  onSearchChange: (q: string) => void;
-  filterStatus: string;
-  onFilterStatus: (s: string) => void;
-  filterType: string;
-  onFilterType: (t: string) => void;
-  showFilters: boolean;
-  onToggleFilters: () => void;
-  hasActiveFilters: boolean;
-  onClearFilters: () => void;
-}
 
 export const FilterBar = ({
   searchQuery,
@@ -29,7 +17,7 @@ export const FilterBar = ({
   onToggleFilters,
   hasActiveFilters,
   onClearFilters,
-}: Props) => (
+}: FilterBarProps) => (
   <div className="mb-4">
     <div className="flex gap-[10px] items-center">
       <SearchInput

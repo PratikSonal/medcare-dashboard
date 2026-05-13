@@ -1,14 +1,9 @@
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
-import type { Appointment } from "@/features/appointments/types";
+import type { DoctorSchedulesProps } from "./types";
 import { Avatar } from "@/components/ui/Avatar";
 
-interface Props {
-  doctors: string[];
-  todayAll: Appointment[];
-}
-
-export const DoctorSchedules = ({ doctors, todayAll }: Props) => (
+export const DoctorSchedules = ({ doctors, todayAll }: DoctorSchedulesProps) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
