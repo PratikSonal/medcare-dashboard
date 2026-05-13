@@ -19,11 +19,16 @@ interface Props {
 }
 
 export const FilterBar = ({
-  searchQuery, onSearchChange,
-  filterStatus, onFilterStatus,
-  filterType, onFilterType,
-  showFilters, onToggleFilters,
-  hasActiveFilters, onClearFilters,
+  searchQuery,
+  onSearchChange,
+  filterStatus,
+  onFilterStatus,
+  filterType,
+  onFilterType,
+  showFilters,
+  onToggleFilters,
+  hasActiveFilters,
+  onClearFilters,
 }: Props) => (
   <div className="mb-4">
     <div className="flex gap-[10px] items-center">
@@ -44,11 +49,16 @@ export const FilterBar = ({
         <Filter size={14} />
         Filters
         {hasActiveFilters && (
-          <span className="text-[10px] font-bold py-[1px] px-[6px] rounded-full bg-accent-blue text-white">ON</span>
+          <span className="text-[10px] font-bold py-[1px] px-[6px] rounded-full bg-accent-blue text-white">
+            ON
+          </span>
         )}
         <ChevronDown
           size={14}
-          style={{ transition: "transform 200ms", transform: showFilters ? "rotate(180deg)" : "none" }}
+          style={{
+            transition: "transform 200ms",
+            transform: showFilters ? "rotate(180deg)" : "none",
+          }}
         />
       </button>
       {hasActiveFilters && (
@@ -72,15 +82,19 @@ export const FilterBar = ({
         >
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <p className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[10px]">Status</p>
+              <p className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[10px]">
+                Status
+              </p>
               <div className="flex flex-wrap gap-[6px]">
-                {["All", ...ALL_STATUSES].map((s) => (
+                {["All", ...ALL_STATUSES].map(s => (
                   <button
                     key={s}
                     onClick={() => onFilterStatus(s)}
                     className={cn(
                       "py-[5px] px-3 rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-150 border-0",
-                      filterStatus === s ? "bg-accent-blue text-white" : "bg-bg-tertiary text-text-secondary",
+                      filterStatus === s
+                        ? "bg-accent-blue text-white"
+                        : "bg-bg-tertiary text-text-secondary",
                     )}
                   >
                     {s}
@@ -89,15 +103,20 @@ export const FilterBar = ({
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[10px]">Appointment Type</p>
+              <p className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[10px]">
+                Appointment Type
+              </p>
               <div className="flex flex-wrap gap-[6px]">
-                {["All", ...Object.keys(APPT_TYPE_COLORS)].map((t) => (
+                {["All", ...Object.keys(APPT_TYPE_COLORS)].map(t => (
                   <button
                     key={t}
                     onClick={() => onFilterType(t)}
                     className="py-[5px] px-3 rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-150 border-0"
                     style={{
-                      background: filterType === t ? (APPT_TYPE_COLORS[t] ?? "var(--accent-blue)") : "var(--bg-tertiary)",
+                      background:
+                        filterType === t
+                          ? (APPT_TYPE_COLORS[t] ?? "var(--accent-blue)")
+                          : "var(--bg-tertiary)",
                       color: filterType === t ? "white" : "var(--text-secondary)",
                     }}
                   >

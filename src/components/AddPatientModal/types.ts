@@ -1,9 +1,9 @@
-import type { PatientStatus, BloodGroup } from '@/types';
+import type { PatientStatus, BloodGroup } from "@/features/patients/types";
 
 export type FormData = {
   name: string;
   age: string;
-  gender: 'Male' | 'Female' | 'Other';
+  gender: "Male" | "Female" | "Other";
   bloodGroup: BloodGroup;
   phone: string;
   email: string;

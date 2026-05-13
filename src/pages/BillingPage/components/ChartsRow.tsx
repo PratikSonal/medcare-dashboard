@@ -1,8 +1,17 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, PieChart, Pie, Cell, Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
 } from "recharts";
 import { Trophy } from "lucide-react";
 import { useAppSelector } from "@/hooks/useAppDispatch";
@@ -12,11 +21,14 @@ import { CLAIM_STATUS_COLORS } from "@/lib/constants";
 import { item, ttStyle, ALL_STATUSES } from "../constants";
 
 export const ChartsRow = () => {
-  const records = useAppSelector((s) => s.billing.records);
+  const records = useAppSelector(s => s.billing.records);
 
   const providerData = useMemo(() => {
-    const map: Record<string, { approved: number; partial: number; pending: number; denied: number }> = {};
-    records.forEach((r) => {
+    const map: Record<
+      string,
+      { approved: number; partial: number; pending: number; denied: number }
+    > = {};
+    records.forEach(r => {
       const name = PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider;
       if (!map[name]) map[name] = { approved: 0, partial: 0, pending: 0, denied: 0 };
       const key = r.claimStatus.toLowerCase() as "approved" | "partial" | "pending" | "denied";
@@ -26,11 +38,12 @@ export const ChartsRow = () => {
   }, [records]);
 
   const claimStatusData = useMemo(
-    () => ALL_STATUSES.map((s) => ({
-      name: s,
-      value: records.filter((r) => r.claimStatus === s).length,
-      color: CLAIM_STATUS_COLORS[s].color,
-    })),
+    () =>
+      ALL_STATUSES.map(s => ({
+        name: s,
+        value: records.filter(r => r.claimStatus === s).length,
+        color: CLAIM_STATUS_COLORS[s].color,
+      })),
     [records],
   );
 
@@ -45,20 +58,58 @@ export const ChartsRow = () => {
       <motion.div variants={item} className="glass-card rounded-20 p-6 flex flex-col">
         <div className="mb-6">
           <h2 className="text-base font-semibold text-text-primary">Provider Performance</h2>
-          <p className="text-[13px] text-text-secondary mt-[2px]">Claims by status per insurance provider</p>
+          <p className="text-[13px] text-text-secondary mt-[2px]">
+            Claims by status per insurance provider
+          </p>
         </div>
         <div className="flex-1 min-h-[220px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={providerData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }} barSize={14}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" vertical={false} />
-              <XAxis dataKey="name" tick={{ fill: "var(--text-tertiary)", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
+            <BarChart
+              data={providerData}
+              margin={{ top: 5, right: 10, left: -10, bottom: 0 }}
+              barSize={14}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--border-primary)"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "var(--text-tertiary)", fontSize: 11 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={false}
+              />
               <Tooltip {...ttStyle} />
-              <Legend wrapperStyle={{ fontSize: "12px", color: "var(--text-secondary)", paddingTop: "12px" }} />
-              <Bar dataKey="approved" name="Approved" stackId="a" fill="#0ea5e9" radius={[0, 0, 0, 0]} />
+              <Legend
+                wrapperStyle={{
+                  fontSize: "12px",
+                  color: "var(--text-secondary)",
+                  paddingTop: "12px",
+                }}
+              />
+              <Bar
+                dataKey="approved"
+                name="Approved"
+                stackId="a"
+                fill="#0ea5e9"
+                radius={[0, 0, 0, 0]}
+              />
               <Bar dataKey="partial" name="Partial" stackId="a" fill="#7c3bed" />
               <Bar dataKey="pending" name="Pending" stackId="a" fill="#f59e0b" />
-              <Bar dataKey="denied" name="Denied" stackId="a" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="denied"
+                name="Denied"
+                stackId="a"
+                fill="#ef4444"
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -72,16 +123,24 @@ export const ChartsRow = () => {
         </div>
         <ResponsiveContainer width="100%" height={140}>
           <PieChart>
-            <Pie data={claimStatusData} dataKey="value" cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3}>
+            <Pie
+              data={claimStatusData}
+              dataKey="value"
+              cx="50%"
+              cy="50%"
+              innerRadius={40}
+              outerRadius={65}
+              paddingAngle={3}
+            >
               {claimStatusData.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip {...ttStyle} formatter={(v) => [`${v} claims`]} />
+            <Tooltip {...ttStyle} formatter={v => [`${v} claims`]} />
           </PieChart>
         </ResponsiveContainer>
         <div className="flex flex-col gap-2 mt-1">
-          {claimStatusData.map((s) => (
+          {claimStatusData.map(s => (
             <div key={s.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} />
@@ -112,15 +171,27 @@ export const ChartsRow = () => {
               whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
               className="flex items-center gap-[10px] px-2 py-1 -mx-2 rounded-[10px] cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary"
             >
-              <span className={cn("text-[11px] font-bold w-[18px] shrink-0 text-right", i === 0 ? "text-accent-yellow" : "text-text-tertiary")}>
+              <span
+                className={cn(
+                  "text-[11px] font-bold w-[18px] shrink-0 text-right",
+                  i === 0 ? "text-accent-yellow" : "text-text-tertiary",
+                )}
+              >
                 #{i + 1}
               </span>
               <Avatar initials={r.patientAvatar} size={28} radius="50%" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{r.patientName}</p>
+                <p className="text-xs font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
+                  {r.patientName}
+                </p>
                 <p className="text-[11px] text-text-tertiary">{r.department}</p>
               </div>
-              <span className={cn("text-xs font-bold shrink-0", r.patientDue > 50000 ? "text-accent-red" : "text-text-primary")}>
+              <span
+                className={cn(
+                  "text-xs font-bold shrink-0",
+                  r.patientDue > 50000 ? "text-accent-red" : "text-text-primary",
+                )}
+              >
                 {formatCompact(r.patientDue)}
               </span>
             </motion.div>

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Avatar } from "@/components/ui/Avatar";
 import { getStatusBg, getStatusColor, formatDate } from "@/lib/utils";
-import type { Patient } from "@/types";
+import type { Patient } from "@/features/patients/types";
 import { container, item } from "../constants";
 
 const PatientListRow = ({ patient, onClick }: { patient: Patient; onClick: () => void }) => (
@@ -34,7 +34,9 @@ const PatientListRow = ({ patient, onClick }: { patient: Patient; onClick: () =>
         {patient.status}
       </span>
     </td>
-    <td className="py-[14px] px-4 text-[13px] text-text-secondary">{formatDate(patient.lastVisit)}</td>
+    <td className="py-[14px] px-4 text-[13px] text-text-secondary">
+      {formatDate(patient.lastVisit)}
+    </td>
   </motion.tr>
 );
 
@@ -55,7 +57,15 @@ export const PatientListView = ({
     <table className="w-full border-collapse">
       <thead className="bg-bg-tertiary border-b border-border-primary">
         <tr>
-          {["Patient", "Age / Gender", "Diagnosis", "Department", "Doctor", "Status", "Last Visit"].map((h) => (
+          {[
+            "Patient",
+            "Age / Gender",
+            "Diagnosis",
+            "Department",
+            "Doctor",
+            "Status",
+            "Last Visit",
+          ].map(h => (
             <th
               key={h}
               className="text-left py-3 px-4 text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em]"
@@ -66,7 +76,7 @@ export const PatientListView = ({
         </tr>
       </thead>
       <motion.tbody variants={container} initial="hidden" animate="show">
-        {filteredPatients.map((p) => (
+        {filteredPatients.map(p => (
           <PatientListRow key={p.id} patient={p} onClick={() => onPatientClick(p)} />
         ))}
       </motion.tbody>

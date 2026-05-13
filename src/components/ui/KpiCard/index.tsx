@@ -69,10 +69,7 @@ export const KpiCard = ({
             {title}
           </p>
           <p
-            className={cn(
-              "font-bold leading-none",
-              sm ? "text-[28px]" : "text-[32px]",
-            )}
+            className={cn("font-bold leading-none", sm ? "text-[28px]" : "text-[32px]")}
             style={{ color: sm ? color : "var(--text-primary)" }}
           >
             {displayValue}
@@ -88,12 +85,7 @@ export const KpiCard = ({
               {change}
             </p>
           ) : sub ? (
-            <p
-              className={cn(
-                "text-text-tertiary mt-[6px]",
-                sm ? "text-[11px]" : "text-xs",
-              )}
-            >
+            <p className={cn("text-text-tertiary mt-[6px]", sm ? "text-[11px]" : "text-xs")}>
               {sub}
             </p>
           ) : null}
@@ -102,10 +94,7 @@ export const KpiCard = ({
           <motion.div
             animate={{ scale: hovered ? 1.1 : 1 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className={cn(
-              "shrink-0",
-              sm ? "p-[10px] rounded-[10px]" : "p-3 rounded-12",
-            )}
+            className={cn("shrink-0", sm ? "p-[10px] rounded-[10px]" : "p-3 rounded-12")}
             style={{ background: iconBg ? `${color}18` : "transparent", color }}
           >
             {icon}

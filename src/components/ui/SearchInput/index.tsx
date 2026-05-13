@@ -8,17 +8,14 @@ export const SearchInput = ({
   placeholder = "Search...",
   width,
 }: SearchInputProps) => (
-  <div
-    className={cn("relative", !width && "flex-1")}
-    style={width ? { width } : undefined}
-  >
+  <div className={cn("relative", !width && "flex-1")} style={width ? { width } : undefined}>
     <Search
       size={15}
       className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
     />
     <input
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       className={cn(
         "w-full bg-bg-secondary border border-border-primary rounded-12",

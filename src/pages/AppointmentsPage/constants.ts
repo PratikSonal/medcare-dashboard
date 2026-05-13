@@ -1,5 +1,5 @@
 import type { Variants } from "framer-motion";
-import type { AppointmentStatus } from "@/types";
+import type { AppointmentStatus } from "@/features/appointments/types";
 
 export const container: Variants = {
   hidden: { opacity: 0 },

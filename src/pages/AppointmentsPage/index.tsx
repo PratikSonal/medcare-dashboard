@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Plus, CheckCircle, AlertCircle, XCircle } from "lucide-react";
-import type { Appointment } from "@/types";
+import type { Appointment } from "@/features/appointments/types";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { KpiCard } from "@/components/ui/KpiCard";
 import NewAppointmentModal from "@/components/NewAppointmentModal";
@@ -15,7 +15,7 @@ import { TimeSlots } from "./components/TimeSlots";
 import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
 
 const AppointmentsPage = () => {
-  const appointments = useAppSelector((s) => s.appointments.appointments);
+  const appointments = useAppSelector(s => s.appointments.appointments);
   const [selectedDate, setSelectedDate] = useState(new Date("2026-05-11"));
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterStatus, setFilterStatus] = useState<string>("All");
@@ -34,14 +34,14 @@ const AppointmentsPage = () => {
   const dateKey = useMemo(() => formatDateKey(selectedDate), [selectedDate]);
 
   const todayAll = useMemo(
-    () => appointments.filter((a) => a.date === dateKey).sort((a, b) => a.time.localeCompare(b.time)),
+    () => appointments.filter(a => a.date === dateKey).sort((a, b) => a.time.localeCompare(b.time)),
     [appointments, dateKey],
   );
 
   const todayApps = useMemo(
     () =>
       todayAll
-        .filter((a) => {
+        .filter(a => {
           if (filterStatus !== "All" && a.status !== filterStatus) return false;
           if (filterType !== "All" && a.type !== filterType) return false;
           if (searchQuery.trim()) {
@@ -62,14 +62,42 @@ const AppointmentsPage = () => {
   );
 
   const hasActiveFilters = filterStatus !== "All" || filterType !== "All";
-  const doctors = useMemo(() => [...new Set(appointments.map((a) => a.doctor))], [appointments]);
+  const doctors = useMemo(() => [...new Set(appointments.map(a => a.doctor))], [appointments]);
 
   const stats = useMemo(
     () => [
-      { label: "Total Today", value: todayAll.length, color: "#3c83f6", icon: <Calendar size={20} />, desc: "All scheduled visits", filter: "All" },
-      { label: "Confirmed", value: todayAll.filter((a) => a.status === "Confirmed").length, color: "#0ea5e9", icon: <CheckCircle size={20} />, desc: "Ready to proceed", filter: "Confirmed" },
-      { label: "Pending", value: todayAll.filter((a) => a.status === "Pending").length, color: "#f59e0b", icon: <AlertCircle size={20} />, desc: "Awaiting confirmation", filter: "Pending" },
-      { label: "No-Shows", value: todayAll.filter((a) => a.status === "No-Show").length, color: "#ef4444", icon: <XCircle size={20} />, desc: "Did not attend", filter: "No-Show" },
+      {
+        label: "Total Today",
+        value: todayAll.length,
+        color: "#3c83f6",
+        icon: <Calendar size={20} />,
+        desc: "All scheduled visits",
+        filter: "All",
+      },
+      {
+        label: "Confirmed",
+        value: todayAll.filter(a => a.status === "Confirmed").length,
+        color: "#0ea5e9",
+        icon: <CheckCircle size={20} />,
+        desc: "Ready to proceed",
+        filter: "Confirmed",
+      },
+      {
+        label: "Pending",
+        value: todayAll.filter(a => a.status === "Pending").length,
+        color: "#f59e0b",
+        icon: <AlertCircle size={20} />,
+        desc: "Awaiting confirmation",
+        filter: "Pending",
+      },
+      {
+        label: "No-Shows",
+        value: todayAll.filter(a => a.status === "No-Show").length,
+        color: "#ef4444",
+        icon: <XCircle size={20} />,
+        desc: "Did not attend",
+        filter: "No-Show",
+      },
     ],
     [todayAll],
   );
@@ -83,7 +111,11 @@ const AppointmentsPage = () => {
             <h1 className="text-[30px] font-bold text-text-primary">Appointments</h1>
             <p className="text-sm text-text-secondary mt-1">
               {todayApps.length} appointments on{" "}
-              {selectedDate.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}
+              {selectedDate.toLocaleDateString("en-IN", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+              })}
             </p>
           </div>
           <motion.button
@@ -94,7 +126,10 @@ const AppointmentsPage = () => {
             style={{ background: "var(--gradient-primary)" }}
           >
             <motion.span
-              variants={{ rest: { scale: 1 }, hover: { scale: 1.2, transition: { duration: 0.2, ease: "easeOut" } } }}
+              variants={{
+                rest: { scale: 1 },
+                hover: { scale: 1.2, transition: { duration: 0.2, ease: "easeOut" } },
+              }}
               style={{ display: "inline-flex" }}
             >
               <Plus size={16} />
@@ -113,7 +148,12 @@ const AppointmentsPage = () => {
         className="grid grid-cols-4 gap-3 mb-6"
       >
         {stats.map((s, i) => (
-          <motion.div key={s.label} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.06 }}>
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.06 }}
+          >
             <KpiCard
               size="sm"
               title={s.label}
@@ -136,8 +176,8 @@ const AppointmentsPage = () => {
             baseDate={baseDate}
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
-            onPrevWeek={() => setWeekOffset((w) => w - 1)}
-            onNextWeek={() => setWeekOffset((w) => w + 1)}
+            onPrevWeek={() => setWeekOffset(w => w - 1)}
+            onNextWeek={() => setWeekOffset(w => w + 1)}
           />
           <FilterBar
             searchQuery={searchQuery}
@@ -147,9 +187,12 @@ const AppointmentsPage = () => {
             filterType={filterType}
             onFilterType={setFilterType}
             showFilters={showFilters}
-            onToggleFilters={() => setShowFilters((f) => !f)}
+            onToggleFilters={() => setShowFilters(f => !f)}
             hasActiveFilters={hasActiveFilters}
-            onClearFilters={() => { setFilterStatus("All"); setFilterType("All"); }}
+            onClearFilters={() => {
+              setFilterStatus("All");
+              setFilterType("All");
+            }}
           />
           <AppointmentList
             todayApps={todayApps}
@@ -169,7 +212,10 @@ const AppointmentsPage = () => {
 
       <AnimatePresence>
         {showNewAppModal && (
-          <NewAppointmentModal defaultDate={formatDateKey(selectedDate)} onClose={() => setShowNewAppModal(false)} />
+          <NewAppointmentModal
+            defaultDate={formatDateKey(selectedDate)}
+            onClose={() => setShowNewAppModal(false)}
+          />
         )}
       </AnimatePresence>
 

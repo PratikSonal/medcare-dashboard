@@ -2,8 +2,7 @@ export const variantClasses: Record<string, string> = {
   primary: "bg-accent-blue text-white border-0 shadow-[var(--glow-blue)]",
   secondary: "bg-accent-green text-white border-0",
   ghost: "bg-transparent text-text-secondary border-0",
-  danger:
-    "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.3)]",
+  danger: "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.3)]",
   outline: "bg-transparent text-text-primary border border-border-primary",
 };
 

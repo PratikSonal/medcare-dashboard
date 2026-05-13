@@ -29,7 +29,10 @@ const AnalyticsPage = () => {
       sub: "7-month period",
       icon: <Users size={20} />,
       color: "#3c83f6",
-      onClick: () => { dispatch(clearFilters()); navigate("/patients"); },
+      onClick: () => {
+        dispatch(clearFilters());
+        navigate("/patients");
+      },
     },
     {
       title: "Total Revenue",
@@ -55,25 +58,39 @@ const AnalyticsPage = () => {
       sub: `${totalRecovered.toLocaleString()} patients recovered`,
       icon: <TrendingUp size={20} />,
       color: "#f59e0b",
-      onClick: () => { dispatch(setFilterStatus("Discharged")); navigate("/patients"); },
+      onClick: () => {
+        dispatch(setFilterStatus("Discharged"));
+        navigate("/patients");
+      },
     },
   ];
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="max-w-[1280px] mx-auto">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="max-w-[1280px] mx-auto"
+    >
       <motion.div variants={item} className="mb-8">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-[30px] font-bold text-text-primary">Analytics</h1>
-            <p className="text-sm text-text-secondary mt-1">Performance insights and health metrics</p>
+            <p className="text-sm text-text-secondary mt-1">
+              Performance insights and health metrics
+            </p>
           </div>
           <Badge variant="info">Nov 2025 — May 2026</Badge>
         </div>
         <div className="glow-line mt-6" />
       </motion.div>
 
-      <motion.div variants={item} className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-        {kpis.map((k) => (
+      <motion.div
+        variants={item}
+        className="grid gap-4 mb-8"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+      >
+        {kpis.map(k => (
           <KpiCard
             key={k.title}
             rawValue={k.rawValue}

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone } from "lucide-react";
-import type { Appointment } from "@/types";
+import type { Appointment } from "@/features/appointments/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { Avatar } from "@/components/ui/Avatar";
@@ -14,11 +14,11 @@ interface Props {
 
 export const AppointmentDetailModal = ({ app, onClose }: Props) => {
   const dispatch = useAppDispatch();
-  const patients = useAppSelector((s) => s.patients.patients);
+  const patients = useAppSelector(s => s.patients.patients);
 
   const handleViewPatient = () => {
     if (!app) return;
-    const patient = patients.find((p) => p.id === app.patientId);
+    const patient = patients.find(p => p.id === app.patientId);
     if (patient) dispatch(setSelectedPatient(patient));
     onClose();
   };
@@ -39,7 +39,7 @@ export const AppointmentDetailModal = ({ app, onClose }: Props) => {
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", duration: 0.4 }}
             className="w-full max-w-[520px] rounded-[24px] bg-bg-secondary border border-border-primary overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <div className="p-6 bg-bg-tertiary border-b border-border-primary">
               <div className="flex items-center gap-[14px]">
@@ -56,7 +56,10 @@ export const AppointmentDetailModal = ({ app, onClose }: Props) => {
                 </div>
                 <span
                   className="flex items-center gap-1 text-xs font-medium py-1 px-[10px] rounded-[10px] shrink-0"
-                  style={{ background: STATUS_CONFIG[app.status].bg, color: STATUS_CONFIG[app.status].color }}
+                  style={{
+                    background: STATUS_CONFIG[app.status].bg,
+                    color: STATUS_CONFIG[app.status].color,
+                  }}
                 >
                   {STATUS_CONFIG[app.status].icon} {app.status}
                 </span>
@@ -66,7 +69,14 @@ export const AppointmentDetailModal = ({ app, onClose }: Props) => {
             <div className="p-6 flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-[10px]">
                 {[
-                  { label: "Date", value: new Date(app.date).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" }) },
+                  {
+                    label: "Date",
+                    value: new Date(app.date).toLocaleDateString("en-IN", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                    }),
+                  },
                   { label: "Time", value: `${app.time} (${app.duration} min)` },
                   { label: "Doctor", value: app.doctor },
                   { label: "Visit Type", value: app.type },
@@ -75,7 +85,9 @@ export const AppointmentDetailModal = ({ app, onClose }: Props) => {
                 ].map(({ label, value }) => (
                   <div key={label} className="p-3 rounded-[12px] bg-bg-tertiary">
                     <p className="text-[11px] text-text-tertiary mb-1">{label}</p>
-                    <p className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{value}</p>
+                    <p className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
+                      {value}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -90,10 +102,17 @@ export const AppointmentDetailModal = ({ app, onClose }: Props) => {
                   )}
                 >
                   <p className="text-[20px] mb-1">{app.intakeComplete ? "✅" : "⏳"}</p>
-                  <p className={cn("text-xs font-semibold", app.intakeComplete ? "text-[#0ea5e9]" : "text-[#f59e0b]")}>
+                  <p
+                    className={cn(
+                      "text-xs font-semibold",
+                      app.intakeComplete ? "text-[#0ea5e9]" : "text-[#f59e0b]",
+                    )}
+                  >
                     Patient Intake
                   </p>
-                  <p className="text-[11px] text-text-tertiary mt-[2px]">{app.intakeComplete ? "Complete" : "Pending"}</p>
+                  <p className="text-[11px] text-text-tertiary mt-[2px]">
+                    {app.intakeComplete ? "Complete" : "Pending"}
+                  </p>
                 </div>
                 <div
                   className={cn(
@@ -104,10 +123,17 @@ export const AppointmentDetailModal = ({ app, onClose }: Props) => {
                   )}
                 >
                   <p className="text-[20px] mb-1">{app.insuranceVerified ? "✅" : "❌"}</p>
-                  <p className={cn("text-xs font-semibold", app.insuranceVerified ? "text-[#0ea5e9]" : "text-[#ef4444]")}>
+                  <p
+                    className={cn(
+                      "text-xs font-semibold",
+                      app.insuranceVerified ? "text-[#0ea5e9]" : "text-[#ef4444]",
+                    )}
+                  >
                     Insurance
                   </p>
-                  <p className="text-[11px] text-text-tertiary mt-[2px]">{app.insuranceVerified ? "Verified" : "Not Verified"}</p>
+                  <p className="text-[11px] text-text-tertiary mt-[2px]">
+                    {app.insuranceVerified ? "Verified" : "Not Verified"}
+                  </p>
                 </div>
               </div>
 

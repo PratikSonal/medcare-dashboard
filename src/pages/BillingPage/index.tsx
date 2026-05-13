@@ -10,13 +10,19 @@ import { ChartsRow } from "./components/ChartsRow";
 import { BillingTable } from "./components/BillingTable";
 
 const BillingPage = () => {
-  const records = useAppSelector((s) => s.billing.records);
+  const records = useAppSelector(s => s.billing.records);
 
   const totalBilled = useMemo(() => records.reduce((s, r) => s + r.totalAmount, 0), [records]);
-  const insuranceCoveredTotal = useMemo(() => records.reduce((s, r) => s + r.insuranceCovered, 0), [records]);
+  const insuranceCoveredTotal = useMemo(
+    () => records.reduce((s, r) => s + r.insuranceCovered, 0),
+    [records],
+  );
   const patientDueTotal = useMemo(() => records.reduce((s, r) => s + r.patientDue, 0), [records]);
-  const pendingRecords = useMemo(() => records.filter((r) => r.claimStatus === "Pending"), [records]);
-  const pendingAmount = useMemo(() => pendingRecords.reduce((s, r) => s + r.totalAmount, 0), [pendingRecords]);
+  const pendingRecords = useMemo(() => records.filter(r => r.claimStatus === "Pending"), [records]);
+  const pendingAmount = useMemo(
+    () => pendingRecords.reduce((s, r) => s + r.totalAmount, 0),
+    [pendingRecords],
+  );
 
   const kpis = [
     {
@@ -53,21 +59,40 @@ const BillingPage = () => {
   ];
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="max-w-[1280px] mx-auto">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="max-w-[1280px] mx-auto"
+    >
       <motion.div variants={item} className="mb-8">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-[30px] font-bold text-text-primary">Billing & Revenue</h1>
-            <p className="text-sm text-text-secondary mt-1">Insurance claims, payments, and financial overview</p>
+            <p className="text-sm text-text-secondary mt-1">
+              Insurance claims, payments, and financial overview
+            </p>
           </div>
           <Badge variant="info">May 2026</Badge>
         </div>
         <div className="glow-line mt-6" />
       </motion.div>
 
-      <motion.div variants={item} className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-        {kpis.map((k) => (
-          <KpiCard key={k.title} title={k.title} rawValue={k.rawValue} format={k.format} sub={k.sub} icon={k.icon} color={k.color} />
+      <motion.div
+        variants={item}
+        className="grid gap-4 mb-8"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+      >
+        {kpis.map(k => (
+          <KpiCard
+            key={k.title}
+            title={k.title}
+            rawValue={k.rawValue}
+            format={k.format}
+            sub={k.sub}
+            icon={k.icon}
+            color={k.color}
+          />
         ))}
       </motion.div>
 

@@ -16,7 +16,7 @@ import { DEPARTMENTS, STATUSES } from "../constants";
 
 export const FilterBar = () => {
   const dispatch = useAppDispatch();
-  const { searchQuery, filterStatus, filterDepartment } = useAppSelector((s) => s.patients);
+  const { searchQuery, filterStatus, filterDepartment } = useAppSelector(s => s.patients);
   const [showFilters, setShowFilters] = useState(false);
   const hasActiveFilters = filterStatus !== "All" || filterDepartment !== "All";
 
@@ -30,7 +30,7 @@ export const FilterBar = () => {
       >
         <SearchInput
           value={searchQuery}
-          onChange={(v) => dispatch(setSearchQuery(v))}
+          onChange={v => dispatch(setSearchQuery(v))}
           placeholder="Search by name, diagnosis, doctor..."
         />
         <button
@@ -42,8 +42,7 @@ export const FilterBar = () => {
               : "border-border-primary bg-bg-secondary text-text-secondary",
           )}
         >
-          <Filter size={15} /> Filters{" "}
-          {hasActiveFilters && <Badge variant="info">Active</Badge>}
+          <Filter size={15} /> Filters {hasActiveFilters && <Badge variant="info">Active</Badge>}
           <ChevronDown
             size={14}
             style={{
@@ -75,15 +74,25 @@ export const FilterBar = () => {
           >
             <div className="grid grid-cols-2 gap-6">
               {[
-                { label: "Status", items: STATUSES, current: filterStatus, action: setFilterStatus },
-                { label: "Department", items: DEPARTMENTS, current: filterDepartment, action: setFilterDepartment },
+                {
+                  label: "Status",
+                  items: STATUSES,
+                  current: filterStatus,
+                  action: setFilterStatus,
+                },
+                {
+                  label: "Department",
+                  items: DEPARTMENTS,
+                  current: filterDepartment,
+                  action: setFilterDepartment,
+                },
               ].map(({ label, items, current, action }) => (
                 <div key={label}>
                   <p className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-3">
                     {label}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {items.map((s) => (
+                    {items.map(s => (
                       <button
                         key={s}
                         onClick={() => dispatch(action(s))}

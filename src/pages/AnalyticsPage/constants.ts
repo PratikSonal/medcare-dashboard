@@ -23,13 +23,7 @@ export const ttStyle = {
 };
 
 export const RADIAN = Math.PI / 180;
-export const PROC_COLORS = [
-  "#3c83f6",
-  "#7c3bed",
-  "#0ea5e9",
-  "#f59e0b",
-  "#6366f1",
-];
+export const PROC_COLORS = ["#3c83f6", "#7c3bed", "#0ea5e9", "#f59e0b", "#6366f1"];
 
 export const STATUS_CELLS: {
   key: "active" | "critical" | "recovering" | "discharged";

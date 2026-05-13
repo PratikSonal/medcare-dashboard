@@ -14,8 +14,15 @@ interface Props {
   onNextWeek: () => void;
 }
 
-export const WeekStrip = ({ weekDays, baseDate, selectedDate, onSelectDate, onPrevWeek, onNextWeek }: Props) => {
-  const appointments = useAppSelector((s) => s.appointments.appointments);
+export const WeekStrip = ({
+  weekDays,
+  baseDate,
+  selectedDate,
+  onSelectDate,
+  onPrevWeek,
+  onNextWeek,
+}: Props) => {
+  const appointments = useAppSelector(s => s.appointments.appointments);
 
   return (
     <motion.div
@@ -47,7 +54,7 @@ export const WeekStrip = ({ weekDays, baseDate, selectedDate, onSelectDate, onPr
         {weekDays.map((day, i) => {
           const key = formatDateKey(day);
           const isSelected = key === formatDateKey(selectedDate);
-          const appCount = appointments.filter((a) => a.date === key).length;
+          const appCount = appointments.filter(a => a.date === key).length;
           return (
             <motion.button
               key={key}
@@ -61,10 +68,20 @@ export const WeekStrip = ({ weekDays, baseDate, selectedDate, onSelectDate, onPr
                   : "border-transparent bg-bg-tertiary",
               )}
             >
-              <span className={cn("text-[11px] font-medium", isSelected ? "text-accent-blue" : "text-text-tertiary")}>
+              <span
+                className={cn(
+                  "text-[11px] font-medium",
+                  isSelected ? "text-accent-blue" : "text-text-tertiary",
+                )}
+              >
                 {DAY_NAMES[i]}
               </span>
-              <span className={cn("text-[18px] font-bold", isSelected ? "text-accent-blue" : "text-text-primary")}>
+              <span
+                className={cn(
+                  "text-[18px] font-bold",
+                  isSelected ? "text-accent-blue" : "text-text-primary",
+                )}
+              >
                 {day.getDate()}
               </span>
               {appCount > 0 && (

@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
-import type { ClaimStatus } from "@/types";
+import type { ClaimStatus } from "@/features/billing/types";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { Avatar } from "@/components/ui/Avatar";
@@ -11,7 +11,7 @@ import { item, ALL_STATUSES, PAGE_SIZE } from "../constants";
 import { BillingDetailModal } from "./BillingDetailModal";
 
 export const BillingTable = () => {
-  const records = useAppSelector((s) => s.billing.records);
+  const records = useAppSelector(s => s.billing.records);
 
   const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -20,16 +20,27 @@ export const BillingTable = () => {
   const [page, setPage] = useState(1);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
-  const selectedRecord = selectedRecordId ? (records.find((r) => r.id === selectedRecordId) ?? null) : null;
+  const selectedRecord = selectedRecordId
+    ? (records.find(r => r.id === selectedRecordId) ?? null)
+    : null;
 
-  const allProviders = useMemo(() => [...new Set(records.map((r) => r.insuranceProvider))], [records]);
+  const allProviders = useMemo(
+    () => [...new Set(records.map(r => r.insuranceProvider))],
+    [records],
+  );
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return records.filter((r) => {
-      const matchSearch = !q || r.patientName.toLowerCase().includes(q) || r.doctor.toLowerCase().includes(q) || r.procedure.toLowerCase().includes(q) || r.insuranceProvider.toLowerCase().includes(q);
+    return records.filter(r => {
+      const matchSearch =
+        !q ||
+        r.patientName.toLowerCase().includes(q) ||
+        r.doctor.toLowerCase().includes(q) ||
+        r.procedure.toLowerCase().includes(q) ||
+        r.insuranceProvider.toLowerCase().includes(q);
       const matchStatus = statusFilter.length === 0 || statusFilter.includes(r.claimStatus);
-      const matchProvider = providerFilter.length === 0 || providerFilter.includes(r.insuranceProvider);
+      const matchProvider =
+        providerFilter.length === 0 || providerFilter.includes(r.insuranceProvider);
       return matchSearch && matchStatus && matchProvider;
     });
   }, [records, search, statusFilter, providerFilter]);
@@ -40,11 +51,11 @@ export const BillingTable = () => {
   const activeFilters = statusFilter.length + providerFilter.length;
 
   const toggleStatus = (s: ClaimStatus) => {
-    setStatusFilter((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
+    setStatusFilter(prev => (prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]));
     setPage(1);
   };
   const toggleProvider = (p: string) => {
-    setProviderFilter((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
+    setProviderFilter(prev => (prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]));
     setPage(1);
   };
 
@@ -56,18 +67,22 @@ export const BillingTable = () => {
           <div>
             <h2 className="text-base font-semibold text-text-primary">Billing Records</h2>
             <p className="text-[13px] text-text-secondary mt-[2px]">
-              {filtered.length} record{filtered.length !== 1 ? "s" : ""}{activeFilters > 0 ? " (filtered)" : ""}
+              {filtered.length} record{filtered.length !== 1 ? "s" : ""}
+              {activeFilters > 0 ? " (filtered)" : ""}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <SearchInput
               value={search}
-              onChange={(v) => { setSearch(v); setPage(1); }}
+              onChange={v => {
+                setSearch(v);
+                setPage(1);
+              }}
               placeholder="Search patient, doctor, procedure..."
               width={260}
             />
             <button
-              onClick={() => setFilterOpen((o) => !o)}
+              onClick={() => setFilterOpen(o => !o)}
               className={cn(
                 "flex items-center gap-[6px] px-[14px] py-2 rounded-[10px] text-[13px] font-medium cursor-pointer font-sans transition-all duration-150 border",
                 activeFilters > 0
@@ -78,7 +93,9 @@ export const BillingTable = () => {
               <SlidersHorizontal size={14} />
               Filters
               {activeFilters > 0 && (
-                <span className="bg-accent-blue text-white rounded-full text-[10px] font-bold px-[6px] py-[1px]">{activeFilters}</span>
+                <span className="bg-accent-blue text-white rounded-full text-[10px] font-bold px-[6px] py-[1px]">
+                  {activeFilters}
+                </span>
               )}
             </button>
           </div>
@@ -93,8 +110,10 @@ export const BillingTable = () => {
         >
           <div className="p-4 rounded-12 bg-bg-secondary border border-border-primary mb-4">
             <div className="flex items-center gap-2 mb-3 flex-wrap">
-              <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] w-[70px] shrink-0">Status</span>
-              {ALL_STATUSES.map((s) => {
+              <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] w-[70px] shrink-0">
+                Status
+              </span>
+              {ALL_STATUSES.map(s => {
                 const active = statusFilter.includes(s);
                 return (
                   <button
@@ -114,9 +133,11 @@ export const BillingTable = () => {
               })}
             </div>
             <div className="flex items-start gap-2 flex-wrap">
-              <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] w-[70px] shrink-0 pt-[5px]">Provider</span>
+              <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] w-[70px] shrink-0 pt-[5px]">
+                Provider
+              </span>
               <div className="flex flex-wrap gap-[6px]">
-                {allProviders.map((p) => {
+                {allProviders.map(p => {
                   const active = providerFilter.includes(p);
                   return (
                     <button
@@ -137,7 +158,11 @@ export const BillingTable = () => {
             </div>
             {activeFilters > 0 && (
               <button
-                onClick={() => { setStatusFilter([]); setProviderFilter([]); setPage(1); }}
+                onClick={() => {
+                  setStatusFilter([]);
+                  setProviderFilter([]);
+                  setPage(1);
+                }}
                 className="mt-3 text-xs text-accent-red bg-transparent border-0 cursor-pointer font-sans p-0"
               >
                 Clear all filters
@@ -151,8 +176,20 @@ export const BillingTable = () => {
           <table className="w-full text-[13px]" style={{ borderCollapse: "collapse" }}>
             <thead>
               <tr className="border-b border-border-primary">
-                {["Patient", "Date", "Procedure", "Doctor", "Insurance Provider", "Total", "Status", "Patient Due"].map((h) => (
-                  <th key={h} className="text-left px-3 py-2 text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] whitespace-nowrap">
+                {[
+                  "Patient",
+                  "Date",
+                  "Procedure",
+                  "Doctor",
+                  "Insurance Provider",
+                  "Total",
+                  "Status",
+                  "Patient Due",
+                ].map(h => (
+                  <th
+                    key={h}
+                    className="text-left px-3 py-2 text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] whitespace-nowrap"
+                  >
                     {h}
                   </th>
                 ))}
@@ -179,14 +216,21 @@ export const BillingTable = () => {
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         <Avatar initials={r.patientAvatar} size={28} radius="50%" />
-                        <span className="font-medium text-text-primary whitespace-nowrap">{r.patientName}</span>
+                        <span className="font-medium text-text-primary whitespace-nowrap">
+                          {r.patientName}
+                        </span>
                       </div>
                     </td>
                     <td className="px-3 py-3 text-text-secondary whitespace-nowrap">
-                      {new Date(r.visitDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                      {new Date(r.visitDate).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                      })}
                     </td>
                     <td className="px-3 py-3 text-text-secondary max-w-[200px]">
-                      <p className="overflow-hidden text-ellipsis whitespace-nowrap">{r.procedure}</p>
+                      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        {r.procedure}
+                      </p>
                       <p className="text-[11px] text-text-tertiary mt-[2px]">{r.department}</p>
                     </td>
                     <td className="px-3 py-3 text-text-secondary whitespace-nowrap">{r.doctor}</td>
@@ -199,12 +243,20 @@ export const BillingTable = () => {
                     <td className="px-3 py-3">
                       <span
                         className="text-[11px] font-semibold px-[10px] py-1 rounded-[8px] whitespace-nowrap"
-                        style={{ background: CLAIM_STATUS_COLORS[r.claimStatus].bg, color: CLAIM_STATUS_COLORS[r.claimStatus].color }}
+                        style={{
+                          background: CLAIM_STATUS_COLORS[r.claimStatus].bg,
+                          color: CLAIM_STATUS_COLORS[r.claimStatus].color,
+                        }}
                       >
                         {r.claimStatus}
                       </span>
                     </td>
-                    <td className={cn("px-3 py-3 font-semibold whitespace-nowrap", r.patientDue > 50000 ? "text-accent-red" : "text-text-primary")}>
+                    <td
+                      className={cn(
+                        "px-3 py-3 font-semibold whitespace-nowrap",
+                        r.patientDue > 50000 ? "text-accent-red" : "text-text-primary",
+                      )}
+                    >
                       ₹{r.patientDue.toLocaleString("en-IN")}
                     </td>
                   </motion.tr>
@@ -218,17 +270,18 @@ export const BillingTable = () => {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-border-primary">
             <span className="text-[13px] text-text-secondary">
-              Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
+              Showing {(safePage - 1) * PAGE_SIZE + 1}–
+              {Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
             </span>
             <div className="flex items-center gap-[6px]">
               <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={safePage === 1}
                 className="flex items-center justify-center w-8 h-8 rounded-[8px] border border-border-primary bg-bg-secondary text-text-secondary cursor-pointer disabled:cursor-not-allowed disabled:text-text-tertiary"
               >
                 <ChevronLeft size={14} />
               </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
                 <button
                   key={p}
                   onClick={() => setPage(p)}
@@ -243,7 +296,7 @@ export const BillingTable = () => {
                 </button>
               ))}
               <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={safePage === totalPages}
                 className="flex items-center justify-center w-8 h-8 rounded-[8px] border border-border-primary bg-bg-secondary text-text-secondary cursor-pointer disabled:cursor-not-allowed disabled:text-text-tertiary"
               >

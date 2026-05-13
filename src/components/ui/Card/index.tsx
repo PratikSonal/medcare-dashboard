@@ -1,13 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { CardProps, StatCardProps } from "./types";
 
-export const Card = ({
-  children,
-  className,
-  hover = false,
-  onClick,
-  style,
-}: CardProps) => (
+export const Card = ({ children, className, hover = false, onClick, style }: CardProps) => (
   <div
     onClick={onClick}
     className={cn(
@@ -39,9 +33,7 @@ export const StatCard = ({
     <div className="relative flex items-start justify-between">
       <div>
         <p className="text-[13px] text-text-secondary mb-2">{title}</p>
-        <p className="text-[32px] font-bold text-text-primary leading-none">
-          {value}
-        </p>
+        <p className="text-[32px] font-bold text-text-primary leading-none">{value}</p>
         {change && (
           <p
             className={cn(
@@ -54,10 +46,7 @@ export const StatCard = ({
           </p>
         )}
       </div>
-      <div
-        className="p-3 rounded-12 shrink-0"
-        style={{ background: `${color}18`, color }}
-      >
+      <div className="p-3 rounded-12 shrink-0" style={{ background: `${color}18`, color }}>
         {icon}
       </div>
     </div>

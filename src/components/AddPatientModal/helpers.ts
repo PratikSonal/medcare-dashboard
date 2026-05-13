@@ -1,5 +1,5 @@
-import type { Patient } from '@/types';
-import type { FormData } from './types';
+import type { Patient } from "@/features/patients/types";
+import type { FormData } from "./types";
 
 export const validateStep = (
   step: number,
@@ -9,7 +9,8 @@ export const validateStep = (
 
   if (step === 0) {
     if (!form.name.trim()) e.name = true;
-    if (!form.age || isNaN(Number(form.age)) || Number(form.age) < 1 || Number(form.age) > 120) e.age = true;
+    if (!form.age || isNaN(Number(form.age)) || Number(form.age) < 1 || Number(form.age) > 120)
+      e.age = true;
     if (!form.phone.trim()) e.phone = true;
   } else if (step === 1) {
     if (!form.diagnosis.trim()) e.diagnosis = true;
@@ -22,11 +23,17 @@ export const validateStep = (
   }
 
   return e;
-}
+};
 
 export const buildPatient = (form: FormData, maxId: number): Patient => {
-  const newId = `P${String(maxId + 1).padStart(3, '0')}`;
-  const initials = form.name.trim().split(/\s+/).map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const newId = `P${String(maxId + 1).padStart(3, "0")}`;
+  const initials = form.name
+    .trim()
+    .split(/\s+/)
+    .map(n => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return {
     id: newId,
@@ -51,11 +58,16 @@ export const buildPatient = (form: FormData, maxId: number): Patient => {
       oxygenSat: Number(form.oxygenSat),
       weight: Number(form.weight),
     },
-    tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+    tags: form.tags
+      ? form.tags
+          .split(",")
+          .map(t => t.trim())
+          .filter(Boolean)
+      : [],
   };
-}
+};
 
 export const getNextId = (patients: { id: string }[]): string => {
   const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1))));
-  return `P${String(maxId + 1).padStart(3, '0')}`;
-}
+  return `P${String(maxId + 1).padStart(3, "0")}`;
+};

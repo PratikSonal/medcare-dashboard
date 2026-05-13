@@ -1,18 +1,28 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Sun, Moon, X, CheckCheck, AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { toggleTheme, markAllRead, markNotificationRead } from '@/features/ui/uiSlice';
-import styles from './Navbar.module.scss';
-import type { FilterType } from './types';
-import { timeAgo } from './helpers';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Bell,
+  Sun,
+  Moon,
+  X,
+  CheckCheck,
+  AlertCircle,
+  Info,
+  CheckCircle,
+  AlertTriangle,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { toggleTheme, markAllRead, markNotificationRead } from "@/features/ui/uiSlice";
+import styles from "./Navbar.module.scss";
+import type { FilterType } from "./types";
+import { timeAgo } from "./helpers";
 
 const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  error:   { icon: <AlertCircle size={14} />,   color: '#ef4444', bg: 'rgba(239,68,68,0.12)'   },
-  info:    { icon: <Info size={14} />,           color: '#3c83f6', bg: 'rgba(60,131,246,0.12)'  },
-  success: { icon: <CheckCircle size={14} />,    color: '#0ea5e9', bg: 'rgba(14,165,233,0.12)'  },
-  warning: { icon: <AlertTriangle size={14} />,  color: '#f59e0b', bg: 'rgba(245,158,11,0.12)'  },
+  error: { icon: <AlertCircle size={14} />, color: "#ef4444", bg: "rgba(239,68,68,0.12)" },
+  info: { icon: <Info size={14} />, color: "#3c83f6", bg: "rgba(60,131,246,0.12)" },
+  success: { icon: <CheckCircle size={14} />, color: "#0ea5e9", bg: "rgba(14,165,233,0.12)" },
+  warning: { icon: <AlertTriangle size={14} />, color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
 };
 
 export const Navbar = () => {
@@ -21,30 +31,30 @@ export const Navbar = () => {
   const { notifications, unreadCount } = useAppSelector(s => s.ui);
   const user = useAppSelector(s => s.auth.user);
   const [showNotifs, setShowNotifs] = useState(false);
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<FilterType>("all");
 
-  const visible = filter === 'unread' ? notifications.filter(n => !n.read) : notifications;
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Doctor';
+  const visible = filter === "unread" ? notifications.filter(n => !n.read) : notifications;
+  const displayName = user?.displayName || user?.email?.split("@")[0] || "Doctor";
   const initial = displayName[0].toUpperCase();
 
   return (
     <motion.header
       className={cn(
-        'fixed top-[14px] right-5 z-40 flex items-center justify-between gap-2',
-        'bg-bg-card border border-border-primary rounded-full h-12',
-        'px-4 backdrop-blur-md transition-[background,border-color,box-shadow] duration-[400ms]',
+        "fixed top-[14px] right-5 z-40 flex items-center justify-between gap-2",
+        "bg-bg-card border border-border-primary rounded-full h-12",
+        "px-4 backdrop-blur-md transition-[background,border-color,box-shadow] duration-[400ms]",
         styles.navbar,
       )}
-      style={{ left: '284px' }}
+      style={{ left: "284px" }}
     >
       {/* Welcome section */}
       <div className="flex items-center gap-[10px]">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 22, delay: 0.1 }}
+          transition={{ type: "spring", stiffness: 320, damping: 22, delay: 0.1 }}
           className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
-          style={{ background: 'var(--gradient-primary)' }}
+          style={{ background: "var(--gradient-primary)" }}
         >
           {initial}
         </motion.div>
@@ -71,7 +81,7 @@ export const Navbar = () => {
       <div className="flex items-center gap-1 ml-auto">
         {/* Theme toggle */}
         <button onClick={() => dispatch(toggleTheme())} className={styles.iconBtn}>
-          {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+          {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
         </button>
 
         {/* Notifications */}
@@ -114,7 +124,10 @@ export const Navbar = () => {
                           <CheckCheck size={12} /> Mark all read
                         </button>
                       )}
-                      <button onClick={() => setShowNotifs(false)} className="bg-transparent border-0 cursor-pointer text-text-tertiary flex">
+                      <button
+                        onClick={() => setShowNotifs(false)}
+                        className="bg-transparent border-0 cursor-pointer text-text-tertiary flex"
+                      >
                         <X size={14} />
                       </button>
                     </div>
@@ -122,19 +135,21 @@ export const Navbar = () => {
 
                   {/* Filter tabs */}
                   <div className="flex px-4 pt-2 border-b border-border-primary">
-                    {(['all', 'unread'] as const).map(f => (
+                    {(["all", "unread"] as const).map(f => (
                       <button
                         key={f}
                         onClick={() => setFilter(f)}
                         className={cn(styles.filterTab, filter === f && styles.active)}
                       >
-                        {f === 'all' ? 'All' : `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
+                        {f === "all"
+                          ? "All"
+                          : `Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`}
                       </button>
                     ))}
                   </div>
 
                   {/* List */}
-                  <div className="max-h-80 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                  <div className="max-h-80 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
                     {visible.length === 0 ? (
                       <div className="py-8 px-4 text-center text-text-tertiary text-[13px]">
                         No unread notifications
@@ -144,18 +159,33 @@ export const Navbar = () => {
                         <div
                           key={n.id}
                           onClick={() => dispatch(markNotificationRead(n.id))}
-                          className={cn('flex gap-3 px-4 py-3 items-start border-b border-border-primary', styles.notifItem)}
-                          style={{ background: !n.read ? 'rgba(60,131,246,0.04)' : 'transparent' }}
+                          className={cn(
+                            "flex gap-3 px-4 py-3 items-start border-b border-border-primary",
+                            styles.notifItem,
+                          )}
+                          style={{ background: !n.read ? "rgba(60,131,246,0.04)" : "transparent" }}
                         >
                           <div
-                            className={cn('w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0', styles.iconBox)}
-                            style={{ '--notif-color': typeConfig[n.type].color, background: typeConfig[n.type].bg, color: typeConfig[n.type].color } as React.CSSProperties}
+                            className={cn(
+                              "w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0",
+                              styles.iconBox,
+                            )}
+                            style={
+                              {
+                                "--notif-color": typeConfig[n.type].color,
+                                background: typeConfig[n.type].bg,
+                                color: typeConfig[n.type].color,
+                              } as React.CSSProperties
+                            }
                           >
                             {typeConfig[n.type].icon}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
-                              <p className="text-xs font-semibold mb-[2px]" style={{ color: typeConfig[n.type].color }}>
+                              <p
+                                className="text-xs font-semibold mb-[2px]"
+                                style={{ color: typeConfig[n.type].color }}
+                              >
                                 {n.title}
                               </p>
                               {!n.read && (
@@ -163,7 +193,9 @@ export const Navbar = () => {
                               )}
                             </div>
                             <p className="text-xs text-text-secondary leading-[1.5]">{n.message}</p>
-                            <p className="text-[11px] text-text-tertiary mt-1">{timeAgo(n.timestamp)}</p>
+                            <p className="text-[11px] text-text-tertiary mt-1">
+                              {timeAgo(n.timestamp)}
+                            </p>
                           </div>
                         </div>
                       ))

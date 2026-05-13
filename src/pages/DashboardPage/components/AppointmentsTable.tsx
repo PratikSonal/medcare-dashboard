@@ -11,11 +11,11 @@ import { item } from "../constants";
 export const AppointmentsTable = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const patients = useAppSelector((s) => s.patients.patients);
-  const appointments = useAppSelector((s) => s.appointments.appointments);
+  const patients = useAppSelector(s => s.patients.patients);
+  const appointments = useAppSelector(s => s.appointments.appointments);
 
   const todayAppointments = useMemo(
-    () => appointments.filter((a) => a.date === "2026-05-11"),
+    () => appointments.filter(a => a.date === "2026-05-11"),
     [appointments],
   );
 
@@ -36,18 +36,23 @@ export const AppointmentsTable = () => {
         <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr className="border-b border-border-primary">
-              {["Time", "Patient", "Type", "Doctor", "Clinic", "Intake & Insurance", "Status"].map((h) => (
-                <th key={h} className="text-left px-3 py-2 text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] whitespace-nowrap">
-                  {h}
-                </th>
-              ))}
+              {["Time", "Patient", "Type", "Doctor", "Clinic", "Intake & Insurance", "Status"].map(
+                h => (
+                  <th
+                    key={h}
+                    className="text-left px-3 py-2 text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] whitespace-nowrap"
+                  >
+                    {h}
+                  </th>
+                ),
+              )}
             </tr>
           </thead>
           <tbody>
             {todayAppointments.map((app, i) => {
               const sc = APPT_STATUS_COLORS[app.status];
               const typeColor = APPT_TYPE_COLORS[app.type] || "var(--accent-blue)";
-              const patient = patients.find((p) => p.id === app.patientId);
+              const patient = patients.find(p => p.id === app.patientId);
               return (
                 <motion.tr
                   key={app.id}
@@ -58,7 +63,9 @@ export const AppointmentsTable = () => {
                     i < todayAppointments.length - 1 && "border-b border-border-primary",
                   )}
                 >
-                  <td className="px-3 py-3 font-bold text-text-primary whitespace-nowrap">{app.time}</td>
+                  <td className="px-3 py-3 font-bold text-text-primary whitespace-nowrap">
+                    {app.time}
+                  </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2">
                       <div
@@ -67,39 +74,62 @@ export const AppointmentsTable = () => {
                       >
                         {app.patientAvatar}
                       </div>
-                      <span className="font-medium text-text-primary whitespace-nowrap">{app.patientName}</span>
+                      <span className="font-medium text-text-primary whitespace-nowrap">
+                        {app.patientName}
+                      </span>
                     </div>
                   </td>
                   <td className="px-3 py-3">
                     <span
                       className="text-[11px] px-2 py-[2px] rounded-full font-medium whitespace-nowrap"
-                      style={{ background: `${typeColor}18`, color: typeColor, border: `1px solid ${typeColor}30` }}
+                      style={{
+                        background: `${typeColor}18`,
+                        color: typeColor,
+                        border: `1px solid ${typeColor}30`,
+                      }}
                     >
                       {app.type}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-text-secondary text-[13px] whitespace-nowrap">{app.doctor}</td>
+                  <td className="px-3 py-3 text-text-secondary text-[13px] whitespace-nowrap">
+                    {app.doctor}
+                  </td>
                   <td className="px-3 py-3 text-text-secondary text-xs max-w-[180px]">
-                    <p className="overflow-hidden text-ellipsis whitespace-nowrap">{app.clinicName}</p>
+                    <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {app.clinicName}
+                    </p>
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex gap-1">
                       <span
                         className="text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
-                        style={{ background: app.intakeComplete ? "rgba(14,165,233,0.1)" : "rgba(245,158,11,0.1)", color: app.intakeComplete ? "#0ea5e9" : "#f59e0b" }}
+                        style={{
+                          background: app.intakeComplete
+                            ? "rgba(14,165,233,0.1)"
+                            : "rgba(245,158,11,0.1)",
+                          color: app.intakeComplete ? "#0ea5e9" : "#f59e0b",
+                        }}
                       >
                         {app.intakeComplete ? "✓ Intake" : "⏳ Intake"}
                       </span>
                       <span
                         className="text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
-                        style={{ background: app.insuranceVerified ? "rgba(14,165,233,0.1)" : "rgba(239,68,68,0.1)", color: app.insuranceVerified ? "#0ea5e9" : "#ef4444" }}
+                        style={{
+                          background: app.insuranceVerified
+                            ? "rgba(14,165,233,0.1)"
+                            : "rgba(239,68,68,0.1)",
+                          color: app.insuranceVerified ? "#0ea5e9" : "#ef4444",
+                        }}
                       >
                         {app.insuranceVerified ? "✓ Ins." : "✗ Ins."}
                       </span>
                     </div>
                   </td>
                   <td className="px-3 py-3">
-                    <span className="text-[11px] font-medium px-2 py-[3px] rounded-[8px] whitespace-nowrap" style={{ background: sc.bg, color: sc.color }}>
+                    <span
+                      className="text-[11px] font-medium px-2 py-[3px] rounded-[8px] whitespace-nowrap"
+                      style={{ background: sc.bg, color: sc.color }}
+                    >
                       {app.status}
                     </span>
                   </td>

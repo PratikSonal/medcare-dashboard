@@ -30,9 +30,7 @@ const Toast = ({ id, message, type }: ToastProps) => {
       >
         <Icon size={16} />
       </div>
-      <p className="flex-1 text-[13px] font-medium text-text-primary leading-[1.4]">
-        {message}
-      </p>
+      <p className="flex-1 text-[13px] font-medium text-text-primary leading-[1.4]">{message}</p>
       <button
         onClick={() => dispatch(removeToast(id))}
         className="p-[2px] border-0 bg-transparent cursor-pointer text-text-tertiary flex shrink-0"
@@ -44,12 +42,12 @@ const Toast = ({ id, message, type }: ToastProps) => {
 };
 
 export const ToastContainer = () => {
-  const toasts = useAppSelector((s) => s.ui.toasts);
+  const toasts = useAppSelector(s => s.ui.toasts);
 
   return (
     <div className="fixed bottom-6 right-6 z-[1100] flex flex-col-reverse gap-2 items-end">
       <AnimatePresence>
-        {toasts.map((t) => (
+        {toasts.map(t => (
           <Toast key={t.id} {...t} />
         ))}
       </AnimatePresence>

@@ -23,14 +23,35 @@ export const ChartsRow = () => (
         <p className="text-[13px] text-text-secondary mt-[2px]">Monthly revenue in INR</p>
       </div>
       <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={metricsData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }} barSize={24}>
+        <BarChart
+          data={metricsData}
+          margin={{ top: 5, right: 10, left: -10, bottom: 0 }}
+          barSize={24}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" vertical={false} />
-          <XAxis dataKey="month" tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${v / 1000}K`} />
-          <Tooltip {...ttStyle} formatter={(v) => [`₹${((v as number) / 1000).toFixed(0)}K`, "Revenue"]} cursor={{ fill: "rgba(60,131,246,0.05)" }} />
+          <XAxis
+            dataKey="month"
+            tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={v => `₹${v / 1000}K`}
+          />
+          <Tooltip
+            {...ttStyle}
+            formatter={v => [`₹${((v as number) / 1000).toFixed(0)}K`, "Revenue"]}
+            cursor={{ fill: "rgba(60,131,246,0.05)" }}
+          />
           <Bar dataKey="revenue" radius={[6, 6, 0, 0]}>
             {metricsData.map((_, i) => (
-              <Cell key={i} fill={i === metricsData.length - 1 ? "#3c83f6" : "rgba(60,131,246,0.35)"} />
+              <Cell
+                key={i}
+                fill={i === metricsData.length - 1 ? "#3c83f6" : "rgba(60,131,246,0.35)"}
+              />
             ))}
           </Bar>
         </BarChart>
@@ -59,11 +80,11 @@ export const ChartsRow = () => (
               <Cell key={i} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip {...ttStyle} formatter={(v) => [`${v} patients`]} />
+          <Tooltip {...ttStyle} formatter={v => [`${v} patients`]} />
         </PieChart>
       </ResponsiveContainer>
       <div className="flex flex-col gap-[5px] mt-2">
-        {departmentStats.map((dept) => (
+        {departmentStats.map(dept => (
           <div key={dept.name} className="flex items-center justify-between">
             <div className="flex items-center gap-[7px]">
               <div className="w-2 h-2 rounded-full shrink-0" style={{ background: dept.color }} />

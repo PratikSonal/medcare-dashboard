@@ -1,6 +1,6 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { mockBillingData } from '@/lib/mockData';
-import type { BillingRecord, ClaimStatus } from '@/types';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { mockBillingData } from "@/lib/mockData";
+import type { BillingRecord, ClaimStatus } from "./types";
 
 interface BillingState {
   records: BillingRecord[];
@@ -11,7 +11,7 @@ const initialState: BillingState = {
 };
 
 const billingSlice = createSlice({
-  name: 'billing',
+  name: "billing",
   initialState,
   reducers: {
     updateClaimStatus(state, action: PayloadAction<{ id: string; status: ClaimStatus }>) {

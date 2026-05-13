@@ -1,1 +1,1 @@
-export type FilterType = 'all' | 'unread';
+export type FilterType = "all" | "unread";

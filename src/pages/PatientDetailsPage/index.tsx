@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setViewMode, setSelectedPatient, clearFilters } from "@/features/patients/patientsSlice";
 import { showPatientAlertNotification } from "@/lib/notifications";
-import type { Patient } from "@/types";
+import type { Patient } from "@/features/patients/types";
 import { cn } from "@/lib/utils";
 import { FilterBar } from "./components/FilterBar";
 import { PatientGrid } from "./components/PatientGrid";
@@ -14,7 +14,7 @@ import { PatientListView } from "./components/PatientListView";
 
 const PatientDetailsPage = () => {
   const dispatch = useAppDispatch();
-  const { patients, filteredPatients, viewMode } = useAppSelector((s) => s.patients);
+  const { patients, filteredPatients, viewMode } = useAppSelector(s => s.patients);
   const [showAddModal, setShowAddModal] = useState(false);
 
   const handlePatientClick = async (patient: Patient) => {
@@ -39,10 +39,16 @@ const PatientDetailsPage = () => {
               whileHover="hover"
               initial="rest"
               className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white"
-              style={{ background: "var(--gradient-primary)", boxShadow: "0 4px 14px rgba(60,131,246,0.3)" }}
+              style={{
+                background: "var(--gradient-primary)",
+                boxShadow: "0 4px 14px rgba(60,131,246,0.3)",
+              }}
             >
               <motion.span
-                variants={{ rest: { scale: 1 }, hover: { scale: 1.2, transition: { duration: 0.2, ease: "easeOut" } } }}
+                variants={{
+                  rest: { scale: 1 },
+                  hover: { scale: 1.2, transition: { duration: 0.2, ease: "easeOut" } },
+                }}
                 style={{ display: "inline-flex" }}
               >
                 <UserPlus size={15} />
@@ -59,7 +65,9 @@ const PatientDetailsPage = () => {
                   onClick={() => dispatch(setViewMode(mode))}
                   className={cn(
                     "flex items-center gap-[6px] py-[7px] px-[14px] rounded-[8px] text-[13px] font-medium border-0 cursor-pointer font-sans transition-all duration-200",
-                    viewMode === mode ? "bg-accent-blue text-white" : "bg-transparent text-text-secondary",
+                    viewMode === mode
+                      ? "bg-accent-blue text-white"
+                      : "bg-transparent text-text-secondary",
                   )}
                 >
                   {icon} {label}
@@ -75,9 +83,17 @@ const PatientDetailsPage = () => {
 
       <AnimatePresence mode="wait">
         {viewMode === "grid" ? (
-          <PatientGrid key="grid" filteredPatients={filteredPatients} onPatientClick={handlePatientClick} />
+          <PatientGrid
+            key="grid"
+            filteredPatients={filteredPatients}
+            onPatientClick={handlePatientClick}
+          />
         ) : (
-          <PatientListView key="list" filteredPatients={filteredPatients} onPatientClick={handlePatientClick} />
+          <PatientListView
+            key="list"
+            filteredPatients={filteredPatients}
+            onPatientClick={handlePatientClick}
+          />
         )}
       </AnimatePresence>
 

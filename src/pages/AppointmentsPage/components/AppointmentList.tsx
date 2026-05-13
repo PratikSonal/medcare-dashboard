@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, CheckCircle, XCircle, Phone, UserX } from "lucide-react";
-import type { Appointment } from "@/types";
+import type { Appointment } from "@/features/appointments/types";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { updateAppointmentStatus } from "@/features/appointments/appointmentsSlice";
 import { addToast } from "@/features/ui/uiSlice";
@@ -35,7 +35,7 @@ export const AppointmentList = ({ todayApps, dateKey, filterStatus, onSelectApp 
             <p className="text-[15px] font-medium">No appointments for this day</p>
           </motion.div>
         ) : (
-          todayApps.map((app) => {
+          todayApps.map(app => {
             const status = STATUS_CONFIG[app.status];
             const typeColor = APPT_TYPE_COLORS[app.type] || "var(--accent-blue)";
             return (
@@ -60,17 +60,25 @@ export const AppointmentList = ({ todayApps, dateKey, filterStatus, onSelectApp 
                         <p className="text-sm font-semibold text-text-primary">{app.patientName}</p>
                         <span
                           className="text-[10px] py-[2px] px-2 rounded-full font-medium"
-                          style={{ background: `${typeColor}18`, color: typeColor, border: `1px solid ${typeColor}30` }}
+                          style={{
+                            background: `${typeColor}18`,
+                            color: typeColor,
+                            border: `1px solid ${typeColor}30`,
+                          }}
                         >
                           {app.type}
                         </span>
                       </div>
-                      <p className="text-xs text-text-secondary mt-[2px]">{app.doctor} · {app.department}</p>
+                      <p className="text-xs text-text-secondary mt-[2px]">
+                        {app.doctor} · {app.department}
+                      </p>
                       <div className="flex items-center gap-1 mt-[3px]">
                         <Phone size={10} className="text-text-tertiary" />
                         <p className="text-[11px] text-text-tertiary">{app.phone}</p>
                       </div>
-                      {app.notes && <p className="text-[11px] text-accent-yellow mt-1">⚠️ {app.notes}</p>}
+                      {app.notes && (
+                        <p className="text-[11px] text-accent-yellow mt-1">⚠️ {app.notes}</p>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
@@ -84,10 +92,17 @@ export const AppointmentList = ({ todayApps, dateKey, filterStatus, onSelectApp 
                       <div className="flex gap-1">
                         {app.status === "Pending" && (
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
-                              dispatch(updateAppointmentStatus({ id: app.id, status: "Confirmed" }));
-                              dispatch(addToast({ message: `Appointment for ${app.patientName} confirmed.`, type: "success" }));
+                              dispatch(
+                                updateAppointmentStatus({ id: app.id, status: "Confirmed" }),
+                              );
+                              dispatch(
+                                addToast({
+                                  message: `Appointment for ${app.patientName} confirmed.`,
+                                  type: "success",
+                                }),
+                              );
                             }}
                             className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(14,165,233,0.35)] bg-[rgba(14,165,233,0.1)] text-[#0ea5e9] cursor-pointer font-sans"
                           >
@@ -95,20 +110,30 @@ export const AppointmentList = ({ todayApps, dateKey, filterStatus, onSelectApp 
                           </button>
                         )}
                         <button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             dispatch(updateAppointmentStatus({ id: app.id, status: "No-Show" }));
-                            dispatch(addToast({ message: `${app.patientName} marked as no-show.`, type: "info" }));
+                            dispatch(
+                              addToast({
+                                message: `${app.patientName} marked as no-show.`,
+                                type: "info",
+                              }),
+                            );
                           }}
                           className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(107,114,128,0.3)] bg-[rgba(107,114,128,0.08)] text-text-tertiary cursor-pointer font-sans"
                         >
                           <UserX size={10} /> No-show
                         </button>
                         <button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             dispatch(updateAppointmentStatus({ id: app.id, status: "Cancelled" }));
-                            dispatch(addToast({ message: `Appointment for ${app.patientName} cancelled.`, type: "error" }));
+                            dispatch(
+                              addToast({
+                                message: `Appointment for ${app.patientName} cancelled.`,
+                                type: "error",
+                              }),
+                            );
                           }}
                           className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.08)] text-[#ef4444] cursor-pointer font-sans"
                         >

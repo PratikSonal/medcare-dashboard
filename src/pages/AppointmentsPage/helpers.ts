@@ -10,4 +10,4 @@ export const getWeekDays = (baseDate: Date): Date[] => {
   return days;
 };
 
-export const formatDateKey = (d: Date): string => d.toISOString().split('T')[0];
+export const formatDateKey = (d: Date): string => d.toISOString().split("T")[0];

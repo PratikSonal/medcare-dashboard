@@ -1,4 +1,4 @@
-import type { AppointmentType, Appointment } from '@/types';
+import type { AppointmentType, Appointment } from "@/features/appointments/types";
 
 export interface Props {
   defaultDate: string;

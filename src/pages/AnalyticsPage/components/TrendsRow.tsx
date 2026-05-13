@@ -24,12 +24,35 @@ export const TrendsRow = () => (
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={metricsData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
-          <XAxis dataKey="month" tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} />
+          <XAxis
+            dataKey="month"
+            tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
           <Tooltip {...ttStyle} />
           <Legend wrapperStyle={{ fontSize: "12px", color: "var(--text-secondary)" }} />
-          <Line type="monotone" dataKey="appointments" name="Appointments" stroke="#7c3bed" strokeWidth={2} dot={{ fill: "#7c3bed", r: 4 }} />
-          <Line type="monotone" dataKey="recovered" name="Recovered" stroke="#0ea5e9" strokeWidth={2} dot={{ fill: "#0ea5e9", r: 4 }} />
+          <Line
+            type="monotone"
+            dataKey="appointments"
+            name="Appointments"
+            stroke="#7c3bed"
+            strokeWidth={2}
+            dot={{ fill: "#7c3bed", r: 4 }}
+          />
+          <Line
+            type="monotone"
+            dataKey="recovered"
+            name="Recovered"
+            stroke="#0ea5e9"
+            strokeWidth={2}
+            dot={{ fill: "#0ea5e9", r: 4 }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </motion.div>
@@ -48,10 +71,27 @@ export const TrendsRow = () => (
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
-          <XAxis dataKey="month" tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} axisLine={false} tickLine={false} />
+          <XAxis
+            dataKey="month"
+            tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fill: "var(--text-tertiary)", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
           <Tooltip {...ttStyle} />
-          <Area type="monotone" dataKey="patients" name="Patients" stroke="#0ea5e9" strokeWidth={2} fill="url(#vG)" dot={false} />
+          <Area
+            type="monotone"
+            dataKey="patients"
+            name="Patients"
+            stroke="#0ea5e9"
+            strokeWidth={2}
+            fill="url(#vG)"
+            dot={false}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </motion.div>

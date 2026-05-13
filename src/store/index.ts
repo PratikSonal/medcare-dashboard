@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '@/features/auth/authSlice';
-import patientsReducer from '@/features/patients/patientsSlice';
-import uiReducer from '@/features/ui/uiSlice';
-import appointmentsReducer from '@/features/appointments/appointmentsSlice';
-import billingReducer from '@/features/billing/billingSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "@/features/auth/authSlice";
+import patientsReducer from "@/features/patients/patientsSlice";
+import uiReducer from "@/features/ui/uiSlice";
+import appointmentsReducer from "@/features/appointments/appointmentsSlice";
+import billingReducer from "@/features/billing/billingSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,8 +13,7 @@ export const store = configureStore({
     appointments: appointmentsReducer,
     billing: billingReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+  middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

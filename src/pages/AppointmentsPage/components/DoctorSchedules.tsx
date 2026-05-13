@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
-import type { Appointment } from "@/types";
+import type { Appointment } from "@/features/appointments/types";
 import { Avatar } from "@/components/ui/Avatar";
 
 interface Props {
@@ -19,9 +19,9 @@ export const DoctorSchedules = ({ doctors, todayAll }: Props) => (
       <User size={15} className="text-accent-blue" /> Doctor Schedules
     </h3>
     <div className="flex flex-col gap-[10px]">
-      {doctors.map((doc) => {
-        const docApps = todayAll.filter((a) => a.doctor === doc);
-        const confirmed = docApps.filter((a) => a.status === "Confirmed").length;
+      {doctors.map(doc => {
+        const docApps = todayAll.filter(a => a.doctor === doc);
+        const confirmed = docApps.filter(a => a.status === "Confirmed").length;
         return (
           <motion.div
             key={doc}
@@ -45,7 +45,9 @@ export const DoctorSchedules = ({ doctors, todayAll }: Props) => (
                   }}
                 />
               </div>
-              <span className="text-[10px] text-text-tertiary">{confirmed}/{docApps.length}</span>
+              <span className="text-[10px] text-text-tertiary">
+                {confirmed}/{docApps.length}
+              </span>
             </div>
           </motion.div>
         );
