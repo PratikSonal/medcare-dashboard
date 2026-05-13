@@ -8,6 +8,8 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 
 - [ ] **No tests exist** — write tests for conflict detection algorithm, billing calculations, filter pipeline (`useCountUp`, `applyFilters`, appointment overlap logic)
 - [ ] **Redux reducer has DOM side effects** — `uiSlice.ts` calls `document.documentElement.setAttribute` and reads `localStorage` inside the reducer. Move to RTK listener middleware or a top-level `useEffect` watching the theme selector.
+- [ ] **`auth.isLoading` is permanently `true` after any form submit (bug)** — `AuthForm` calls `dispatch(setLoading(true))` but the `finally` block only calls `setIsLoading(false)` (local state). `dispatch(setLoading(false))` is never called. After one submit attempt, `state.auth.isLoading` is stuck `true` forever, which breaks `ProtectedRoute`'s loading guard. Fix: remove `dispatch(setLoading)` from the form entirely — form-submit loading is local state, not global auth state.
+- [ ] **`RegisterPage` and `RegisterCard` are dead code** — the `/register` route renders `<LoginPage />` (see `routes/index.tsx:27`). `RegisterCard` never mounts. Delete `src/pages/RegisterPage/` entirely or wire the route to render it; do not ship a duplicate auth flow that never runs.
 
 ---
 
@@ -18,6 +20,9 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 - [ ] **Split `PatientModal` (250+ lines)** — extract each tab (Overview, Appointments, Billing, Prescriptions) into its own component.
 - [ ] **Split `AddPatientModal` (250+ lines)** — extract `StepIndicator`, per-step field groups, and validation into separate components.
 - [ ] **Split `AuthForm` (150+ lines)** — separate Firebase auth logic into a `useFirebaseAuth` hook; keep the component presentational.
+- [ ] **`isRegister` derived from `useLocation()` inside the form** — `AuthForm` reads `pathname === "/register"` to determine its own mode. A form component should not reach into the router. Pass `mode: "login" | "register"` as a prop from the page component, or split into two separate form components (`LoginForm` / `RegisterForm`).
+- [ ] **"Forgot password?" button does nothing** — `AuthForm` renders the button with no `onClick` handler. Dead UI ships to production. Wire up `sendPasswordResetEmail` from Firebase or remove the button.
+- [ ] **Labels not linked to inputs** — no `htmlFor`/`id` pairs on any auth form field. Clicking "Email Address" does not focus the input. This is a WCAG 2.1 Level A failure.
 - [ ] **Deduplicate error message maps** — `AuthForm` and `RegisterCard` both define Firebase error → human message maps. Extract to `src/lib/errorMessages.ts`.
 - [ ] **Deduplicate validation logic** — same email regex lives in both auth components. Extract to `src/lib/validators.ts`.
 - [ ] **Deduplicate status color logic** — defined in `lib/constants.ts`, `lib/utils.ts`, `PatientModal/constants.ts`, and `AppointmentsPage/statusConfig.tsx`. One source of truth only.
@@ -27,6 +32,10 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 ## P2 — High Quality Issues
 
 - [ ] **Unsafe Firebase error casting** — `err as { code?: string }` bypasses the type system. Replace with `FirebaseError` from `firebase/app` + `instanceof` narrowing in both `AuthForm` and `RegisterCard`.
+- [ ] **`onFocus`/`onBlur` DOM mutations in `RegisterCard`** — `e.target.style.borderColor = "#2563eb"` is imperative DOM mutation from an event handler. Use `focus:border-accent-blue` Tailwind class and a CSS variable instead.
+- [ ] **`useCallback` on `validate` and `handleSubmit` provides zero memoization** — both functions list all state variables (`name`, `email`, `password`) in their dependency arrays, causing them to re-create on every keystroke. The `useCallback` wrapper is pure noise; remove it or keep the functions as plain declarations.
+- [ ] **`setTimeout` without `clearTimeout` in `RegisterCard`** — `setTimeout(() => navigate("/dashboard"), 1500)` has no cleanup on unmount. Wrap in `useEffect` with a cleanup or use `navigate` directly after `setSuccess(true)`.
+- [ ] **Input className duplicated 3× in `AuthForm`** — the same 120-character Tailwind string is copy-pasted across name, email, and password inputs. Extract a shared `AuthInput` component that accepts `label`, `icon`, `error`, and standard input props.
 - [ ] **Derived state belongs in selectors** — `totalBilled`, `approvalRate`, filtered appointment lists, doctor rosters are computed in component bodies with `useMemo`. Move to `createSelector` (RTK) so every consumer gets the memoized result without duplicating dependency arrays.
 - [ ] **`serializableCheck: false` in store** — this disables a critical RTK guard. Identify what non-serializable value is triggering it (likely a Firebase `User` object or a `Date`) and fix the root cause.
 - [ ] **Add Error Boundaries** — no `ErrorBoundary` exists anywhere. One bad render (malformed chart data, bad mock entry) crashes the entire app to a white screen. Add at app root and around modal/chart-heavy pages.

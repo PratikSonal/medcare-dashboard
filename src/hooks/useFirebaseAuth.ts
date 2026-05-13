@@ -1,0 +1,60 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+import { auth } from "@/lib/firebase";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { setError } from "@/features/auth/authSlice";
+import { showWelcomeNotification, registerServiceWorker } from "@/lib/notifications";
+import { getFirebaseErrorMessage } from "@/lib/errorMessages";
+
+export const useFirebaseAuth = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setLocalError] = useState<string | null>(null);
+
+  const clearError = () => setLocalError(null);
+
+  const signIn = async (email: string, password: string): Promise<void> => {
+    setLocalError(null);
+    setIsLoading(true);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await registerServiceWorker();
+      showWelcomeNotification(result.user.displayName || result.user.email || "Doctor");
+      navigate("/dashboard");
+    } catch (err) {
+      const code = err instanceof FirebaseError ? err.code : "";
+      const msg = getFirebaseErrorMessage(code, "Login failed. Please try again.");
+      setLocalError(msg);
+      dispatch(setError(msg));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (name: string, email: string, password: string): Promise<void> => {
+    setLocalError(null);
+    setIsLoading(true);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(result.user, { displayName: name });
+      showWelcomeNotification(name);
+      navigate("/dashboard");
+    } catch (err) {
+      const code = err instanceof FirebaseError ? err.code : "";
+      const msg = getFirebaseErrorMessage(code, "Registration failed. Please try again.");
+      setLocalError(msg);
+      dispatch(setError(msg));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { signIn, register, isLoading, error, clearError };
+};

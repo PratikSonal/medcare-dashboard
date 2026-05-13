@@ -1,11 +1,10 @@
-import { LeftPanel } from "./components/LeftPanel";
-import { AuthForm } from "./components/AuthForm";
+import { LoginLayout } from "@/components/layout/LoginLayout";
+import { LoginForm } from "./components/LoginForm";
 
 const LoginPage = () => (
-  <div className="dot-grid min-h-screen flex bg-bg-primary">
-    <LeftPanel />
-    <AuthForm />
-  </div>
+  <LoginLayout>
+    <LoginForm />
+  </LoginLayout>
 );
 
 export default LoginPage;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity } from "lucide-react";
-import { slides } from "../constants";
+import { slides } from "./constants";
 
 const FeatureCarousel = () => {
   const [active, setActive] = useState(0);
