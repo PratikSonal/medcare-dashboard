@@ -51,7 +51,7 @@ export const DoctorPerformance = () => {
         </p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-[13px]" style={{ borderCollapse: "collapse" }}>
+        <table className="w-full text-[13px] border-collapse">
           <thead>
             <tr className="border-b border-border-primary">
               {[

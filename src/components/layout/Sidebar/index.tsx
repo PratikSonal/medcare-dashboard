@@ -24,9 +24,9 @@ export const Sidebar = () => {
       className={cn(
         "fixed left-3 top-3 z-50 flex flex-col overflow-hidden",
         "bg-bg-secondary border border-border-primary rounded-20",
+        "h-[calc(100vh-24px)] w-60",
         styles.sidebar,
       )}
-      style={{ height: "calc(100vh - 24px)", width: "240px" }}
     >
       {/* Logo */}
       <div className="flex items-center gap-[10px] px-4 py-5 shrink-0">

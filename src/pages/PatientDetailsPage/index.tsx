@@ -38,18 +38,15 @@ const PatientDetailsPage = () => {
               onClick={() => setShowAddModal(true)}
               whileHover="hover"
               initial="rest"
-              className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white"
-              style={{
-                background: "var(--gradient-primary)",
-                boxShadow: "0 4px 14px rgba(60,131,246,0.3)",
-              }}
+              className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white shadow-[0_4px_14px_rgba(60,131,246,0.3)]"
+              style={{ background: "var(--gradient-primary)" }}
             >
               <motion.span
                 variants={{
                   rest: { scale: 1 },
                   hover: { scale: 1.2, transition: { duration: 0.2, ease: "easeOut" } },
                 }}
-                style={{ display: "inline-flex" }}
+                className="inline-flex"
               >
                 <UserPlus size={15} />
               </motion.span>

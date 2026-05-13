@@ -44,6 +44,28 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 
 ---
 
+## P3 — Inline Styles (Remaining)
+
+The following inline `style` props are intentionally kept — they require dynamic values or CSS features not expressible as static Tailwind utilities:
+
+- **Gradient backgrounds** (`background: "var(--gradient-primary)"`) in `Sidebar`, `Navbar`, `Sidebar` user avatar, `AddPatientModal` submit button, `LeftPanel` logo icon, `AuthForm` submit button — Tailwind's `bg-` prefix does not support CSS gradient variables without adding a `backgroundImage` extension to the config. Add `backgroundImage: { 'gradient-primary': 'var(--gradient-primary)', ... }` to `tailwind.config.js` to unlock `bg-gradient-primary`.
+- **Dynamic color template strings** (`` `${color}18` ``, `` `3px solid ${typeColor}` ``) in `KpiCard`, `PatientModal`, `NewAppointmentModal` — value is computed at runtime from props/state.
+- **`getStatusBg()` / `getStatusColor()` returns** in `PatientGrid`, `PatientListView`, `PatientModal` — function returns a string at runtime.
+- **Dynamic slide color** (`color: slide.color`) in `LeftPanel/FeatureCarousel` — color is runtime state.
+- **Dynamic carousel dot widths** (`width: i === active ? "20px" : "6px"`) in `LeftPanel/FeatureCarousel` — value is runtime state.
+- **CSS animations** (`animation: "alert-pulse..."`, `animation: "pulse..."`, `animation: "ping-red..."`) in `CriticalBanner`, `PatientGrid` — custom keyframe names not in Tailwind's animation config.
+- **Dynamic width percentages** (progress bars) in `DoctorSchedules`, `FinancialBreakdown` — `${pct}%` computed at runtime.
+- **Dynamic positioning** (`left`, `top` from `hoveredBlock` state) in `NewAppointmentModal` — position is calculated from pointer events.
+- **`scrollbarWidth: "none"`** — not available as a Tailwind utility.
+- **Recharts / SVG attributes** (`stroke`, `fill`, `stopColor`) — SVG presentation attributes, not HTML style props.
+- **Framer Motion animated properties** — values passed directly to motion's `animate`/`style` animate from/to; extracting to className would break the animation (e.g. `BillingTable` collapsible panel `maxHeight`).
+- **`RegisterPage` hardcoded hex colors** — tracked separately in the colour token gap item above.
+- **`LoginPage/LeftPanel` residual hex values** (`#0c111d`, `#1d2839`, `#f8fafc`, `#9ca3af`, `#4b5563`) — tracked separately in the colour token gap item above. Structural layout styles have been converted; only color values remain.
+- **Dynamic claim status colors** in `BillingTable` filter buttons — `CLAIM_STATUS_COLORS[s].color` / `.bg` are runtime lookups, not static Tailwind classes.
+- **Dynamic appointment type border** in `NewAppointmentModal` — `` `3px solid ${typeColor}` `` is runtime string.
+
+---
+
 ## P3 — Import Order & Naming
 
 - [ ] **Install `eslint-plugin-simple-import-sort`** — automates import ordering so violations are caught at lint time. Add to `eslint.config.js` with rules `simple-import-sort/imports` and `simple-import-sort/exports`, then run `eslint --fix` once to sort all files. Enforced order: (1) React, (2) third-party, (3) `@/hooks` → `@/lib` → `@/components`, (4) relative, (5) `import type` last.

@@ -33,7 +33,7 @@ export const FinancialBreakdown = () => (
         Insurance coverage and billing analysis
       </p>
     </div>
-    <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 340px" }}>
+    <div className="grid grid-cols-[1fr_340px] gap-6">
       <div className="glass-card rounded-20 p-6">
         <h3 className="text-[15px] font-semibold text-text-primary mb-1">
           Provider Coverage Analysis
@@ -72,7 +72,7 @@ export const FinancialBreakdown = () => (
             </span>
           </div>
         </div>
-        <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+        <table className="w-full text-xs border-collapse">
           <thead>
             <tr className="border-b border-border-primary">
               {["Provider", "Total Billed", "Coverage", "Rate"].map(h => (

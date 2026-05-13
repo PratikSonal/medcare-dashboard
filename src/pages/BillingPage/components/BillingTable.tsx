@@ -106,7 +106,7 @@ export const BillingTable = () => {
           initial={false}
           animate={{ maxHeight: filterOpen ? 200 : 0, opacity: filterOpen ? 1 : 0 }}
           transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{ overflow: "hidden" }}
+          className="overflow-hidden"
         >
           <div className="p-4 rounded-12 bg-bg-secondary border border-border-primary mb-4">
             <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -173,7 +173,7 @@ export const BillingTable = () => {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px]" style={{ borderCollapse: "collapse" }}>
+          <table className="w-full text-[13px] border-collapse">
             <thead>
               <tr className="border-b border-border-primary">
                 {[

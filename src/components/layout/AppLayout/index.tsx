@@ -15,7 +15,7 @@ export const AppLayout = () => {
     <div className="dot-grid min-h-screen bg-bg-primary">
       <Sidebar />
       <Navbar />
-      <main className="min-h-screen" style={{ marginLeft: "264px", paddingTop: "76px" }}>
+      <main className="min-h-screen ml-[264px] pt-[76px]">
         <div className="p-6">
           <Outlet />
         </div>

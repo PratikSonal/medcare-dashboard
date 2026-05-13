@@ -34,7 +34,7 @@ export const TrendsRow = () => {
   );
 
   return (
-    <div className="grid gap-6 mb-6" style={{ gridTemplateColumns: "1fr 340px" }}>
+    <div className="grid grid-cols-[1fr_340px] gap-6 mb-6">
       {/* Patient Trends Chart */}
       <motion.div variants={item} className="glass-card rounded-20 p-6">
         <div className="flex items-center justify-between mb-6">

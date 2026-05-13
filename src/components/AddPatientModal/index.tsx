@@ -90,8 +90,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 12 }}
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[540px] bg-bg-card rounded-[24px] border border-border-primary shadow-[0_24px_80px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden"
-        style={{ maxHeight: "calc(100vh - 48px)" }}
+        className="w-full max-w-[540px] bg-bg-card rounded-[24px] border border-border-primary shadow-[0_24px_80px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden max-h-[calc(100vh-48px)]"
       >
         {/* Header */}
         <div className="py-6 px-6 pb-5 border-b border-border-primary shrink-0">

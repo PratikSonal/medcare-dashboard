@@ -23,7 +23,7 @@ export const StatCard = ({
   icon,
   color = "var(--accent-blue)",
 }: StatCardProps) => (
-  <Card hover style={{ position: "relative", overflow: "hidden" }}>
+  <Card hover className="relative overflow-hidden">
     <div
       className="absolute inset-0 opacity-5 pointer-events-none"
       style={{

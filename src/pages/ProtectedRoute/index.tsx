@@ -30,10 +30,7 @@ export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
 
   if (isLoading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center dot-grid"
-        style={{ background: "var(--bg-primary)" }}
-      >
+      <div className="min-h-screen flex items-center justify-center dot-grid bg-bg-primary">
         <div className="flex flex-col items-center gap-4">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center animate-pulse"
@@ -41,7 +38,7 @@ export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
           >
             <Activity size={20} stroke="white" strokeWidth={2} />
           </div>
-          <p className="text-sm text-[var(--text-secondary)] animate-pulse">Loading MedCare...</p>
+          <p className="text-sm text-text-secondary animate-pulse">Loading MedCare...</p>
         </div>
       </div>
     );

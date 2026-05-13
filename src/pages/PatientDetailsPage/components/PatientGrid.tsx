@@ -24,8 +24,8 @@ const PatientCard = ({ patient, onClick }: PatientCardProps) => {
         />
       )}
       <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ opacity: 0.15, background: "var(--gradient-card)" }}
+        className="absolute inset-0 pointer-events-none opacity-[0.15]"
+        style={{ background: "var(--gradient-card)" }}
       />
       <div className="relative">
         <div className="flex items-start gap-3 mb-[14px]">
@@ -101,11 +101,7 @@ export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridPro
     initial="hidden"
     animate="show"
     exit={{ opacity: 0 }}
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-      gap: "16px",
-    }}
+    className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4"
   >
     {filteredPatients.map(p => (
       <PatientCard key={p.id} patient={p} onClick={() => onPatientClick(p)} />

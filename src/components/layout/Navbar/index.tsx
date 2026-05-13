@@ -40,12 +40,11 @@ export const Navbar = () => {
   return (
     <motion.header
       className={cn(
-        "fixed top-[14px] right-5 z-40 flex items-center justify-between gap-2",
+        "fixed top-[14px] right-5 left-[284px] z-40 flex items-center justify-between gap-2",
         "bg-bg-card border border-border-primary rounded-full h-12",
         "px-4 backdrop-blur-md transition-[background,border-color,box-shadow] duration-[400ms]",
         styles.navbar,
       )}
-      style={{ left: "284px" }}
     >
       {/* Welcome section */}
       <div className="flex items-center gap-[10px]">

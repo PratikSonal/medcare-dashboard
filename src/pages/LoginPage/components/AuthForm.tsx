@@ -219,18 +219,8 @@ export const AuthForm = () => {
               <Button
                 type="submit"
                 loading={isLoading}
-                className="w-full mt-[6px]"
-                style={{
-                  padding: "13px",
-                  fontSize: "14px",
-                  borderRadius: "12px",
-                  background: "var(--gradient-primary)",
-                  border: "none",
-                  color: "white",
-                  fontWeight: 600,
-                  cursor: isLoading ? "not-allowed" : "pointer",
-                  fontFamily: "inherit",
-                }}
+                className="w-full mt-[6px] p-[13px] text-[14px] rounded-12 font-semibold"
+                style={{ background: "var(--gradient-primary)" }}
               >
                 {isRegister ? "Create Account" : "Sign In to MedCare"}
               </Button>

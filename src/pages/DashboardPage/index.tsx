@@ -183,10 +183,7 @@ const DashboardPage = () => {
         <div className="glow-line mt-6" />
       </motion.div>
 
-      <div
-        className="grid gap-4 mb-6"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-6">
         {kpis.map(k => (
           <KpiCard key={k.title} variants={item} {...k} />
         ))}

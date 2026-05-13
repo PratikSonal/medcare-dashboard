@@ -80,8 +80,7 @@ const BillingPage = () => {
 
       <motion.div
         variants={item}
-        className="grid gap-4 mb-8"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+        className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-8"
       >
         {kpis.map(k => (
           <KpiCard

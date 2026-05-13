@@ -130,7 +130,7 @@ const AppointmentsPage = () => {
                 rest: { scale: 1 },
                 hover: { scale: 1.2, transition: { duration: 0.2, ease: "easeOut" } },
               }}
-              style={{ display: "inline-flex" }}
+              className="inline-flex"
             >
               <Plus size={16} />
             </motion.span>
@@ -168,7 +168,7 @@ const AppointmentsPage = () => {
         ))}
       </motion.div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "24px" }}>
+      <div className="grid grid-cols-[1fr_320px] gap-6">
         {/* Left — Calendar + List */}
         <div>
           <WeekStrip

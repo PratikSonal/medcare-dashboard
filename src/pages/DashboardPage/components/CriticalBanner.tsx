@@ -45,8 +45,7 @@ export const CriticalBanner = () => {
             transition={{ delay: i * 0.09, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
             whileHover={{ x: 4, y: -2, transition: { duration: 0.22, ease: "easeOut" } }}
             onClick={() => dispatch(setSelectedPatient(p))}
-            className="flex items-center gap-[10px] px-[14px] py-[10px] rounded-12 bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] cursor-pointer flex-1 min-w-[220px] transition-colors duration-200 hover:bg-[rgba(239,68,68,0.14)]"
-            style={{ boxShadow: "0 2px 8px rgba(239,68,68,0.12), 0 1px 3px rgba(239,68,68,0.08)" }}
+            className="flex items-center gap-[10px] px-[14px] py-[10px] rounded-12 bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] cursor-pointer flex-1 min-w-[220px] transition-colors duration-200 hover:bg-[rgba(239,68,68,0.14)] shadow-[0_2px_8px_rgba(239,68,68,0.12),0_1px_3px_rgba(239,68,68,0.08)]"
           >
             <div className="relative w-8 h-8 shrink-0">
               <div

@@ -33,7 +33,7 @@ export const AppointmentsTable = () => {
         </button>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+        <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b border-border-primary">
               {["Time", "Patient", "Type", "Doctor", "Clinic", "Intake & Insurance", "Status"].map(
