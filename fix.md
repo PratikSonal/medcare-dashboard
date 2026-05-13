@@ -35,6 +35,15 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 
 ---
 
+## P2 — Colour Token Gaps (partially addressed)
+
+- [ ] **`rgba` alpha variants are still hardcoded** — `rgba(60,131,246,0.1)`, `rgba(14,165,233,0.12)`, `rgba(239,68,68,0.35)`, etc. appear throughout components and constants. The design system has no alpha-channel tokens. Add `--accent-blue-subtle`, `--accent-cyan-subtle`, `--accent-red-subtle`, `--accent-yellow-subtle`, `--accent-purple-subtle` CSS variables (at 10–12% opacity) and replace all inline `rgba(...)` background/border values.
+- [ ] **Design-system gaps in chart/dept colours** — `#38bdf8` (Orthopedics), `#6366f1` (Surgery/PROC_COLORS), `#a78bfa` (Nephrology), `#6b7280` (Others) are used in `departmentStats.ts`, `mockData.ts`, and `AnalyticsPage/constants.ts` with no corresponding CSS variable. Add them to the design system or replace with existing tokens.
+- [ ] **`RegisterPage` bypasses the design system entirely** — `RegisterCard.tsx` and `RegisterPage/index.tsx` use ~25 raw hex values (`#070d1a`, `#0d1b33`, `#1e3a5f`, `#2563eb`, `#fca5a5`, etc.) that have no CSS variable equivalents. This page needs to be migrated to the same dark-mode token system used by `LoginPage`.
+- [ ] **`LoginPage/LeftPanel.tsx` has residual dark-only hex values** — `#0c111d`, `#1d2839`, `#4b5563`, `#f8fafc`, `#9ca3af` are hardcoded because the panel is always rendered dark regardless of theme. These should map to the dark-mode CSS var values (`--bg-secondary`, `--border-primary`, etc.) and be expressed as `var(--x)` so a future theme change doesn't require revisiting.
+
+---
+
 ## P3 — Technical Debt
 
 - [ ] **Fragile ID generation in `AddPatientModal`** — `Math.max(...patients.map(p => parseInt(p.id.slice(1))))` silently returns `NaN` on format mismatch, `-Infinity` on empty array, and stack overflows at scale. Replace with `crypto.randomUUID()`.

@@ -69,7 +69,7 @@ const AppointmentsPage = () => {
       {
         label: "Total Today",
         value: todayAll.length,
-        color: "#3c83f6",
+        color: "var(--accent-blue)",
         icon: <Calendar size={20} />,
         desc: "All scheduled visits",
         filter: "All",
@@ -77,7 +77,7 @@ const AppointmentsPage = () => {
       {
         label: "Confirmed",
         value: todayAll.filter(a => a.status === "Confirmed").length,
-        color: "#0ea5e9",
+        color: "var(--accent-cyan)",
         icon: <CheckCircle size={20} />,
         desc: "Ready to proceed",
         filter: "Confirmed",
@@ -85,7 +85,7 @@ const AppointmentsPage = () => {
       {
         label: "Pending",
         value: todayAll.filter(a => a.status === "Pending").length,
-        color: "#f59e0b",
+        color: "var(--accent-yellow)",
         icon: <AlertCircle size={20} />,
         desc: "Awaiting confirmation",
         filter: "Pending",
@@ -93,7 +93,7 @@ const AppointmentsPage = () => {
       {
         label: "No-Shows",
         value: todayAll.filter(a => a.status === "No-Show").length,
-        color: "#ef4444",
+        color: "var(--accent-red)",
         icon: <XCircle size={20} />,
         desc: "Did not attend",
         filter: "No-Show",

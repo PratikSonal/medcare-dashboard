@@ -22,7 +22,7 @@ export const AppointmentsTable = () => {
   return (
     <motion.div variants={item} className="glass-card rounded-20 p-6">
       <div className="flex items-center gap-[10px] mb-5">
-        <Calendar size={16} className="text-[#3c83f6]" />
+        <Calendar size={16} className="text-accent-blue" />
         <h3 className="text-[15px] font-semibold text-text-primary">Today's Appointments</h3>
         <span className="text-xs text-text-tertiary">11 May 2026</span>
         <button
@@ -107,7 +107,7 @@ export const AppointmentsTable = () => {
                           background: app.intakeComplete
                             ? "rgba(14,165,233,0.1)"
                             : "rgba(245,158,11,0.1)",
-                          color: app.intakeComplete ? "#0ea5e9" : "#f59e0b",
+                          color: app.intakeComplete ? "var(--accent-cyan)" : "var(--accent-yellow)",
                         }}
                       >
                         {app.intakeComplete ? "✓ Intake" : "⏳ Intake"}
@@ -118,7 +118,7 @@ export const AppointmentsTable = () => {
                           background: app.insuranceVerified
                             ? "rgba(14,165,233,0.1)"
                             : "rgba(239,68,68,0.1)",
-                          color: app.insuranceVerified ? "#0ea5e9" : "#ef4444",
+                          color: app.insuranceVerified ? "var(--accent-cyan)" : "var(--accent-red)",
                         }}
                       >
                         {app.insuranceVerified ? "✓ Ins." : "✗ Ins."}

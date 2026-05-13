@@ -96,17 +96,17 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
                 {
                   label: "Total Billed",
                   value: `₹${record.totalAmount.toLocaleString("en-IN")}`,
-                  color: "#3c83f6",
+                  color: "var(--accent-blue)",
                 },
                 {
                   label: "Ins. Covered",
                   value: `₹${record.insuranceCovered.toLocaleString("en-IN")}`,
-                  color: "#0ea5e9",
+                  color: "var(--accent-cyan)",
                 },
                 {
                   label: "Patient Due",
                   value: `₹${record.patientDue.toLocaleString("en-IN")}`,
-                  color: record.patientDue > 50000 ? "#ef4444" : "#7c3bed",
+                  color: record.patientDue > 50000 ? "var(--accent-red)" : "var(--accent-purple)",
                 },
               ].map(f => (
                 <div

@@ -19,10 +19,10 @@ import type { FilterType } from "./types";
 import { timeAgo } from "./helpers";
 
 const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  error: { icon: <AlertCircle size={14} />, color: "#ef4444", bg: "rgba(239,68,68,0.12)" },
-  info: { icon: <Info size={14} />, color: "#3c83f6", bg: "rgba(60,131,246,0.12)" },
-  success: { icon: <CheckCircle size={14} />, color: "#0ea5e9", bg: "rgba(14,165,233,0.12)" },
-  warning: { icon: <AlertTriangle size={14} />, color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+  error: { icon: <AlertCircle size={14} />, color: "var(--accent-red)", bg: "rgba(239,68,68,0.12)" },
+  info: { icon: <Info size={14} />, color: "var(--accent-blue)", bg: "rgba(60,131,246,0.12)" },
+  success: { icon: <CheckCircle size={14} />, color: "var(--accent-cyan)", bg: "rgba(14,165,233,0.12)" },
+  warning: { icon: <AlertTriangle size={14} />, color: "var(--accent-yellow)", bg: "rgba(245,158,11,0.12)" },
 };
 
 export const Navbar = () => {

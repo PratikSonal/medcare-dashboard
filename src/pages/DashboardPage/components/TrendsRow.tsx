@@ -63,12 +63,12 @@ export const TrendsRow = () => {
           <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="pG" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3c83f6" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#3c83f6" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="rG" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--accent-cyan)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--accent-cyan)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
@@ -99,7 +99,7 @@ export const TrendsRow = () => {
               type="monotone"
               dataKey="patients"
               name="Patients"
-              stroke="#3c83f6"
+              stroke="var(--accent-blue)"
               strokeWidth={2}
               fill="url(#pG)"
               dot={false}
@@ -108,7 +108,7 @@ export const TrendsRow = () => {
               type="monotone"
               dataKey="recovered"
               name="Recovered"
-              stroke="#0ea5e9"
+              stroke="var(--accent-cyan)"
               strokeWidth={2}
               fill="url(#rG)"
               dot={false}
@@ -117,11 +117,11 @@ export const TrendsRow = () => {
         </ResponsiveContainer>
         <div className="flex items-center gap-6 mt-4">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#3c83f6]" />
+            <div className="w-3 h-3 rounded-full bg-accent-blue" />
             <span className="text-xs text-text-secondary">Total Patients</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#0ea5e9]" />
+            <div className="w-3 h-3 rounded-full bg-accent-cyan" />
             <span className="text-xs text-text-secondary">Recovered</span>
           </div>
         </div>

@@ -4,7 +4,7 @@ import type { Slide } from "./types";
 export const slides: Slide[] = [
   {
     icon: Shield,
-    color: "#3c83f6",
+    color: "var(--accent-blue)",
     stat: "99.9%",
     headline: "Always On",
     description:
@@ -12,7 +12,7 @@ export const slides: Slide[] = [
   },
   {
     icon: Zap,
-    color: "#0ea5e9",
+    color: "var(--accent-cyan)",
     stat: "170%",
     headline: "Smarter Scheduling",
     description:
@@ -20,7 +20,7 @@ export const slides: Slide[] = [
   },
   {
     icon: Brain,
-    color: "#7c3bed",
+    color: "var(--accent-purple)",
     stat: "1000+",
     headline: "AI Does the Paperwork",
     description:
@@ -36,7 +36,7 @@ export const slides: Slide[] = [
   },
   {
     icon: TrendingUp,
-    color: "#0ea5e9",
+    color: "var(--accent-cyan)",
     stat: "$5M+",
     headline: "Revenue Impact",
     description:
@@ -44,7 +44,7 @@ export const slides: Slide[] = [
   },
   {
     icon: Clock,
-    color: "#3c83f6",
+    color: "var(--accent-blue)",
     stat: "2 min",
     headline: "Instant Onboarding",
     description:

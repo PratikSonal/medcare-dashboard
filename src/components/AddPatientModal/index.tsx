@@ -23,11 +23,11 @@ const Field = ({ label, error, children }: FieldProps) => {
       <label
         className={cn(
           "block text-[11px] font-semibold uppercase tracking-[0.04em] mb-[6px]",
-          error ? "text-[#ef4444]" : "text-text-tertiary",
+          error ? "text-accent-red" : "text-text-tertiary",
         )}
       >
         {label}
-        {error && <span className="text-[#ef4444]"> *</span>}
+        {error && <span className="text-accent-red"> *</span>}
       </label>
       {children}
     </div>
@@ -44,7 +44,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
   const inputCls = (field: keyof FormData) =>
     cn(
       "w-full bg-bg-secondary rounded-[10px] py-[9px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
-      errors[field] ? "border border-[#ef4444]" : "border border-border-primary",
+      errors[field] ? "border border-accent-red" : "border border-border-primary",
     );
 
   const set =
@@ -123,22 +123,22 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
                       className={cn(
                         "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-[250ms]",
                         done
-                          ? "bg-[#0ea5e9] border-2 border-[#0ea5e9]"
+                          ? "bg-accent-cyan border-2 border-accent-cyan"
                           : active
-                            ? "bg-[rgba(60,131,246,0.12)] border-2 border-[#3c83f6]"
+                            ? "bg-[rgba(60,131,246,0.12)] border-2 border-accent-blue"
                             : "bg-bg-tertiary border-2 border-border-primary",
                       )}
                     >
                       {done ? (
                         <Check size={14} color="white" strokeWidth={3} />
                       ) : (
-                        <Icon size={14} color={active ? "#3c83f6" : "var(--text-tertiary)"} />
+                        <Icon size={14} color={active ? "var(--accent-blue)" : "var(--text-tertiary)"} />
                       )}
                     </div>
                     <span
                       className={cn(
                         "text-[10px] font-semibold tracking-[0.03em]",
-                        active ? "text-[#3c83f6]" : done ? "text-[#0ea5e9]" : "text-text-tertiary",
+                        active ? "text-accent-blue" : done ? "text-accent-cyan" : "text-text-tertiary",
                       )}
                     >
                       {s.label}
@@ -148,7 +148,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
                     <div
                       className={cn(
                         "flex-1 h-[2px] mb-[18px] mx-[6px] transition-[background] duration-[250ms]",
-                        step > i ? "bg-[#0ea5e9]" : "bg-border-primary",
+                        step > i ? "bg-accent-cyan" : "bg-border-primary",
                       )}
                     />
                   )}

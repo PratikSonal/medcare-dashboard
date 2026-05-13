@@ -105,7 +105,7 @@ export const LeftPanel = () => (
         borderRadius: "50%",
         opacity: 0.07,
         filter: "blur(80px)",
-        background: "#3c83f6",
+        background: "var(--accent-blue)",
         pointerEvents: "none",
       }}
     />
@@ -119,7 +119,7 @@ export const LeftPanel = () => (
         borderRadius: "50%",
         opacity: 0.05,
         filter: "blur(80px)",
-        background: "#0ea5e9",
+        background: "var(--accent-cyan)",
         pointerEvents: "none",
       }}
     />

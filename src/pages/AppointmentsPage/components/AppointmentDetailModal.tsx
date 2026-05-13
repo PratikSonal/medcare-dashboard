@@ -100,7 +100,7 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
                   <p
                     className={cn(
                       "text-xs font-semibold",
-                      app.intakeComplete ? "text-[#0ea5e9]" : "text-[#f59e0b]",
+                      app.intakeComplete ? "text-accent-cyan" : "text-accent-yellow",
                     )}
                   >
                     Patient Intake
@@ -121,7 +121,7 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
                   <p
                     className={cn(
                       "text-xs font-semibold",
-                      app.insuranceVerified ? "text-[#0ea5e9]" : "text-[#ef4444]",
+                      app.insuranceVerified ? "text-accent-cyan" : "text-accent-red",
                     )}
                   >
                     Insurance
@@ -134,7 +134,7 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
 
               {app.notes && (
                 <div className="p-[14px] rounded-[14px] bg-[rgba(245,158,11,0.08)] border border-[rgba(245,158,11,0.2)]">
-                  <p className="text-xs font-semibold text-[#f59e0b] mb-[6px]">⚠️ Doctor Notes</p>
+                  <p className="text-xs font-semibold text-accent-yellow mb-[6px]">⚠️ Doctor Notes</p>
                   <p className="text-[13px] text-text-secondary leading-[1.6]">{app.notes}</p>
                 </div>
               )}

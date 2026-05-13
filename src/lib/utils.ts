@@ -13,7 +13,7 @@ export const formatDate = (dateString: string): string =>
 export const getStatusColor = (status: string): string => {
   switch (status) {
     case "Active":
-      return "#0ea5e9";
+      return "var(--accent-cyan)";
     case "Critical":
       return "var(--accent-red)";
     case "Recovering":

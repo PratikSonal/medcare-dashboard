@@ -28,7 +28,7 @@ const AnalyticsPage = () => {
       rawValue: totalPatients,
       sub: "7-month period",
       icon: <Users size={20} />,
-      color: "#3c83f6",
+      color: "var(--accent-blue)",
       onClick: () => {
         dispatch(clearFilters());
         navigate("/patients");
@@ -39,7 +39,7 @@ const AnalyticsPage = () => {
       rawValue: Math.round(totalRevenue / 10000),
       format: (n: number) => `₹${(n / 10).toFixed(1)}L`,
       icon: <DollarSign size={20} />,
-      color: "#0ea5e9",
+      color: "var(--accent-cyan)",
       sub: "Nov 2025 – May 2026",
       onClick: () => navigate("/billing"),
     },
@@ -48,7 +48,7 @@ const AnalyticsPage = () => {
       rawValue: totalAppointments,
       sub: "All scheduled visits",
       icon: <Activity size={20} />,
-      color: "#7c3bed",
+      color: "var(--accent-purple)",
       onClick: () => navigate("/appointments"),
     },
     {
@@ -57,7 +57,7 @@ const AnalyticsPage = () => {
       suffix: "%",
       sub: `${totalRecovered.toLocaleString()} patients recovered`,
       icon: <TrendingUp size={20} />,
-      color: "#f59e0b",
+      color: "var(--accent-yellow)",
       onClick: () => {
         dispatch(setFilterStatus("Discharged"));
         navigate("/patients");

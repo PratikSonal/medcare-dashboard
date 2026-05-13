@@ -40,7 +40,7 @@ export const DURATIONS = [15, 30, 45, 60];
 export const TIMELINE_HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
 export const TIMELINE_LEGEND = [
-  { bg: "rgba(239,68,68,0.35)", border: "#ef4444", label: "Doctor busy" },
-  { bg: "rgba(124,59,237,0.35)", border: "#7c3bed", label: "Patient busy" },
-  { bg: "rgba(60,131,246,0.5)", border: "#3c83f6", label: "Your slot" },
+  { bg: "rgba(239,68,68,0.35)", border: "var(--accent-red)", label: "Doctor busy" },
+  { bg: "rgba(124,59,237,0.35)", border: "var(--accent-purple)", label: "Patient busy" },
+  { bg: "rgba(60,131,246,0.5)", border: "var(--accent-blue)", label: "Your slot" },
 ];

@@ -81,12 +81,12 @@ export const WeekStrip = ({
                   className="text-[9px] font-bold leading-none py-[2px] px-[5px] rounded-full text-white"
                   style={{
                     background: isSelected
-                      ? "#3c83f6"
+                      ? "var(--accent-blue)"
                       : appCount >= 6
-                        ? "#ef4444"
+                        ? "var(--accent-red)"
                         : appCount >= 4
-                          ? "#f59e0b"
-                          : "#0ea5e9",
+                          ? "var(--accent-yellow)"
+                          : "var(--accent-cyan)",
                   }}
                 >
                   {appCount}

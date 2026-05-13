@@ -102,7 +102,7 @@ export const AppointmentList = ({
                                 }),
                               );
                             }}
-                            className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(14,165,233,0.35)] bg-[rgba(14,165,233,0.1)] text-[#0ea5e9] cursor-pointer font-sans"
+                            className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(14,165,233,0.35)] bg-[rgba(14,165,233,0.1)] text-accent-cyan cursor-pointer font-sans"
                           >
                             <CheckCircle size={10} /> Confirm
                           </button>
@@ -133,7 +133,7 @@ export const AppointmentList = ({
                               }),
                             );
                           }}
-                          className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.08)] text-[#ef4444] cursor-pointer font-sans"
+                          className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.08)] text-accent-red cursor-pointer font-sans"
                         >
                           <XCircle size={10} /> Cancel
                         </button>
@@ -144,8 +144,8 @@ export const AppointmentList = ({
                         className={cn(
                           "text-[10px] py-[2px] px-[6px] rounded-[6px]",
                           app.intakeComplete
-                            ? "bg-[rgba(14,165,233,0.1)] text-[#0ea5e9] border border-[rgba(14,165,233,0.2)]"
-                            : "bg-[rgba(245,158,11,0.1)] text-[#f59e0b] border border-[rgba(245,158,11,0.2)]",
+                            ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
+                            : "bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.2)]",
                         )}
                       >
                         {app.intakeComplete ? "✓ Intake" : "⏳ Intake"}
@@ -154,8 +154,8 @@ export const AppointmentList = ({
                         className={cn(
                           "text-[10px] py-[2px] px-[6px] rounded-[6px]",
                           app.insuranceVerified
-                            ? "bg-[rgba(14,165,233,0.1)] text-[#0ea5e9] border border-[rgba(14,165,233,0.2)]"
-                            : "bg-[rgba(239,68,68,0.1)] text-[#ef4444] border border-[rgba(239,68,68,0.2)]",
+                            ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
+                            : "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.2)]",
                         )}
                       >
                         {app.insuranceVerified ? "✓ Insured" : "✗ Insurance"}

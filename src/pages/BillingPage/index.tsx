@@ -31,7 +31,7 @@ const BillingPage = () => {
       format: formatCompact,
       sub: `${records.length} records`,
       icon: <CreditCard size={20} />,
-      color: "#3c83f6",
+      color: "var(--accent-blue)",
     },
     {
       title: "Insurance Settled",
@@ -39,7 +39,7 @@ const BillingPage = () => {
       format: formatCompact,
       sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`,
       icon: <CheckCircle size={20} />,
-      color: "#0ea5e9",
+      color: "var(--accent-cyan)",
     },
     {
       title: "Patient Outstanding",
@@ -47,14 +47,14 @@ const BillingPage = () => {
       format: formatCompact,
       sub: "Across all visits",
       icon: <TrendingUp size={20} />,
-      color: "#7c3bed",
+      color: "var(--accent-purple)",
     },
     {
       title: "Pending Claims",
       rawValue: pendingRecords.length,
       sub: formatCompact(pendingAmount) + " at risk",
       icon: <Clock size={20} />,
-      color: "#f59e0b",
+      color: "var(--accent-yellow)",
     },
   ];
 

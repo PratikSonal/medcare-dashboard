@@ -77,7 +77,7 @@ const TrackRow = ({
             left: toLeft(t2m(formTime)),
             width: toWidth(duration),
             background: hasConflict ? "rgba(239,68,68,0.5)" : "rgba(60,131,246,0.5)",
-            borderLeft: `2px solid ${hasConflict ? "#ef4444" : "#3c83f6"}`,
+            borderLeft: `2px solid ${hasConflict ? "var(--accent-red)" : "var(--accent-blue)"}`,
             transition: "left 120ms ease",
           }}
         />
@@ -111,7 +111,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
   const fieldCls = (k: keyof FormState) =>
     cn(
       "w-full bg-bg-tertiary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
-      errors[k] ? "border border-[#ef4444]" : "border border-border-primary",
+      errors[k] ? "border border-accent-red" : "border border-border-primary",
     );
 
   const docBusy = appointments.filter(a => a.doctor === form.doctor && a.date === form.date);
@@ -192,7 +192,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="col-span-2">
               <label className="block text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[6px]">
-                Patient <span className="text-[#ef4444]">*</span>
+                Patient <span className="text-accent-red">*</span>
               </label>
               <select
                 value={form.patientId}
@@ -213,7 +213,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
 
             <div>
               <label className="block text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[6px]">
-                Doctor <span className="text-[#ef4444]">*</span>
+                Doctor <span className="text-accent-red">*</span>
               </label>
               <select
                 value={form.doctor}
@@ -303,7 +303,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
           <div className="flex items-center gap-2 mb-4">
             <Clock size={14} className="text-accent-cyan shrink-0" />
             <h3 className="text-sm font-semibold text-text-primary">Pick a Time</h3>
-            {errors.time && <span className="text-xs text-[#ef4444] font-normal">— required</span>}
+            {errors.time && <span className="text-xs text-accent-red font-normal">— required</span>}
           </div>
 
           {/* Timeline */}
@@ -324,7 +324,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               <TrackRow
                 label={form.doctor}
                 busy={docBusy}
-                color="#ef4444"
+                color="var(--accent-red)"
                 colorRgb="239,68,68"
                 formTime={form.time}
                 duration={form.duration}
@@ -342,7 +342,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               <TrackRow
                 label={patients.find(p => p.id === form.patientId)?.name ?? "Patient"}
                 busy={patBusy}
-                color="#7c3bed"
+                color="var(--accent-purple)"
                 colorRgb="124,59,237"
                 formTime={form.time}
                 duration={form.duration}
@@ -392,16 +392,16 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
                     "py-[6px] px-[11px] rounded-[8px] text-xs cursor-pointer font-sans transition-all duration-[120ms] relative",
                     isSel
                       ? hasC
-                        ? "border-2 border-[#ef4444] bg-[rgba(239,68,68,0.15)] text-[#ef4444] font-semibold"
-                        : "border-2 border-[#3c83f6] bg-[rgba(60,131,246,0.15)] text-[#3c83f6] font-semibold"
+                        ? "border-2 border-accent-red bg-[rgba(239,68,68,0.15)] text-accent-red font-semibold"
+                        : "border-2 border-accent-blue bg-[rgba(60,131,246,0.15)] text-accent-blue font-semibold"
                       : hasC
-                        ? "border border-border-primary bg-[rgba(239,68,68,0.06)] text-[#ef4444]"
+                        ? "border border-border-primary bg-[rgba(239,68,68,0.06)] text-accent-red"
                         : "border border-border-primary bg-bg-tertiary text-text-secondary",
                   )}
                 >
                   {slot}
                   {hasC && (
-                    <span className="absolute -top-[3px] -right-[3px] w-2 h-2 rounded-full bg-[#ef4444] border-[1.5px] border-bg-secondary" />
+                    <span className="absolute -top-[3px] -right-[3px] w-2 h-2 rounded-full bg-accent-red border-[1.5px] border-bg-secondary" />
                   )}
                 </button>
               );
@@ -416,8 +416,8 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               className="mt-[14px] p-[14px] rounded-[12px] bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.25)]"
             >
               <div className="flex items-center gap-[7px] mb-2">
-                <AlertTriangle size={14} className="text-[#ef4444] shrink-0" />
-                <p className="text-[13px] font-semibold text-[#ef4444]">Conflict at {form.time}</p>
+                <AlertTriangle size={14} className="text-accent-red shrink-0" />
+                <p className="text-[13px] font-semibold text-accent-red">Conflict at {form.time}</p>
               </div>
               {selConflict.doctor && (
                 <p className="text-xs text-text-secondary pl-[21px] mb-1">
@@ -445,8 +445,8 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
               animate={{ opacity: 1, y: 0 }}
               className="mt-[14px] py-3 px-[14px] rounded-[12px] bg-[rgba(14,165,233,0.08)] border border-[rgba(14,165,233,0.2)] flex items-center gap-2"
             >
-              <CheckCircle2 size={14} className="text-[#0ea5e9] shrink-0" />
-              <p className="text-xs text-[#0ea5e9] font-medium">
+              <CheckCircle2 size={14} className="text-accent-cyan shrink-0" />
+              <p className="text-xs text-accent-cyan font-medium">
                 {form.time} is available — no conflicts detected
               </p>
             </motion.div>

@@ -29,9 +29,9 @@ export const BLOOD_GROUPS: BloodGroup[] = ["A+", "A-", "B+", "B-", "AB+", "AB-",
 export const STATUSES: PatientStatus[] = ["Active", "Critical", "Recovering", "Discharged"];
 
 export const STATUS_COLORS: Record<PatientStatus, string> = {
-  Active: "#0ea5e9",
-  Critical: "#ef4444",
-  Recovering: "#f59e0b",
+  Active: "var(--accent-cyan)",
+  Critical: "var(--accent-red)",
+  Recovering: "var(--accent-yellow)",
   Discharged: "var(--text-tertiary)",
 };
 

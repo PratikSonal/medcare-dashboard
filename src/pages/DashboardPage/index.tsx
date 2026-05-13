@@ -59,7 +59,7 @@ const DashboardPage = () => {
       change: "12% this month",
       positive: true,
       icon: <Users size={20} />,
-      color: "#3c83f6",
+      color: "var(--accent-blue)",
       onClick: () => {
         dispatch(clearFilters());
         navigate("/patients");
@@ -71,7 +71,7 @@ const DashboardPage = () => {
       change: "8% this week",
       positive: true,
       icon: <Activity size={20} />,
-      color: "#0ea5e9",
+      color: "var(--accent-cyan)",
       onClick: () => {
         dispatch(setFilterStatus("Active"));
         navigate("/patients");
@@ -83,7 +83,7 @@ const DashboardPage = () => {
       change: "2 new today",
       positive: false,
       icon: <AlertTriangle size={20} />,
-      color: "#ef4444",
+      color: "var(--accent-red)",
       onClick: () => {
         dispatch(setFilterStatus("Critical"));
         navigate("/patients");
@@ -95,7 +95,7 @@ const DashboardPage = () => {
       change: "vs 6 yesterday",
       positive: true,
       icon: <Calendar size={20} />,
-      color: "#7c3bed",
+      color: "var(--accent-purple)",
       onClick: () => navigate("/appointments"),
     },
     {
@@ -103,7 +103,7 @@ const DashboardPage = () => {
       value: `₹${(totalBilled / 100000).toFixed(1)}L`,
       sub: `${pendingClaims} claims pending`,
       icon: <CreditCard size={20} />,
-      color: "#f59e0b",
+      color: "var(--accent-yellow)",
       onClick: () => navigate("/billing"),
     },
   ];
@@ -114,7 +114,7 @@ const DashboardPage = () => {
       rawValue: dischargedCount,
       sub: "Patients released",
       icon: <UserCheck size={20} />,
-      color: "#9ca3af",
+      color: "var(--text-tertiary)",
       onClick: () => {
         dispatch(setFilterStatus("Discharged"));
         navigate("/patients");
@@ -125,7 +125,7 @@ const DashboardPage = () => {
       rawValue: recoveringCount,
       sub: "In recovery phase",
       icon: <Activity size={20} />,
-      color: "#f59e0b",
+      color: "var(--accent-yellow)",
       onClick: () => {
         dispatch(setFilterStatus("Recovering"));
         navigate("/patients");
@@ -136,14 +136,14 @@ const DashboardPage = () => {
       rawValue: departmentCount,
       sub: "Active specialties",
       icon: <Building2 size={20} />,
-      color: "#7c3bed",
+      color: "var(--accent-purple)",
     },
     {
       title: "Doctors",
       rawValue: doctorCount,
       sub: "Attending physicians",
       icon: <Users size={20} />,
-      color: "#3c83f6",
+      color: "var(--accent-blue)",
     },
     {
       title: "Claim Approval",
@@ -151,7 +151,7 @@ const DashboardPage = () => {
       suffix: "%",
       sub: "Insurance approved",
       icon: <ShieldCheck size={20} />,
-      color: "#0ea5e9",
+      color: "var(--accent-cyan)",
     },
   ];
 

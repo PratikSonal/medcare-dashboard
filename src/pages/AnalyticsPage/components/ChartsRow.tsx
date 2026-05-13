@@ -50,7 +50,7 @@ export const ChartsRow = () => (
             {metricsData.map((_, i) => (
               <Cell
                 key={i}
-                fill={i === metricsData.length - 1 ? "#3c83f6" : "rgba(60,131,246,0.35)"}
+                fill={i === metricsData.length - 1 ? "var(--accent-blue)" : "rgba(60,131,246,0.35)"}
               />
             ))}
           </Bar>

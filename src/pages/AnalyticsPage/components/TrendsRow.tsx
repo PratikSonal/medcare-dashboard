@@ -41,17 +41,17 @@ export const TrendsRow = () => (
             type="monotone"
             dataKey="appointments"
             name="Appointments"
-            stroke="#7c3bed"
+            stroke="var(--accent-purple)"
             strokeWidth={2}
-            dot={{ fill: "#7c3bed", r: 4 }}
+            dot={{ fill: "var(--accent-purple)", r: 4 }}
           />
           <Line
             type="monotone"
             dataKey="recovered"
             name="Recovered"
-            stroke="#0ea5e9"
+            stroke="var(--accent-cyan)"
             strokeWidth={2}
-            dot={{ fill: "#0ea5e9", r: 4 }}
+            dot={{ fill: "var(--accent-cyan)", r: 4 }}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -66,8 +66,8 @@ export const TrendsRow = () => (
         <AreaChart data={metricsData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="vG" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--accent-cyan)" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="var(--accent-cyan)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
@@ -87,7 +87,7 @@ export const TrendsRow = () => (
             type="monotone"
             dataKey="patients"
             name="Patients"
-            stroke="#0ea5e9"
+            stroke="var(--accent-cyan)"
             strokeWidth={2}
             fill="url(#vG)"
             dot={false}

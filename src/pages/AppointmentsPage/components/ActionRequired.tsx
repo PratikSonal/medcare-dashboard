@@ -42,7 +42,7 @@ export const ActionRequired = ({ todayAll }: ActionRequiredProps) => {
                       }),
                     );
                   }}
-                  className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[rgba(245,158,11,0.1)] text-[#f59e0b] border border-[rgba(245,158,11,0.3)] cursor-pointer font-sans"
+                  className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.3)] cursor-pointer font-sans"
                 >
                   <ClipboardCheck size={10} /> Complete Intake
                 </button>
@@ -58,7 +58,7 @@ export const ActionRequired = ({ todayAll }: ActionRequiredProps) => {
                       }),
                     );
                   }}
-                  className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[rgba(239,68,68,0.1)] text-[#ef4444] border border-[rgba(239,68,68,0.3)] cursor-pointer font-sans"
+                  className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.3)] cursor-pointer font-sans"
                 >
                   <ShieldCheck size={10} /> Verify Insurance
                 </button>

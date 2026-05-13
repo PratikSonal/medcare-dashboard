@@ -98,16 +98,16 @@ export const ChartsRow = () => {
                 dataKey="approved"
                 name="Approved"
                 stackId="a"
-                fill="#0ea5e9"
+                fill="var(--accent-cyan)"
                 radius={[0, 0, 0, 0]}
               />
-              <Bar dataKey="partial" name="Partial" stackId="a" fill="#7c3bed" />
-              <Bar dataKey="pending" name="Pending" stackId="a" fill="#f59e0b" />
+              <Bar dataKey="partial" name="Partial" stackId="a" fill="var(--accent-purple)" />
+              <Bar dataKey="pending" name="Pending" stackId="a" fill="var(--accent-yellow)" />
               <Bar
                 dataKey="denied"
                 name="Denied"
                 stackId="a"
-                fill="#ef4444"
+                fill="var(--accent-red)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

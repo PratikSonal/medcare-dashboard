@@ -45,13 +45,13 @@ export const FinancialBreakdown = () => (
           <div className="flex justify-between mb-[10px]">
             <div>
               <span className="text-[11px] text-text-tertiary">Insurance Settled</span>
-              <p className="text-[17px] font-bold text-[#0ea5e9] mt-[2px]">
+              <p className="text-[17px] font-bold text-accent-cyan mt-[2px]">
                 {formatCompact(insuranceCovered)}
               </p>
             </div>
             <div className="text-right">
               <span className="text-[11px] text-text-tertiary">Patient Outstanding</span>
-              <p className="text-[17px] font-bold text-[#ef4444] mt-[2px]">
+              <p className="text-[17px] font-bold text-accent-red mt-[2px]">
                 {formatCompact(patientDue)}
               </p>
             </div>
@@ -61,12 +61,12 @@ export const FinancialBreakdown = () => (
               className="h-full rounded-full"
               style={{
                 width: `${coveragePct}%`,
-                background: "linear-gradient(90deg, #0ea5e9, #3c83f6)",
+                background: "linear-gradient(90deg, var(--accent-cyan), var(--accent-blue))",
               }}
             />
           </div>
           <div className="flex justify-between mt-[6px]">
-            <span className="text-[11px] text-[#0ea5e9] font-semibold">{coveragePct}% covered</span>
+            <span className="text-[11px] text-accent-cyan font-semibold">{coveragePct}% covered</span>
             <span className="text-[11px] text-text-tertiary">
               Total: {formatCompact(totalBilled)}
             </span>
@@ -103,14 +103,14 @@ export const FinancialBreakdown = () => (
                       className="h-full rounded-full"
                       style={{
                         width: `${p.rate}%`,
-                        background: p.rate > 60 ? "#0ea5e9" : p.rate > 30 ? "#f59e0b" : "#ef4444",
+                        background: p.rate > 60 ? "var(--accent-cyan)" : p.rate > 30 ? "var(--accent-yellow)" : "var(--accent-red)",
                       }}
                     />
                   </div>
                 </td>
                 <td
                   className="px-2 py-[10px] font-bold"
-                  style={{ color: p.rate > 60 ? "#0ea5e9" : p.rate > 30 ? "#f59e0b" : "#ef4444" }}
+                  style={{ color: p.rate > 60 ? "var(--accent-cyan)" : p.rate > 30 ? "var(--accent-yellow)" : "var(--accent-red)" }}
                 >
                   {p.rate}%
                 </td>

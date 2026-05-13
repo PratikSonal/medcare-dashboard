@@ -312,8 +312,8 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                               className={cn(
                                 "text-[10px] py-[2px] px-[6px] rounded-[6px]",
                                 app.intakeComplete
-                                  ? "bg-[rgba(14,165,233,0.1)] text-[#0ea5e9] border border-[rgba(14,165,233,0.2)]"
-                                  : "bg-[rgba(245,158,11,0.1)] text-[#f59e0b] border border-[rgba(245,158,11,0.2)]",
+                                  ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
+                                  : "bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.2)]",
                               )}
                             >
                               {app.intakeComplete ? "✓ Intake" : "⏳ Intake Pending"}
@@ -322,8 +322,8 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                               className={cn(
                                 "text-[10px] py-[2px] px-[6px] rounded-[6px]",
                                 app.insuranceVerified
-                                  ? "bg-[rgba(14,165,233,0.1)] text-[#0ea5e9] border border-[rgba(14,165,233,0.2)]"
-                                  : "bg-[rgba(239,68,68,0.1)] text-[#ef4444] border border-[rgba(239,68,68,0.2)]",
+                                  ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
+                                  : "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.2)]",
                               )}
                             >
                               {app.insuranceVerified
@@ -335,7 +335,7 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                             </span>
                           </div>
                           {app.notes && (
-                            <p className="text-[11px] text-[#f59e0b] mt-2 py-[6px] px-[10px] rounded-[8px] bg-[rgba(245,158,11,0.08)]">
+                            <p className="text-[11px] text-accent-yellow mt-2 py-[6px] px-[10px] rounded-[8px] bg-[rgba(245,158,11,0.08)]">
                               ⚠️ {app.notes}
                             </p>
                           )}
@@ -372,8 +372,8 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                           className={cn(
                             "ml-auto text-[11px] font-semibold py-[3px] px-[10px] rounded-[8px]",
                             billing.insuranceCovered > 0
-                              ? "bg-[rgba(14,165,233,0.1)] text-[#0ea5e9]"
-                              : "bg-[rgba(239,68,68,0.1)] text-[#ef4444]",
+                              ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan"
+                              : "bg-[rgba(239,68,68,0.1)] text-accent-red",
                           )}
                         >
                           {billing.insuranceCovered > 0 ? "Covered" : "Unverified"}
@@ -511,7 +511,7 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                                   "text-[11px] py-[2px] px-2 rounded-[6px]",
                                   rx.refillsLeft > 0
                                     ? "bg-[rgba(60,131,246,0.1)] text-accent-blue"
-                                    : "bg-[rgba(245,158,11,0.1)] text-[#f59e0b]",
+                                    : "bg-[rgba(245,158,11,0.1)] text-accent-yellow",
                                 )}
                               >
                                 {rx.refillsLeft > 0
@@ -521,7 +521,7 @@ export const PatientModal = ({ patient, onClose }: Props) => {
                             )}
                           </div>
                           {rx.notes && (
-                            <p className="text-[11px] text-[#f59e0b] mt-[6px] py-[6px] px-[10px] rounded-[8px] bg-[rgba(245,158,11,0.08)]">
+                            <p className="text-[11px] text-accent-yellow mt-[6px] py-[6px] px-[10px] rounded-[8px] bg-[rgba(245,158,11,0.08)]">
                               ⚠️ {rx.notes}
                             </p>
                           )}
