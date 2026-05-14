@@ -1,5 +1,7 @@
 import type { Variants } from "framer-motion";
 
+export const TODAY_DATE = "2026-05-11";
+
 export const container: Variants = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.08 } },

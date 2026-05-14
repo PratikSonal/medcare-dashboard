@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient, setFilterStatus } from "@/features/patients/patientsSlice";
 import { item } from "../constants";
 
-export const CriticalBanner = () => {
+export const CriticalBanner = (): React.ReactElement | null => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const patients = useAppSelector(s => s.patients.patients);
@@ -27,6 +27,7 @@ export const CriticalBanner = () => {
           Immediate Attention Required
         </p>
         <button
+          type="button"
           onClick={() => {
             dispatch(setFilterStatus("Critical"));
             navigate("/patients");

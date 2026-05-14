@@ -18,11 +18,13 @@ import { getStatusBg, getStatusColor } from "@/features/patients/utils";
 import { cn } from "@/utils";
 import { item } from "../constants";
 
-export const TrendsRow = () => {
+type ChartPeriod = "3M" | "6M" | "All";
+
+export const TrendsRow = (): React.ReactElement => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const patients = useAppSelector(s => s.patients.patients);
-  const [chartPeriod, setChartPeriod] = useState<"3M" | "6M" | "All">("All");
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("All");
 
   const chartData = useMemo(
     () =>
@@ -35,8 +37,7 @@ export const TrendsRow = () => {
   );
 
   return (
-    <div className="grid grid-cols-[1fr_340px] gap-6 mb-6">
-      {/* Patient Trends Chart */}
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-6">
       <motion.div variants={item} className="glass-card rounded-20 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -44,18 +45,19 @@ export const TrendsRow = () => {
             <p className="text-[13px] text-text-secondary mt-[2px]">Monthly overview</p>
           </div>
           <div className="flex gap-[6px]">
-            {(["3M", "6M", "All"] as const).map(p => (
+            {(["3M", "6M", "All"] as const).map(period => (
               <button
-                key={p}
-                onClick={() => setChartPeriod(p)}
+                key={period}
+                type="button"
+                onClick={() => setChartPeriod(period)}
                 className={cn(
                   "px-3 py-[5px] rounded-[8px] text-xs font-medium cursor-pointer font-sans transition-all duration-200 border-0",
-                  chartPeriod === p
+                  chartPeriod === period
                     ? "bg-accent-blue text-white"
                     : "bg-bg-tertiary text-text-secondary",
                 )}
               >
-                {p}
+                {period}
               </button>
             ))}
           </div>
@@ -63,11 +65,11 @@ export const TrendsRow = () => {
         <ResponsiveContainer width="100%" height={260}>
           <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
             <defs>
-              <linearGradient id="pG" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="patientGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="rG" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="recoveredGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--accent-cyan)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="var(--accent-cyan)" stopOpacity={0} />
               </linearGradient>
@@ -102,7 +104,7 @@ export const TrendsRow = () => {
               name="Patients"
               stroke="var(--accent-blue)"
               strokeWidth={2}
-              fill="url(#pG)"
+              fill="url(#patientGradient)"
               dot={false}
             />
             <Area
@@ -111,7 +113,7 @@ export const TrendsRow = () => {
               name="Recovered"
               stroke="var(--accent-cyan)"
               strokeWidth={2}
-              fill="url(#rG)"
+              fill="url(#recoveredGradient)"
               dot={false}
             />
           </AreaChart>
@@ -128,11 +130,11 @@ export const TrendsRow = () => {
         </div>
       </motion.div>
 
-      {/* Recent Patients */}
       <motion.div variants={item} className="glass-card rounded-20 p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-text-primary">Recent Patients</h2>
           <button
+            type="button"
             onClick={() => {
               dispatch(clearFilters());
               navigate("/patients");
@@ -154,8 +156,7 @@ export const TrendsRow = () => {
               className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-12 cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary"
             >
               <div
-                className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
-                style={{ background: "var(--gradient-primary)" }}
+                className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 [background:var(--gradient-primary)]"
               >
                 {patient.avatar}
               </div>

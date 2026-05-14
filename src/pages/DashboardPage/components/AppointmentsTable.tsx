@@ -6,16 +6,16 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/features/appointments/constants";
 import { cn } from "@/utils";
-import { item } from "../constants";
+import { item, TODAY_DATE } from "../constants";
 
-export const AppointmentsTable = () => {
+export const AppointmentsTable = (): React.ReactElement => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const patients = useAppSelector(s => s.patients.patients);
   const appointments = useAppSelector(s => s.appointments.appointments);
 
   const todayAppointments = useMemo(
-    () => appointments.filter(a => a.date === "2026-05-11"),
+    () => appointments.filter(a => a.date === TODAY_DATE),
     [appointments],
   );
 
@@ -26,6 +26,7 @@ export const AppointmentsTable = () => {
         <h3 className="text-[15px] font-semibold text-text-primary">Today's Appointments</h3>
         <span className="text-xs text-text-tertiary">11 May 2026</span>
         <button
+          type="button"
           onClick={() => navigate("/appointments")}
           className="ml-auto flex items-center gap-[3px] text-xs text-accent-blue bg-transparent border-0 cursor-pointer font-sans font-medium"
         >
@@ -50,9 +51,11 @@ export const AppointmentsTable = () => {
           </thead>
           <tbody>
             {todayAppointments.map((app, i) => {
-              const sc = APPT_STATUS_COLORS[app.status];
+              const statusStyle = APPT_STATUS_COLORS[app.status];
               const typeColor = APPT_TYPE_COLORS[app.type] || "var(--accent-blue)";
               const patient = patients.find(p => p.id === app.patientId);
+              const intakeStyle = app.intakeComplete ? APPT_STATUS_COLORS.Completed : APPT_STATUS_COLORS.Pending;
+              const insuranceStyle = app.insuranceVerified ? APPT_STATUS_COLORS.Completed : APPT_STATUS_COLORS["No-Show"];
               return (
                 <motion.tr
                   key={app.id}
@@ -68,10 +71,7 @@ export const AppointmentsTable = () => {
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2">
-                      <div
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                        style={{ background: "var(--gradient-primary)" }}
-                      >
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 [background:var(--gradient-primary)]">
                         {app.patientAvatar}
                       </div>
                       <span className="font-medium text-text-primary whitespace-nowrap">
@@ -103,23 +103,13 @@ export const AppointmentsTable = () => {
                     <div className="flex gap-1">
                       <span
                         className="flex items-center gap-[3px] text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
-                        style={{
-                          background: app.intakeComplete
-                            ? "rgba(14,165,233,0.1)"
-                            : "rgba(245,158,11,0.1)",
-                          color: app.intakeComplete ? "var(--accent-cyan)" : "var(--accent-yellow)",
-                        }}
+                        style={{ background: intakeStyle.bg, color: intakeStyle.color }}
                       >
                         {app.intakeComplete ? <><Check size={9} /> Intake</> : <><Clock size={9} /> Intake</>}
                       </span>
                       <span
                         className="flex items-center gap-[3px] text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
-                        style={{
-                          background: app.insuranceVerified
-                            ? "rgba(14,165,233,0.1)"
-                            : "rgba(239,68,68,0.1)",
-                          color: app.insuranceVerified ? "var(--accent-cyan)" : "var(--accent-red)",
-                        }}
+                        style={{ background: insuranceStyle.bg, color: insuranceStyle.color }}
                       >
                         {app.insuranceVerified ? <><Check size={9} /> Ins.</> : <><X size={9} /> Ins.</>}
                       </span>
@@ -128,7 +118,7 @@ export const AppointmentsTable = () => {
                   <td className="px-3 py-3">
                     <span
                       className="text-[11px] font-medium px-2 py-[3px] rounded-[8px] whitespace-nowrap"
-                      style={{ background: sc.bg, color: sc.color }}
+                      style={{ background: statusStyle.bg, color: statusStyle.color }}
                     >
                       {app.status}
                     </span>
