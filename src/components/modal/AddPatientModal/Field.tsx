@@ -13,8 +13,8 @@ export const Field = memo(({ label, error, children }: FieldProps): React.ReactE
       )}
     >
       {label}
-      {error && <span className="text-accent-red"> *</span>}
     </label>
     {children}
+    {error && <p className="text-[11px] text-accent-red mt-1">{error}</p>}
   </div>
 ));

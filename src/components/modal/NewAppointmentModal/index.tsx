@@ -1,15 +1,18 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle2, Clock,X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { addAppointment } from "@/features/appointments/appointmentsSlice";
 import type { Appointment } from "@/features/appointments/types";
 import type { Patient } from "@/features/patients/types";
-import { addNotification,addToast } from "@/features/ui/uiSlice";
-import { useAppDispatch,useAppSelector } from "@/hooks/useAppDispatch";
+import { addNotification, addToast } from "@/features/ui/uiSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { type NewAppointmentFormData,newAppointmentSchema } from "@/lib/validators";
 import type { RootState } from "@/store";
 import { cn } from "@/utils";
-import { minToTime,t2m } from "@/utils/time";
+import { minToTime, t2m } from "@/utils/time";
 
 import {
   DURATIONS,
@@ -21,15 +24,8 @@ import {
   TSTART,
   TYPES,
 } from "./constants";
-import {
-  buildAppointment,
-  getConflict,
-  getFieldCls,
-  toLeft,
-  toWidth,
-  validateForm,
-} from "./helpers";
-import type { FormState, Props, TrackRowProps } from "./types";
+import { buildAppointment, getConflict, getFieldCls, toLeft, toWidth } from "./helpers";
+import type { Props, TrackRowProps } from "./types";
 
 const TrackRow = memo(({
   label,
@@ -52,11 +48,7 @@ const TrackRow = memo(({
         <div
           key={a.id}
           onMouseEnter={e =>
-            onBlockHover({
-              x: e.clientX,
-              y: e.clientY,
-              text: `${a.patientName} · ${a.type} · ${a.duration}min`,
-            })
+            onBlockHover({ x: e.clientX, y: e.clientY, text: `${a.patientName} · ${a.type} · ${a.duration}min` })
           }
           onMouseLeave={() => onBlockHover(null)}
           className="absolute top-0 bottom-0 flex items-center pl-1 overflow-hidden"
@@ -67,10 +59,7 @@ const TrackRow = memo(({
             borderLeft: `2px solid ${color}`,
           }}
         >
-          <span
-            className="text-[9px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis"
-            style={{ color }}
-          >
+          <span className="text-[9px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" style={{ color }}>
             {a.patientName.split(" ")[0]}
           </span>
         </div>
@@ -94,7 +83,7 @@ const TrackRow = memo(({
 interface DurationButtonProps {
   duration: number;
   isSelected: boolean;
-  onSelect: (duration: number) => void;
+  onSelect: (d: number) => void;
 }
 
 const DurationButton = memo(({ duration, isSelected, onSelect }: DurationButtonProps): React.ReactElement => {
@@ -152,21 +141,29 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
   const patients = useAppSelector((s: RootState) => s.patients.patients);
   const appointments = useAppSelector((s: RootState) => s.appointments.appointments);
 
-  const [form, setForm] = useState<FormState>({
-    patientId: "",
-    doctor: "",
-    date: defaultDate,
-    type: "Follow-up",
-    duration: 30,
-    time: "",
-    notes: "",
-  });
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, boolean>>>({});
   const [hoveredBlock, setHoveredBlock] = useState<{ x: number; y: number; text: string } | null>(null);
 
-  const updateField = useCallback((k: keyof FormState, v: FormState[keyof FormState]): void => {
-    setForm(f => ({ ...f, [k]: v }));
-  }, []);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    clearErrors,
+    formState: { errors },
+  } = useForm<NewAppointmentFormData>({
+    resolver: zodResolver(newAppointmentSchema),
+    defaultValues: {
+      patientId: "",
+      doctor: "",
+      date: defaultDate,
+      type: "Follow-up",
+      duration: 30,
+      time: "",
+      notes: "",
+    },
+  });
+
+  const form = watch();
 
   const docBusy = useMemo(
     () => appointments.filter((a: Appointment) => a.doctor === form.doctor && a.date === form.date),
@@ -202,66 +199,36 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
     const rawMin = TSTART + ((e.clientX - rect.left) / rect.width) * TDUR;
     const snapped = Math.round(rawMin / 30) * 30;
     const clamped = Math.max(TSTART, Math.min(TEND - form.duration, snapped));
-    updateField("time", minToTime(clamped));
-    setErrors(err => ({ ...err, time: false }));
-  }, [form.duration, updateField]);
+    setValue("time", minToTime(clamped));
+    clearErrors("time");
+  }, [form.duration, setValue, clearErrors]);
 
-  const handleSubmit = useCallback((): void => {
-    const errs = validateForm(form);
-    setErrors(errs);
-    if (Object.keys(errs).length) return;
+  const handleSelectDuration = useCallback((duration: number) => {
+    setValue("duration", duration);
+  }, [setValue]);
 
-    const appointment = buildAppointment(form, patients, appointments);
-    const pt = patients.find((patient: Patient) => patient.id === form.patientId)!;
-    dispatch(addAppointment(appointment));
-    dispatch(
-      addToast({
-        message: `Appointment booked for ${pt.name} with ${form.doctor} at ${form.time}`,
-        type: "success",
-      }),
-    );
-    dispatch(
-      addNotification({
-        title: "Appointment Scheduled",
-        message: `${pt.name} with ${form.doctor} at ${form.time} on ${form.date}.`,
-        type: "success",
-      }),
-    );
-    onClose();
-  }, [form, patients, appointments, dispatch, onClose]);
+  const handleSelectSlot = useCallback((slot: string) => {
+    setValue("time", slot);
+    clearErrors("time");
+  }, [setValue, clearErrors]);
 
   const handleStopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
 
-  const handlePatientChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateField("patientId", e.target.value);
-    setErrors(err => ({ ...err, patientId: false }));
-  }, [updateField]);
-
-  const handleDoctorChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateField("doctor", e.target.value);
-    setErrors(err => ({ ...err, doctor: false }));
-  }, [updateField]);
-
-  const handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateField("date", e.target.value);
-  }, [updateField]);
-
-  const handleTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateField("type", e.target.value as FormState["type"]);
-  }, [updateField]);
-
-  const handleNotesChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateField("notes", e.target.value);
-  }, [updateField]);
-
-  const handleSelectDuration = useCallback((duration: number) => {
-    updateField("duration", duration);
-  }, [updateField]);
-
-  const handleSelectSlot = useCallback((slot: string) => {
-    updateField("time", slot);
-    setErrors(err => ({ ...err, time: false }));
-  }, [updateField]);
+  const onSubmit = handleSubmit((data: NewAppointmentFormData) => {
+    const appointment = buildAppointment(data, patients, appointments);
+    const pt = patients.find((patient: Patient) => patient.id === data.patientId)!;
+    dispatch(addAppointment(appointment));
+    dispatch(addToast({
+      message: `Appointment booked for ${pt.name} with ${data.doctor} at ${data.time}`,
+      type: "success",
+    }));
+    dispatch(addNotification({
+      title: "Appointment Scheduled",
+      message: `${pt.name} with ${data.doctor} at ${data.time} on ${data.date}.`,
+      type: "success",
+    }));
+    onClose();
+  });
 
   return (
     <motion.div
@@ -283,9 +250,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
         <div className="py-[22px] px-6 border-b border-border-primary flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-[18px] font-bold text-text-primary">New Appointment</h2>
-            <p className="text-[13px] text-text-secondary mt-[2px]">
-              Schedule a visit and check for conflicts
-            </p>
+            <p className="text-[13px] text-text-secondary mt-[2px]">Schedule a visit and check for conflicts</p>
           </div>
           <button
             type="button"
@@ -297,70 +262,53 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto flex-1 p-6">
-          {/* Form */}
+        <form onSubmit={onSubmit} className="overflow-y-auto flex-1 p-6">
+          {/* Form fields */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="col-span-2">
               <label className="block text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[6px]">
                 Patient <span className="text-accent-red">*</span>
               </label>
-              <select
-                value={form.patientId}
-                onChange={handlePatientChange}
-                className={getFieldCls("patientId", errors)}
-              >
+              <select {...register("patientId")} className={getFieldCls(!!errors.patientId)}>
                 <option value="">Select patient…</option>
                 {patients.map(patient => (
-                  <option key={patient.id} value={patient.id}>
-                    {patient.name}
-                  </option>
+                  <option key={patient.id} value={patient.id}>{patient.name}</option>
                 ))}
               </select>
+              {errors.patientId && (
+                <p className="text-[11px] text-accent-red mt-1">{errors.patientId.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[6px]">
                 Doctor <span className="text-accent-red">*</span>
               </label>
-              <select
-                value={form.doctor}
-                onChange={handleDoctorChange}
-                className={getFieldCls("doctor", errors)}
-              >
+              <select {...register("doctor")} className={getFieldCls(!!errors.doctor)}>
                 <option value="">Select doctor…</option>
                 {doctors.map(doctor => (
-                  <option key={doctor} value={doctor}>
-                    {doctor}
-                  </option>
+                  <option key={doctor} value={doctor}>{doctor}</option>
                 ))}
               </select>
+              {errors.doctor && (
+                <p className="text-[11px] text-accent-red mt-1">{errors.doctor.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[6px]">
                 Date
               </label>
-              <input
-                type="date"
-                value={form.date}
-                onChange={handleDateChange}
-                className={getFieldCls("date", errors)}
-              />
+              <input type="date" {...register("date")} className={getFieldCls(false)} />
             </div>
 
             <div>
               <label className="block text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] mb-[6px]">
                 Appointment Type
               </label>
-              <select
-                value={form.type}
-                onChange={handleTypeChange}
-                className={getFieldCls("type", errors)}
-              >
+              <select {...register("type")} className={getFieldCls(false)}>
                 {TYPES.map(apptType => (
-                  <option key={apptType} value={apptType}>
-                    {apptType}
-                  </option>
+                  <option key={apptType} value={apptType}>{apptType}</option>
                 ))}
               </select>
             </div>
@@ -386,8 +334,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
                 Notes (optional)
               </label>
               <textarea
-                value={form.notes}
-                onChange={handleNotesChange}
+                {...register("notes")}
                 placeholder="Optional clinical notes…"
                 rows={2}
                 className="w-full bg-bg-tertiary border border-border-primary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border resize-none leading-[1.5] focus:border-accent-blue transition-colors duration-150"
@@ -401,7 +348,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
           <div className="flex items-center gap-2 mb-4">
             <Clock size={14} className="text-accent-cyan shrink-0" />
             <h3 className="text-sm font-semibold text-text-primary">Pick a Time</h3>
-            {errors.time && <span className="text-xs text-accent-red font-normal">— required</span>}
+            {errors.time && <span className="text-xs text-accent-red font-normal">— {errors.time.message}</span>}
           </div>
 
           {/* Timeline */}
@@ -457,16 +404,11 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
             <div className="flex gap-4 mt-1 flex-wrap items-center">
               {TIMELINE_LEGEND.map(l => (
                 <div key={l.label} className="flex items-center gap-[5px]">
-                  <div
-                    className="w-[10px] h-[10px] rounded-[2px]"
-                    style={{ background: l.bg, borderLeft: `2px solid ${l.border}` }}
-                  />
+                  <div className="w-[10px] h-[10px] rounded-[2px]" style={{ background: l.bg, borderLeft: `2px solid ${l.border}` }} />
                   <span className="text-[10px] text-text-tertiary">{l.label}</span>
                 </div>
               ))}
-              <span className="text-[10px] text-text-tertiary ml-auto">
-                Click timeline to set time
-              </span>
+              <span className="text-[10px] text-text-tertiary ml-auto">Click timeline to set time</span>
             </div>
           </div>
 
@@ -529,31 +471,30 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
               </p>
             </motion.div>
           )}
-        </div>
 
-        {/* Footer */}
-        <div className="py-4 px-6 border-t border-border-primary flex gap-[10px] shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 py-3 rounded-[12px] border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans text-sm font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={hasConflict}
-            className={cn(
-              "flex-[2] flex items-center justify-center gap-2 py-3 rounded-[12px] border-0 cursor-pointer font-sans text-sm font-semibold disabled:cursor-not-allowed",
-              hasConflict
-                ? "bg-bg-tertiary text-text-tertiary"
-                : "[background:var(--gradient-primary)] text-white",
-            )}
-          >
-            {hasConflict ? <><AlertTriangle size={14} /> Conflicts — Change Time</> : "Book Appointment"}
-          </button>
-        </div>
+          {/* Footer inside form so submit button is within form context */}
+          <div className="pt-4 mt-4 border-t border-border-primary flex gap-[10px]">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-3 rounded-[12px] border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans text-sm font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={hasConflict}
+              className={cn(
+                "flex-[2] flex items-center justify-center gap-2 py-3 rounded-[12px] border-0 cursor-pointer font-sans text-sm font-semibold disabled:cursor-not-allowed",
+                hasConflict
+                  ? "bg-bg-tertiary text-text-tertiary"
+                  : "[background:var(--gradient-primary)] text-white",
+              )}
+            >
+              {hasConflict ? <><AlertTriangle size={14} /> Conflicts — Change Time</> : "Book Appointment"}
+            </button>
+          </div>
+        </form>
       </motion.div>
 
       {/* Hover tooltip */}

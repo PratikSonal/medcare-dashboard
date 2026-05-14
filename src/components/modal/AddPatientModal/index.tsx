@@ -1,73 +1,80 @@
-import { AnimatePresence,motion } from "framer-motion";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { addPatient } from "@/features/patients/patientsSlice";
-import type { PatientStatus } from "@/features/patients/types";
 import { addToast } from "@/features/ui/uiSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { type AddPatientFormData,addPatientSchema } from "@/lib/validators";
 import type { RootState } from "@/store";
 import { cn } from "@/utils";
 
-import { defaultForm,STEPS } from "./constants";
-import { buildPatient, getNextId,validateStep } from "./helpers";
+import { defaultForm, STEPS } from "./constants";
+import { buildPatient, getNextId } from "./helpers";
 import { StepIndicator } from "./StepIndicator";
 import { Step0Personal } from "./steps/Step0Personal";
 import { Step1Clinical } from "./steps/Step1Clinical";
 import { Step2Vitals } from "./steps/Step2Vitals";
-import type { AddPatientModalProps,FormData } from "./types";
+import type { AddPatientModalProps } from "./types";
+
+const STEP_FIELDS: (keyof AddPatientFormData)[][] = [
+  ["name", "age", "phone", "email"],
+  ["diagnosis"],
+  ["heartRate", "bloodPressure", "temperature", "oxygenSat", "weight"],
+];
 
 export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector((s: RootState) => s.patients.patients);
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState<FormData>(defaultForm);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, boolean>>>({});
 
-  const set = useCallback(
-    (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      setForm(f => ({ ...f, [field]: e.target.value }));
-      setErrors(err => ({ ...err, [field]: false }));
-    },
-    [],
-  );
+  const {
+    register,
+    control,
+    handleSubmit,
+    trigger,
+    clearErrors,
+    formState: { errors },
+  } = useForm<AddPatientFormData>({
+    resolver: zodResolver(addPatientSchema),
+    defaultValues: defaultForm,
+    mode: "onSubmit",
+  });
 
-  const validate = useCallback(
-    (stepIndex: number): boolean => {
-      const e = validateStep(stepIndex, form);
-      setErrors(e);
-      return Object.keys(e).length === 0;
-    },
-    [form],
-  );
+  const stepErrors = useMemo(() => {
+    const allowed = new Set<string>(STEP_FIELDS[step]);
+    return Object.fromEntries(
+      Object.entries(errors).filter(([k]) => allowed.has(k))
+    ) as typeof errors;
+  }, [errors, step]);
 
-  const back = useCallback((): void => setStep(s => s - 1), []);
+  const handleNext = useCallback(async (): Promise<void> => {
+    const valid = await trigger(STEP_FIELDS[step]);
+    if (valid) {
+      clearErrors();
+      setStep(s => s + 1);
+    }
+  }, [step, trigger, clearErrors]);
 
-  const next = useCallback((): void => {
-    if (validate(step)) setStep(s => s + 1);
-  }, [validate, step]);
-
-  const submit = useCallback((): void => {
-    if (!validate(2)) return;
-    const patient = buildPatient(form, getNextId(patients));
-    dispatch(addPatient(patient));
-    dispatch(addToast({ message: `${patient.name} added successfully`, type: "success" }));
-    onClose();
-  }, [validate, patients, form, dispatch, onClose]);
+  const handleBack = useCallback((): void => {
+    clearErrors();
+    setStep(s => s - 1);
+  }, [clearErrors]);
 
   const handleBackOrClose = useCallback((): void => {
     if (step === 0) onClose();
-    else back();
-  }, [step, onClose, back]);
+    else handleBack();
+  }, [step, onClose, handleBack]);
 
-  const handleNextOrSubmit = useCallback((): void => {
-    if (step < 2) next();
-    else submit();
-  }, [step, next, submit]);
-
-  const handleSelectStatus = useCallback((status: PatientStatus) => {
-    setForm(f => ({ ...f, status }));
-  }, []);
+  const onSubmit = handleSubmit((data: AddPatientFormData) => {
+    const nextId = getNextId(patients);
+    const patient = buildPatient(data, nextId);
+    dispatch(addPatient(patient));
+    dispatch(addToast({ message: `${patient.name} added successfully`, type: "success" }));
+    onClose();
+  });
 
   const handleOverlayClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -114,44 +121,57 @@ export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.R
         </div>
 
         {/* Form */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <AnimatePresence mode="wait">
-            {step === 0 && <Step0Personal key="s0" form={form} errors={errors} set={set} />}
-            {step === 1 && (
-              <Step1Clinical
-                key="s1"
-                form={form}
-                errors={errors}
-                set={set}
-                onSelectStatus={handleSelectStatus}
-              />
-            )}
-            {step === 2 && (
-              <Step2Vitals key="s2" form={form} errors={errors} set={set} nextId={nextId} />
-            )}
-          </AnimatePresence>
-        </div>
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6">
+            <AnimatePresence mode="wait">
+              {step === 0 && (
+                <Step0Personal key="s0" register={register} control={control} errors={stepErrors} />
+              )}
+              {step === 1 && (
+                <Step1Clinical key="s1" register={register} control={control} errors={stepErrors} />
+              )}
+              {step === 2 && (
+                <Step2Vitals
+                  key="s2"
+                  register={register}
+                  control={control}
+                  errors={stepErrors}
+                  nextId={nextId}
+                />
+              )}
+            </AnimatePresence>
+          </div>
 
-        {/* Footer */}
-        <div className="py-4 px-6 pb-6 border-t border-border-primary flex justify-between shrink-0">
-          <button
-            type="button"
-            onClick={handleBackOrClose}
-            className="py-[10px] px-5 rounded-[12px] text-[13px] font-medium border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans"
-          >
-            {step === 0 ? "Cancel" : "← Back"}
-          </button>
-          <button
-            type="button"
-            onClick={handleNextOrSubmit}
-            className={cn(
-              "py-[10px] px-6 rounded-[12px] text-[13px] font-semibold border-0 text-white cursor-pointer font-sans shadow-[0_4px_14px_rgba(60,131,246,0.3)]",
-              step < 2 ? "bg-accent-blue" : "bg-accent-cyan",
+          {/* Footer */}
+          <div className="py-4 px-6 pb-6 border-t border-border-primary flex justify-between shrink-0">
+            <button
+              type="button"
+              onClick={handleBackOrClose}
+              className="py-[10px] px-5 rounded-[12px] text-[13px] font-medium border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans"
+            >
+              {step === 0 ? "Cancel" : "← Back"}
+            </button>
+            {step < 2 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="py-[10px] px-6 rounded-[12px] text-[13px] font-semibold border-0 text-white cursor-pointer font-sans shadow-[0_4px_14px_rgba(60,131,246,0.3)] bg-accent-blue"
+              >
+                Next →
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className={cn(
+                  "py-[10px] px-6 rounded-[12px] text-[13px] font-semibold border-0 text-white cursor-pointer font-sans shadow-[0_4px_14px_rgba(60,131,246,0.3)]",
+                  "bg-accent-cyan",
+                )}
+              >
+                + Add Patient
+              </button>
             )}
-          >
-            {step < 2 ? "Next →" : "+ Add Patient"}
-          </button>
-        </div>
+          </div>
+        </form>
       </motion.div>
     </motion.div>
   );

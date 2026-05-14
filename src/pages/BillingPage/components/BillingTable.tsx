@@ -85,7 +85,7 @@ export const BillingTable = memo((): React.ReactElement => {
           </div>
           <div className="flex items-center gap-2">
             <SearchInput
-              value={search}
+              value={searchInput}
               onChange={v => {
                 setSearchInput(v);
                 setPage(1);

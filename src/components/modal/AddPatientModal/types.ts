@@ -1,8 +1,13 @@
-import type { BloodGroup,PatientStatus } from "@/features/patients/types";
+import type { Control, FieldErrors, UseFormRegister } from "react-hook-form";
+
+import type { AddPatientFormData } from "@/lib/validators";
+
+export type { AddPatientFormData };
+export type FormData = AddPatientFormData;
 
 export interface FieldProps {
   label: string;
-  error?: boolean;
+  error?: string;
   children: React.ReactNode;
 }
 
@@ -11,28 +16,7 @@ export interface AddPatientModalProps {
 }
 
 export interface StepProps {
-  form: FormData;
-  errors: Partial<Record<keyof FormData, boolean>>;
-  set: (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  register: UseFormRegister<AddPatientFormData>;
+  control: Control<AddPatientFormData>;
+  errors: FieldErrors<AddPatientFormData>;
 }
-
-export type FormData = {
-  name: string;
-  age: string;
-  gender: "Male" | "Female" | "Other";
-  bloodGroup: BloodGroup;
-  phone: string;
-  email: string;
-  address: string;
-  status: PatientStatus;
-  diagnosis: string;
-  department: string;
-  doctor: string;
-  admissionDate: string;
-  tags: string;
-  heartRate: string;
-  bloodPressure: string;
-  temperature: string;
-  oxygenSat: string;
-  weight: string;
-};

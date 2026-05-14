@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { memo, useCallback } from "react";
+import { Controller } from "react-hook-form";
 
 import type { PatientStatus } from "@/features/patients/types";
 
-import { DEPARTMENTS, DOCTORS, STATUS_COLORS,STATUSES } from "../constants";
+import { DEPARTMENTS, DOCTORS, STATUS_COLORS, STATUSES } from "../constants";
 import { Field } from "../Field";
 import { getInputCls } from "../helpers";
 import type { StepProps } from "../types";
@@ -33,11 +34,7 @@ const StatusPill = memo(({ status, isSelected, color, onSelect }: StatusPillProp
   );
 });
 
-interface Props extends StepProps {
-  onSelectStatus: (status: PatientStatus) => void;
-}
-
-export const Step1Clinical = memo(({ form, errors, set, onSelectStatus }: Props): React.ReactElement => (
+export const Step1Clinical = memo(({ register, control, errors }: StepProps): React.ReactElement => (
   <motion.div
     key="s1"
     initial={{ opacity: 0, x: 20 }}
@@ -47,36 +44,41 @@ export const Step1Clinical = memo(({ form, errors, set, onSelectStatus }: Props)
     className="flex flex-col gap-4"
   >
     <Field label="Status">
-      <div className="flex gap-2 flex-wrap">
-        {STATUSES.map(status => (
-          <StatusPill
-            key={status}
-            status={status}
-            isSelected={form.status === status}
-            color={STATUS_COLORS[status]}
-            onSelect={onSelectStatus}
-          />
-        ))}
-      </div>
+      <Controller
+        name="status"
+        control={control}
+        render={({ field }) => (
+          <div className="flex gap-2 flex-wrap">
+            {STATUSES.map(status => (
+              <StatusPill
+                key={status}
+                status={status}
+                isSelected={field.value === status}
+                color={STATUS_COLORS[status]}
+                onSelect={field.onChange}
+              />
+            ))}
+          </div>
+        )}
+      />
     </Field>
-    <Field label="Diagnosis" error={errors.diagnosis}>
+    <Field label="Diagnosis" error={errors.diagnosis?.message}>
       <input
-        value={form.diagnosis}
-        onChange={set("diagnosis")}
+        {...register("diagnosis")}
         placeholder="e.g. Type 2 Diabetes"
-        className={getInputCls("diagnosis", errors)}
+        className={getInputCls(!!errors.diagnosis)}
       />
     </Field>
     <div className="grid grid-cols-2 gap-4">
       <Field label="Department">
-        <select value={form.department} onChange={set("department")} className={getInputCls("department", errors)}>
+        <select {...register("department")} className={getInputCls(false)}>
           {DEPARTMENTS.map(dept => (
             <option key={dept}>{dept}</option>
           ))}
         </select>
       </Field>
       <Field label="Attending Doctor">
-        <select value={form.doctor} onChange={set("doctor")} className={getInputCls("doctor", errors)}>
+        <select {...register("doctor")} className={getInputCls(false)}>
           {DOCTORS.map(doctor => (
             <option key={doctor}>{doctor}</option>
           ))}
@@ -87,17 +89,15 @@ export const Step1Clinical = memo(({ form, errors, set, onSelectStatus }: Props)
       <Field label="Admission Date">
         <input
           type="date"
-          value={form.admissionDate}
-          onChange={set("admissionDate")}
-          className={getInputCls("admissionDate", errors)}
+          {...register("admissionDate")}
+          className={getInputCls(false)}
         />
       </Field>
       <Field label="Tags (comma-separated)">
         <input
-          value={form.tags}
-          onChange={set("tags")}
+          {...register("tags")}
           placeholder="Diabetic, High BP"
-          className={getInputCls("tags", errors)}
+          className={getInputCls(false)}
         />
       </Field>
     </div>

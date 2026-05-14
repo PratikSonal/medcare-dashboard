@@ -46,7 +46,7 @@ export const FilterBar = memo((): React.ReactElement => {
         className="flex flex-wrap items-center gap-3 mb-6"
       >
         <SearchInput
-          value={searchQuery}
+          value={inputValue}
           onChange={handleSearchChange}
           placeholder="Search by name, diagnosis, doctor..."
         />

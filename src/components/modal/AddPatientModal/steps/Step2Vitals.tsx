@@ -11,7 +11,7 @@ interface Props extends StepProps {
   nextId: string;
 }
 
-export const Step2Vitals = memo(({ form, errors, set, nextId }: Props): React.ReactElement => (
+export const Step2Vitals = memo(({ register, errors, nextId }: Props): React.ReactElement => (
   <motion.div
     key="s2"
     initial={{ opacity: 0, x: 20 }}
@@ -21,54 +21,49 @@ export const Step2Vitals = memo(({ form, errors, set, nextId }: Props): React.Re
     className="flex flex-col gap-4"
   >
     <div className="grid grid-cols-2 gap-4">
-      <Field label="Heart Rate (bpm)" error={errors.heartRate}>
+      <Field label="Heart Rate (bpm)" error={errors.heartRate?.message}>
         <input
           type="number"
-          value={form.heartRate}
-          onChange={set("heartRate")}
+          {...register("heartRate")}
           placeholder="72"
-          className={getInputCls("heartRate", errors)}
+          className={getInputCls(!!errors.heartRate)}
         />
       </Field>
-      <Field label="Blood Pressure" error={errors.bloodPressure}>
+      <Field label="Blood Pressure" error={errors.bloodPressure?.message}>
         <input
-          value={form.bloodPressure}
-          onChange={set("bloodPressure")}
+          {...register("bloodPressure")}
           placeholder="120/80"
-          className={getInputCls("bloodPressure", errors)}
+          className={getInputCls(!!errors.bloodPressure)}
         />
       </Field>
     </div>
     <div className="grid grid-cols-2 gap-4">
-      <Field label="Temperature (°F)" error={errors.temperature}>
+      <Field label="Temperature (°F)" error={errors.temperature?.message}>
         <input
           type="number"
           step="0.1"
-          value={form.temperature}
-          onChange={set("temperature")}
+          {...register("temperature")}
           placeholder="98.6"
-          className={getInputCls("temperature", errors)}
+          className={getInputCls(!!errors.temperature)}
         />
       </Field>
-      <Field label="Oxygen Saturation (%)" error={errors.oxygenSat}>
+      <Field label="Oxygen Saturation (%)" error={errors.oxygenSat?.message}>
         <input
           type="number"
           min={0}
           max={100}
-          value={form.oxygenSat}
-          onChange={set("oxygenSat")}
+          {...register("oxygenSat")}
           placeholder="98"
-          className={getInputCls("oxygenSat", errors)}
+          className={getInputCls(!!errors.oxygenSat)}
         />
       </Field>
     </div>
-    <Field label="Weight (kg)" error={errors.weight}>
+    <Field label="Weight (kg)" error={errors.weight?.message}>
       <input
         type="number"
-        value={form.weight}
-        onChange={set("weight")}
+        {...register("weight")}
         placeholder="70"
-        className={cn(getInputCls("weight", errors), "max-w-[calc(50%-8px)]")}
+        className={cn(getInputCls(!!errors.weight), "max-w-[calc(50%-8px)]")}
       />
     </Field>
     <div className="py-3 px-4 bg-bg-tertiary rounded-[12px]">

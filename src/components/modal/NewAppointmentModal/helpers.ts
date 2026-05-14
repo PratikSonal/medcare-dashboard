@@ -3,19 +3,16 @@ import { getYear } from "date-fns";
 import type { Appointment } from "@/features/appointments/types";
 import type { Patient } from "@/features/patients/types";
 import { cn } from "@/utils";
-import { minToTime,t2m } from "@/utils/time";
+import { minToTime, t2m } from "@/utils/time";
 
-import { TDUR,TSTART } from "./constants";
-import type { ConflictInfo, FormState } from "./types";
-export { minToTime,t2m };
+import { TDUR, TSTART } from "./constants";
+import type { ConflictInfo, NewAppointmentFormData } from "./types";
+export { minToTime, t2m };
 
-export const getFieldCls = (
-  field: keyof FormState,
-  errors: Partial<Record<keyof FormState, boolean>>,
-): string =>
+export const getFieldCls = (hasError: boolean): string =>
   cn(
     "w-full bg-bg-tertiary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
-    errors[field] ? "border border-accent-red" : "border border-border-primary",
+    hasError ? "border border-accent-red" : "border border-border-primary",
   );
 
 export const toLeft = (min: number): string => `${(((min - TSTART) / TDUR) * 100).toFixed(2)}%`;
@@ -42,21 +39,13 @@ export const getConflict = (
   };
 };
 
-export const validateForm = (form: FormState): Partial<Record<keyof FormState, boolean>> => {
-  const errs: Partial<Record<keyof FormState, boolean>> = {};
-  if (!form.patientId) errs.patientId = true;
-  if (!form.doctor) errs.doctor = true;
-  if (!form.time) errs.time = true;
-  return errs;
-};
-
 export const buildAppointment = (
-  form: FormState,
+  form: NewAppointmentFormData,
   patients: Patient[],
   appointments: Appointment[],
 ): Appointment => {
   const pt = patients.find(p => p.id === form.patientId);
-  if (!pt) throw new Error(`buildAppointment: patient "${form.patientId}" not found — ensure form is validated first`);
+  if (!pt) throw new Error(`buildAppointment: patient "${form.patientId}" not found`);
   const existingDoc = appointments.find(a => a.doctor === form.doctor);
   const existingPat = appointments.find(a => a.patientId === form.patientId);
 

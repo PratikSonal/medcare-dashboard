@@ -1,4 +1,8 @@
-import type { Appointment,AppointmentType } from "@/features/appointments/types";
+import type { Appointment } from "@/features/appointments/types";
+import type { NewAppointmentFormData } from "@/lib/validators";
+
+export type { NewAppointmentFormData };
+export type FormState = NewAppointmentFormData;
 
 export interface Props {
   defaultDate: string;
@@ -20,14 +24,4 @@ export interface TrackRowProps {
 export interface ConflictInfo {
   doctor?: Appointment;
   patient?: Appointment;
-}
-
-export interface FormState {
-  patientId: string;
-  doctor: string;
-  date: string;
-  type: AppointmentType;
-  duration: number;
-  time: string;
-  notes: string;
 }

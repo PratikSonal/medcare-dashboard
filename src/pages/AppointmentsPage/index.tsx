@@ -196,7 +196,7 @@ const AppointmentsPage = (): React.ReactElement => {
             onNextWeek={handleNextWeek}
           />
           <FilterBar
-            searchQuery={searchQuery}
+            searchQuery={searchInput}
             onSearchChange={setSearchInput}
             filterStatus={filterStatus}
             onFilterStatus={setFilterStatus}
