@@ -5,7 +5,7 @@ import { cn } from "@/utils";
 import { Avatar } from "@/components/ui/Avatar";
 import { item, STATUS_CELLS } from "../constants";
 
-export const DoctorPerformance = () => {
+export const DoctorPerformance = (): React.ReactElement => {
   const patients = useAppSelector(s => s.patients.patients);
 
   const doctorData = useMemo(() => {
@@ -73,9 +73,9 @@ export const DoctorPerformance = () => {
             </tr>
           </thead>
           <tbody>
-            {doctorData.map((d, i) => (
+            {doctorData.map((doctor, i) => (
               <motion.tr
-                key={d.name}
+                key={doctor.name}
                 whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
                 className={cn(
                   "cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary",
@@ -85,7 +85,7 @@ export const DoctorPerformance = () => {
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-[10px]">
                     <Avatar
-                      initials={d.name
+                      initials={doctor.name
                         .split(" ")
                         .slice(1)
                         .map(n => n[0])
@@ -95,21 +95,21 @@ export const DoctorPerformance = () => {
                       radius="50%"
                     />
                     <span className="font-medium text-text-primary whitespace-nowrap">
-                      {d.name}
+                      {doctor.name}
                     </span>
                   </div>
                 </td>
                 <td className="px-3 py-3">
-                  <span className="text-[15px] font-bold text-text-primary">{d.total}</span>
+                  <span className="text-[15px] font-bold text-text-primary">{doctor.total}</span>
                 </td>
                 {STATUS_CELLS.map(({ key, bg, color }) => (
                   <td key={key} className="px-3 py-3">
-                    {d[key] ? (
+                    {doctor[key] ? (
                       <span
                         className="text-xs font-semibold px-2 py-[3px] rounded-[6px]"
                         style={{ background: bg, color }}
                       >
-                        {d[key]}
+                        {doctor[key]}
                       </span>
                     ) : (
                       <span className="text-xs text-text-tertiary">—</span>
@@ -118,7 +118,7 @@ export const DoctorPerformance = () => {
                 ))}
                 <td className="px-3 py-3">
                   <div className="flex flex-wrap gap-1">
-                    {d.depts.map(dept => (
+                    {doctor.depts.map(dept => (
                       <span
                         key={dept}
                         className="text-[10px] font-medium px-[7px] py-[2px] rounded-[4px] bg-bg-tertiary text-text-secondary whitespace-nowrap"

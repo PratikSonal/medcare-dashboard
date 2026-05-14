@@ -1,69 +1,79 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TrendingUp, DollarSign, Users, Activity } from "lucide-react";
-import { metricsData } from "@/data/analytics";
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setFilterStatus, clearFilters } from "@/features/patients/patientsSlice";
+import type { RootState } from "@/store";
 import { container, item } from "./constants";
 import { ChartsRow } from "./components/ChartsRow";
 import { TrendsRow } from "./components/TrendsRow";
 import { FinancialBreakdown } from "./components/FinancialBreakdown";
 import { DoctorPerformance } from "./components/DoctorPerformance";
 
-const totalPatients = metricsData.reduce((s, d) => s + d.patients, 0);
-const totalRevenue = metricsData.reduce((s, d) => s + d.revenue, 0);
-const totalAppointments = metricsData.reduce((s, d) => s + d.appointments, 0);
-const totalRecovered = metricsData.reduce((s, d) => s + d.recovered, 0);
-const recoveryRate = Math.round((totalRecovered / totalPatients) * 100);
-
 const AnalyticsPage = (): React.ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const metrics = useAppSelector((s: RootState) => s.analytics.metrics);
 
-  const kpis = [
-    {
-      title: "Total Patients",
-      rawValue: totalPatients,
-      sub: "7-month period",
-      icon: <Users size={20} />,
-      color: "var(--accent-blue)",
-      onClick: () => {
-        dispatch(clearFilters());
-        navigate("/patients");
+  const { totalPatients, totalRevenue, totalAppointments, totalRecovered, recoveryRate } = useMemo(
+    () => {
+      const totalPatients = metrics.reduce((sum, d) => sum + d.patients, 0);
+      const totalRevenue = metrics.reduce((sum, d) => sum + d.revenue, 0);
+      const totalAppointments = metrics.reduce((sum, d) => sum + d.appointments, 0);
+      const totalRecovered = metrics.reduce((sum, d) => sum + d.recovered, 0);
+      return {
+        totalPatients,
+        totalRevenue,
+        totalAppointments,
+        totalRecovered,
+        recoveryRate: Math.round((totalRecovered / totalPatients) * 100),
+      };
+    },
+    [metrics],
+  );
+
+  const kpis = useMemo(
+    () => [
+      {
+        title: "Total Patients",
+        rawValue: totalPatients,
+        sub: "7-month period",
+        icon: <Users size={20} />,
+        color: "var(--accent-blue)",
+        onClick: () => { dispatch(clearFilters()); navigate("/patients"); },
       },
-    },
-    {
-      title: "Total Revenue",
-      rawValue: Math.round(totalRevenue / 10000),
-      format: (n: number): string => `₹${(n / 10).toFixed(1)}L`,
-      icon: <DollarSign size={20} />,
-      color: "var(--accent-cyan)",
-      sub: "Nov 2025 – May 2026",
-      onClick: () => navigate("/billing"),
-    },
-    {
-      title: "Appointments",
-      rawValue: totalAppointments,
-      sub: "All scheduled visits",
-      icon: <Activity size={20} />,
-      color: "var(--accent-purple)",
-      onClick: () => navigate("/appointments"),
-    },
-    {
-      title: "Recovery Rate",
-      rawValue: recoveryRate,
-      suffix: "%",
-      sub: `${totalRecovered.toLocaleString()} patients recovered`,
-      icon: <TrendingUp size={20} />,
-      color: "var(--accent-yellow)",
-      onClick: () => {
-        dispatch(setFilterStatus("Discharged"));
-        navigate("/patients");
+      {
+        title: "Total Revenue",
+        rawValue: Math.round(totalRevenue / 10000),
+        format: (n: number): string => `₹${(n / 10).toFixed(1)}L`,
+        icon: <DollarSign size={20} />,
+        color: "var(--accent-cyan)",
+        sub: "Nov 2025 – May 2026",
+        onClick: () => navigate("/billing"),
       },
-    },
-  ];
+      {
+        title: "Appointments",
+        rawValue: totalAppointments,
+        sub: "All scheduled visits",
+        icon: <Activity size={20} />,
+        color: "var(--accent-purple)",
+        onClick: () => navigate("/appointments"),
+      },
+      {
+        title: "Recovery Rate",
+        rawValue: recoveryRate,
+        suffix: "%",
+        sub: `${totalRecovered.toLocaleString()} patients recovered`,
+        icon: <TrendingUp size={20} />,
+        color: "var(--accent-yellow)",
+        onClick: () => { dispatch(setFilterStatus("Discharged")); navigate("/patients"); },
+      },
+    ],
+    [totalPatients, totalRevenue, totalAppointments, totalRecovered, recoveryRate, navigate, dispatch],
+  );
 
   return (
     <motion.div
@@ -87,22 +97,10 @@ const AnalyticsPage = (): React.ReactElement => {
 
       <motion.div
         variants={item}
-        className="grid gap-4 mb-8"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+        className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-8"
       >
-        {kpis.map(k => (
-          <KpiCard
-            key={k.title}
-            rawValue={k.rawValue}
-            format={k.format}
-            suffix={k.suffix}
-            sub={k.sub}
-            icon={k.icon}
-            color={k.color}
-            onClick={k.onClick}
-            title={k.title}
-            showArrow
-          />
+        {kpis.map(kpi => (
+          <KpiCard key={kpi.title} {...kpi} showArrow />
         ))}
       </motion.div>
 
