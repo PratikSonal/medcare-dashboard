@@ -7,12 +7,14 @@ import { PatientModal } from "@/components/modal/PatientModal";
 import { ToastContainer } from "@/components/ToastContainer";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { useThemeSync } from "@/hooks/useThemeSync";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { RootState } from "@/store";
 
 export const AppLayout = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();
   const selectedPatient = useAppSelector((s: RootState) => s.patients.selectedPatient);
+  useThemeSync();
 
   const handleCloseModal = useCallback(() => dispatch(setSelectedPatient(null)), [dispatch]);
 

@@ -42,20 +42,40 @@ src/
 │   │   │   └── types.ts      — Slide interface
 │   │   ├── Navbar/
 │   │   └── Sidebar/
-│   ├── AddPatientModal   — 3-step add patient form
-│   ├── NewAppointmentModal — new appointment + conflict detection
-│   ├── PatientModal      — patient detail tabs (overview/appts/billing/rx)
+│   ├── modal/
+│   │   ├── AddPatientModal/      — 3-step add patient form
+│   │   │   ├── index.tsx         — orchestration shell (~130 lines)
+│   │   │   ├── Field.tsx         — reusable label+error wrapper
+│   │   │   ├── StepIndicator.tsx — step progress dots
+│   │   │   ├── steps/
+│   │   │   │   ├── Step0Personal.tsx   — name/age/gender/blood/phone/email/address
+│   │   │   │   ├── Step1Clinical.tsx   — status pills (StatusPill sub-component), diagnosis, department, doctor, dates
+│   │   │   │   └── Step2Vitals.tsx     — HR/BP/temp/O₂/weight + patient ID preview
+│   │   │   ├── helpers.ts        — validateStep, buildPatient, getNextId, getInputCls
+│   │   │   ├── constants.ts      — DEPARTMENTS, DOCTORS, STATUSES, STATUS_COLORS (derived from PATIENT_STATUS_COLORS)
+│   │   │   └── types.ts          — FormData, FieldProps, AddPatientModalProps, StepProps
+│   │   ├── NewAppointmentModal   — appointment + conflict detection (DurationButton, SlotButton sub-components)
+│   │   └── PatientModal/         — patient detail viewer
+│   │       ├── index.tsx         — shell with header + tabs (~150 lines)
+│   │       ├── tabs/
+│   │       │   ├── OverviewTab.tsx      — vitals grid (VitalBadge), contact, diagnosis cards
+│   │       │   ├── AppointmentsTab.tsx  — appointment cards with status+type badges
+│   │       │   ├── BillingTab.tsx       — insurance details + billing records list
+│   │       │   └── PrescriptionsTab.tsx — prescription cards with refill indicators
+│   │       ├── constants.ts      — PRESCRIPTION_COLORS
+│   │       └── types.ts          — Props, TabId, VitalBadgeProps
 │   └── ToastContainer    — toast notification renderer
 ├── features/
 │   ├── auth/             — authSlice.ts
 │   ├── appointments/     — appointmentsSlice.ts
 │   ├── billing/          — billingSlice.ts
-│   ├── patients/         — patientsSlice.ts
-│   └── ui/               — uiSlice.ts (theme, sidebar, notifications, toasts)
+│   ├── patients/         — patientsSlice.ts (includes prescriptions[] state)
+│   └── ui/               — uiSlice.ts (theme, sidebar, notifications, toasts; reducers are pure — no DOM side effects)
 ├── hooks/
 │   ├── useAppDispatch.ts — typed Redux hooks
 │   ├── useAuth.ts        — full Firebase auth implementation (signIn, register, isLoading, error, clearError; exports UseAuthReturn interface)
-│   └── useCountUp.ts     — animated number counter
+│   ├── useCountUp.ts     — animated number counter
+│   └── useThemeSync.ts   — useEffect watching s.ui.theme; applies localStorage + data-theme attribute outside of Redux reducers
 ├── lib/
 │   ├── errorMessages.ts  — Firebase error code → human string map
 │   ├── firebase.ts       — Firebase app init
@@ -81,7 +101,8 @@ public/sw.js          — Service Worker (push notifications)
 
 ### Theme
 - **Default**: Light mode
-- **Toggle**: Persisted to `localStorage` via `uiSlice`
+- **Toggle**: State lives in `uiSlice`; side effects (localStorage + `data-theme` attribute) handled by `useThemeSync` hook in `AppLayout`, not inside the reducer
+- **Initial load**: `uiSlice.ts` module scope reads `localStorage` and sets `data-theme` synchronously before React hydrates (prevents FOUC)
 - **Dark mode**: Triggered by `[data-theme="dark"]` on `<html>`
 
 ### CSS Variables (Light mode = `:root`, Dark = `[data-theme="dark"]`)
@@ -136,7 +157,7 @@ public/sw.js          — Service Worker (push notifications)
 - **Left panel**: Always dark (`#0c111d`) regardless of theme — the 5 remaining hex color values (`#0c111d`, `#1d2839`, `#f8fafc`, `#9ca3af`, `#4b5563`) are intentional (panel is always dark; tracked for CSS var migration in fix.md P2)
 - **Right panel**: Follows theme (uses CSS vars)
 - **Layout**: Three-zone flex — logo pinned top, content centred (`flex: 1`), compliance pinned bottom
-- **Carousel**: 6 slides, 3s auto-advance, fixed `h-[120px]` container with `overflow-hidden` to prevent layout shift
+- **Carousel**: 6 slides, 3s auto-advance, fixed `h-[120px]` container with `overflow-hidden` to prevent layout shift. Dot buttons are extracted as a `DotButton` memo sub-component (required because `useCallback` cannot be called inside `.map()`); parent passes a stable `handleDotClick: (index: number) => void` callback.
 - **Carousel design**: Large raw icon (56px, no box) left-aligned + stat + headline + description
 - **Compliance line**: `HIPAA Certified · SOC 2 Type II · FHIR Ready` — dot-separated, rendered `<span>` circles (not Unicode)
 
@@ -235,7 +256,7 @@ Three push notification scenarios:
 ```ts
 store: {
   auth:         { user }
-  patients:     { patients[], filteredPatients[], selectedPatient, filterStatus, viewMode, searchQuery }
+  patients:     { patients[], prescriptions[], filteredPatients[], selectedPatient, filterStatus, viewMode, searchQuery }
   appointments: { appointments[] }   // seeded from mockAppointments, mutable via addAppointment
   billing:      { records[] }        // seeded from mockBillingData, mutable via updateClaimStatus
   ui:           { theme, sidebarOpen, notifications[], toasts[] }
@@ -263,17 +284,30 @@ store: {
 - **metricsData**: 7 months (Nov 2025 – May 2026)
 - **departmentStats**: 8 departments with blues/indigos colour palette
 - **17 billing records** — covering all major departments and all 7 insurance providers
-- `mockAppointments`, `mockPatients`, and `mockBillingData` seed Redux on init — do **not** read them directly in components, always use `useAppSelector`
+- **26 prescriptions** — covers P001–P020 patients with realistic medications, dosages, and frequencies
+- `mockAppointments`, `mockPatients`, `mockBillingData`, and `mockPrescriptions` all seed Redux on init — do **not** read them directly in components, always use `useAppSelector`
 
 ---
 
-## Status Colours (`utils.ts`)
+## Status Colours
+
+**Patient status** — single source of truth in `src/features/patients/utils.ts`:
 ```ts
-Active     → cyan   #0ea5e9  / rgba(14,165,233,0.1)
-Critical   → red    var(--accent-red)
-Recovering → yellow var(--accent-yellow)
-Discharged → gray   var(--text-tertiary)
+PATIENT_STATUS_COLORS: {
+  Active:     { color: "var(--accent-cyan)",    bg: "rgba(14, 165, 233, 0.1)" }
+  Critical:   { color: "var(--accent-red)",     bg: "rgba(239, 68, 68, 0.1)" }
+  Recovering: { color: "var(--accent-yellow)",  bg: "rgba(245, 158, 11, 0.1)" }
+  Discharged: { color: "var(--text-tertiary)",  bg: "rgba(107, 114, 128, 0.1)" }
+}
+// Backwards-compatible helpers:
+getStatusColor(status) → color string
+getStatusBg(status)    → bg string
 ```
+`AddPatientModal/constants.ts` `STATUS_COLORS` derives from `PATIENT_STATUS_COLORS[*].color`.
+
+**Appointment status** — `src/features/appointments/constants.ts` (`APPT_STATUS_COLORS`)
+**Claim status** — `src/features/billing/constants.ts` (`CLAIM_STATUS_COLORS`)
+**Prescription status** — `src/components/modal/PatientModal/constants.ts` (`PRESCRIPTION_COLORS`)
 
 ---
 
@@ -304,6 +338,9 @@ Discharged → gray   var(--text-tertiary)
 - Dispatching `updateClaimStatus` updates Redux → `records.find` re-runs on next render → modal reflects new status without closing
 - Same ID-based pattern should be used anywhere a detail modal needs to stay open while Redux state updates
 
+### `type="button"` on all non-submit buttons
+Every `<button>` that is not a form submit must have `type="button"`. Without it, clicking any button inside a `<form>` triggers form submission. This applies to close buttons in modals, toggle buttons, filter pills, action buttons, etc. Only `<Button type="submit">` should omit it.
+
 ### PayloadAction imports in slices
 Always use `import { createSlice, type PayloadAction }` — `type` keyword required or Vite throws at runtime because `PayloadAction` has no runtime value.
 
@@ -313,6 +350,51 @@ Always use `import { createSlice, type PayloadAction }` — `type` keyword requi
 - **RagaAI**: Vertical AI agent suites. Key modules: Smart Scheduling, Patient Intake, Revenue Cycle. Stats: 46.5% claim denial reduction, 170% booking growth, 99.9% uptime.
 - **Innovaccer**: Horizontal data OS, $250M ARR. Platform: Gravity™ (400+ EHR connectors).
 - **Design inspiration**: raga.ai — deep navy, dot-grid bg, floating dark navbar pill, glassmorphism cards.
+
+---
+
+## Performance Architecture
+
+### Memoization rules (applied codebase-wide)
+- **Every exported component** is wrapped with `React.memo(...)`. `forwardRef` components use `memo(forwardRef(...))` (e.g. `Button`, `Input`).
+- **Every handler** defined inside a component body is wrapped with `useCallback` with correct deps. Exception: inline `style` helper functions like `inputCls` / `fieldCls` that close over `errors` state and are called inline (not passed as props) — these are not memoized.
+- **`.map()` items that own dispatch calls** are extracted as dedicated `memo`-wrapped sub-components so `useCallback` is valid inside them (hooks cannot be called inside loops). Established sub-components:
+  - `NotificationItem`, `FilterTab` — Navbar
+  - `DotButton` — LeftPanel carousel dots
+  - `TabButton` — PatientModal tab bar
+  - `StatusPill` — AddPatientModal/Step1Clinical status pills
+  - `VitalBadge` — PatientModal/OverviewTab vitals grid
+  - `DurationButton`, `SlotButton` — NewAppointmentModal
+  - `RecentPatientRow` — TrendsRow (DashboardPage)
+  - `AppointmentRow` — AppointmentsTable (DashboardPage)
+  - `CriticalPatientCard` — CriticalBanner (DashboardPage)
+  - `AppointmentCard`, `ActionItem` — AppointmentList / ActionRequired (AppointmentsPage)
+  - `PatientCard`, `PatientListRow` — PatientGrid / PatientListView (PatientDetailsPage)
+
+### Prop threading pattern for card components
+`PatientCard` and `PatientListRow` use `onPatientClick: (patient: Patient) => void` (not `onClick: () => void`). The parent creates one stable `useCallback` that accepts a patient argument; the card calls it with its own patient prop. This makes `React.memo` on the card effective — the callback reference is stable even as the list re-renders.
+
+### NewAppointmentModal computed values
+All derived scheduling data is memoized:
+- `docBusy`, `patBusy` — filtered appointment lists by doctor/patient+date
+- `doctors` — deduplicated doctor list from appointments
+- `selConflict` — conflict check for the currently selected time
+- `slotConflicts` — `Record<string, boolean>` mapping every slot to its conflict state; computed once and passed down to each `SlotButton`
+
+---
+
+## Testing
+
+**Framework**: Jest + ts-jest + jsdom (`jest.config.cjs`, `tsconfig.test.json`)
+**Run**: `npm test` (all suites) | `npm run test:watch` (watch mode)
+
+| Suite | File | What it covers |
+|---|---|---|
+| Conflict detection | `NewAppointmentModal/helpers.test.ts` | `t2m`, `minToTime` (round-trip), `getConflict` (before/after/abut/overlap/contains/simultaneous) — 8 cases |
+| Filter pipeline | `features/patients/patientsSlice.test.ts` | `applyFilters` via `setSearchQuery`, `setFilterStatus`, `setFilterDepartment`, `clearFilters`, AND-logic combining filters — 8 cases |
+| Count-up hook | `hooks/useCountUp.test.ts` | starts at 0, reaches target, increments progressively, reset on target change, cleanup on unmount — 6 cases |
+
+**Test tsconfig** (`tsconfig.test.json`): extends app config, overrides `module: "commonjs"` + `moduleResolution: "node"` to satisfy ts-jest in CJS mode (project uses `"type": "module"` in package.json but tests run via CJS transform).
 
 ---
 

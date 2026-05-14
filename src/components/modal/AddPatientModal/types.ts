@@ -10,6 +10,12 @@ export interface AddPatientModalProps {
   onClose: () => void;
 }
 
+export interface StepProps {
+  form: FormData;
+  errors: Partial<Record<keyof FormData, boolean>>;
+  set: (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+}
+
 export type FormData = {
   name: string;
   age: string;

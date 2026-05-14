@@ -1,5 +1,15 @@
+import { cn } from "@/utils";
 import type { Patient } from "@/features/patients/types";
 import type { FormData } from "./types";
+
+export const getInputCls = (
+  field: keyof FormData,
+  errors: Partial<Record<keyof FormData, boolean>>,
+): string =>
+  cn(
+    "w-full bg-bg-secondary rounded-[10px] py-[9px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
+    errors[field] ? "border border-accent-red" : "border border-border-primary",
+  );
 
 export const validateStep = (
   step: number,

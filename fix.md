@@ -6,20 +6,20 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 
 ## P0 — Blocking (Fix Before Anything Else)
 
-- [ ] **No tests exist** — write tests for conflict detection algorithm, billing calculations, filter pipeline (`useCountUp`, `applyFilters`, appointment overlap logic)
-- [ ] **Redux reducer has DOM side effects** — `uiSlice.ts` calls `document.documentElement.setAttribute` and reads `localStorage` inside the reducer. Move to RTK listener middleware or a top-level `useEffect` watching the theme selector.
+- [x] **No tests exist** — Jest configured (`jest.config.cjs`, `tsconfig.test.json`); 27 tests across 3 suites: `NewAppointmentModal/helpers.test.ts` (conflict detection: `t2m`, `minToTime`, `getConflict` — 8 cases), `patientsSlice.test.ts` (`applyFilters` via `setSearchQuery`/`setFilterStatus`/`setFilterDepartment`/`clearFilters` — 8 cases), `useCountUp.test.ts` (count-up lifecycle, reset on target change, cleanup — 6 cases). Run with `npm test`.
+- [x] **Redux reducer has DOM side effects** — removed `localStorage.setItem` and `document.documentElement.setAttribute` from `toggleTheme` and `setTheme` reducers. Created `src/hooks/useThemeSync.ts` (`useEffect` watching `s.ui.theme`, applies both side effects). Called in `AppLayout`. Module-scope `setAttribute` in `uiSlice.ts` kept for initial FOUC prevention only.
 
 ---
 
 ## P1 — Critical Architecture
 
-- [ ] **Mock data imported directly in components** — `PatientModal` imports `mockBillingData` and `mockPrescriptions` raw. Route everything through Redux; components read from the store only.
-- [ ] **`billingRecords[0]` null crash** — `PatientModal` accesses index 0 with no guard. Add null check or optional chaining.
-- [ ] **Split `PatientModal` (250+ lines)** — extract each tab (Overview, Appointments, Billing, Prescriptions) into its own component.
-- [ ] **Split `AddPatientModal` (250+ lines)** — extract `StepIndicator`, per-step field groups, and validation into separate components.
-- [ ] **"Forgot password?" button does nothing** — `LoginForm` renders the button with no `onClick` handler. Dead UI ships to production. Wire up `sendPasswordResetEmail` from Firebase or remove the button.
+- [x] **Mock data imported directly in components** — `mockPrescriptions` added to `patientsSlice` state (`prescriptions: Prescription[]`); `PatientModal` now reads both billing records (`s.billing.records`) and prescriptions (`s.patients.prescriptions`) from Redux; `mockBillingData` and `mockPrescriptions` imports removed from `PatientModal`.
+- [x] **`billingRecords[0]` null crash** — `PatientModal` assigns `billingRecords[0]` to `billing` and the entire billing tab renders `{billing ? (...) : <empty state>}` — fully guarded.
+- [x] **Split `PatientModal` (250+ lines)** — extracted 4 tab components under `PatientModal/tabs/`: `OverviewTab` (patient info grid, vitals, contact), `AppointmentsTab` (appointment list with status+type badges), `BillingTab` (insurance details + billing history), `PrescriptionsTab` (prescription list with refills). `PatientModal/index.tsx` is now ~150 lines (shell only).
+- [x] **Split `AddPatientModal` (250+ lines)** — extracted `StepIndicator` (step progress dots), `Field` (reusable label+error wrapper), `Step0Personal`, `Step1Clinical` (with `StatusPill` sub-component), `Step2Vitals`. Added `getInputCls(field, errors)` module-level helper in `helpers.ts` and `StepProps` interface in `types.ts`. `AddPatientModal/index.tsx` is now ~130 lines (orchestration only).
+- [ ] **"Forgot password?" button does nothing** — deferred per product decision.
 - [ ] **`AddPatientModal` and `NewAppointmentModal` form state should use React Hook Form + Zod** — both modals manage 3–5 separate `useState` calls for individual fields plus a manual validation function. React Hook Form with a Zod resolver eliminates all of that: field registration, dirty state, error messages, and submit handling in one place. Already done for auth forms; apply the same pattern here.
-- [ ] **Deduplicate status color logic** — defined in `lib/constants.ts`, `lib/utils.ts`, `PatientModal/constants.ts`, and `AppointmentsPage/statusConfig.tsx`. One source of truth only.
+- [x] **Deduplicate status color logic** — `patients/utils.ts` converted to `PATIENT_STATUS_COLORS` Record (`{ color, bg }` per status) with `getStatusColor`/`getStatusBg` as thin wrappers for backwards compatibility. `AddPatientModal/constants.ts` `STATUS_COLORS` now derives from `PATIENT_STATUS_COLORS.*.color` instead of duplicating the values. `PatientModal/constants.ts` `PRESCRIPTION_COLORS` unchanged (unique to prescriptions). Appointment status colors remain in `features/appointments/constants.ts` as the single source; `statusConfig.tsx` and `AppointmentsTab` both spread from it.
 
 ---
 
@@ -69,7 +69,7 @@ The following inline `style` props are intentionally kept — they require dynam
 ## P3 — Import Order & Naming
 
 - [ ] **Install `eslint-plugin-simple-import-sort`** — automates import ordering so violations are caught at lint time. Add to `eslint.config.js` with rules `simple-import-sort/imports` and `simple-import-sort/exports`, then run `eslint --fix` once to sort all files. Enforced order: (1) React, (2) third-party, (3) `@/hooks` → `@/lib` → `@/components`, (4) relative, (5) `import type` last.
-- [ ] **`RegisterPage/components/RegisterCard.tsx` import order** — Firebase auth imports, local `@/lib/firebase`, hooks, and features are interleaved rather than grouped. Defer until `simple-import-sort` is installed so the fix is automated.
+- [x] **`RegisterPage/components/RegisterCard.tsx` import order** — moot; `RegisterCard.tsx` was deleted entirely and replaced with `RegisterForm`.
 - [ ] **`AnalyticsPage/components/ChartsRow.tsx` import order** — lucide-react appears after a block of recharts imports; should be grouped with all third-party libraries first.
 
 ---
@@ -83,10 +83,10 @@ The following inline `style` props are intentionally kept — they require dynam
 - [ ] **`new Date()` called in `uiSlice` initialState** — notification timestamps (`new Date().toISOString()`) are computed once at module load time, not when the notification was actually created. The timestamp is frozen at app boot. Timestamps should be assigned when the action is dispatched, not in the initial static data.
 - [ ] **Fragile ID generation in `AddPatientModal`** — `Math.max(...patients.map(p => parseInt(p.id.slice(1))))` silently returns `NaN` on format mismatch, `-Infinity` on empty array, and stack overflows at scale. Replace with `crypto.randomUUID()`.
 - [ ] **Module-scope calculations in `DashboardPage`** — some derived values execute at import time by reading `mockBillingData` directly at the top level. Move inside the component or into selectors.
-- [ ] **`inputCls` helper defined inside component body** — in `AddPatientModal`, re-defined on every render. Move outside the component.
+- [x] **`inputCls` helper defined inside component body (`AddPatientModal`)** — fixed: `getInputCls(field, errors)` extracted to module-level function in `helpers.ts`; all step components import and call it. `NewAppointmentModal` still defines `inputCls` as a closure inside the component body — low-impact since it's a modal (infrequently rendered), but still pending.
 - [ ] **Unused Firebase Analytics import** — `getAnalytics` imported in `firebase.ts` but never used.
 - [ ] **`helper.tsx` vs `helpers.ts` inconsistency** — `AnalyticsPage` uses `.tsx` extension for a file with no JSX. Standardise to `.ts`.
-- [ ] **Single-letter variable names** — `k` (KPI), `t` (tab), `f` (form state) used across pages. Spell them out.
+- [x] **Single-letter variable names** — `k` (KPI), `t` (tab), `f` (form state), `n` (notification), `r` (record), `s` (status/step), `p` (patient), `d` (doctor/duration) renamed throughout all pages and components.
 
 ---
 
@@ -115,3 +115,4 @@ The following inline `style` props are intentionally kept — they require dynam
 - [x] **Page transition lag from lazy loading** — root cause: outer `Suspense fallback={null}` was unmounting Sidebar/Navbar on every navigation. Fix: nested `Suspense` with `<PageLoader />` inside `AppLayout` wrapping only `<Outlet />`; Sidebar/Navbar stay mounted throughout.
 - [x] **PageLoader component** — `src/components/ui/PageLoader/` — gradient arc ring spinner via `conic-gradient` + `radial-gradient` CSS mask. No SVG, no extra dependencies.
 - [x] **Mobile responsive layout** — `sm:` (640px) breakpoints added throughout: Sidebar slide-in drawer, Navbar hamburger button, modal sheet pattern (`items-end sm:items-center`, `rounded-t-[24px] sm:rounded-[24px]`), KPI/chart grids (`grid-cols-1 sm:grid-cols-N`), AppLayout margin (`ml-0 sm:ml-[264px]`). Final mobile polish deferred.
+- [x] **`React.memo` / `useCallback` / sub-component extraction pass — all pages and `src/components/`** — every exported component wrapped with `memo`; every handler defined inside a component body wrapped with `useCallback` (correct deps); `.map()` items that own dispatch calls extracted to dedicated `memo`-wrapped sub-components so `useCallback` is valid inside them (`NotificationItem`, `FilterTab`, `DotButton` in Navbar/LeftPanel; `TabButton` in `PatientModal`; `StatusPill` in `AddPatientModal`; `DurationButton`, `SlotButton` in `NewAppointmentModal`; `RecentPatientRow`, `AppointmentRow` in `TrendsRow`/`AppointmentsTable`; `CriticalPatientCard` in `CriticalBanner`; `AppointmentCard`, `ActionItem` in `AppointmentList`/`ActionRequired`; `PatientCard`, `PatientListRow` in `PatientGrid`/`PatientListView`); `type="button"` added to every non-submit button; all single-letter iterators renamed to descriptive names; `onPatientClick: (patient: Patient) => void` prop pattern established for card components so stable parent callbacks thread down without creating new closures; `NewAppointmentModal` gains `useMemo` for `docBusy`, `patBusy`, `doctors`, `selConflict`, `slotConflicts`; `KpiCard` `cursor` converted from inline style to Tailwind conditional; submit button gradient converted from `style` to `[background:var(--gradient-primary)]` Tailwind arbitrary value; `Button` and `Input` use `memo(forwardRef(...))` pattern; `forwardRef` components have `.displayName` set on the `memo` wrapper.

@@ -1,4 +1,5 @@
 import { User, Stethoscope, Activity } from "lucide-react";
+import { PATIENT_STATUS_COLORS } from "@/features/patients/utils";
 import type { PatientStatus, BloodGroup } from "@/features/patients/types";
 import type { FormData } from "./types";
 
@@ -29,10 +30,10 @@ export const BLOOD_GROUPS: BloodGroup[] = ["A+", "A-", "B+", "B-", "AB+", "AB-",
 export const STATUSES: PatientStatus[] = ["Active", "Critical", "Recovering", "Discharged"];
 
 export const STATUS_COLORS: Record<PatientStatus, string> = {
-  Active: "var(--accent-cyan)",
-  Critical: "var(--accent-red)",
-  Recovering: "var(--accent-yellow)",
-  Discharged: "var(--text-tertiary)",
+  Active: PATIENT_STATUS_COLORS.Active.color,
+  Critical: PATIENT_STATUS_COLORS.Critical.color,
+  Recovering: PATIENT_STATUS_COLORS.Recovering.color,
+  Discharged: PATIENT_STATUS_COLORS.Discharged.color,
 };
 
 export const STEPS = [

@@ -1,64 +1,20 @@
 import { memo, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Check } from "lucide-react";
+import { X } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { addPatient } from "@/features/patients/patientsSlice";
-import type { RootState } from "@/store";
-import type { Patient } from "@/features/patients/types";
 import { addToast } from "@/features/ui/uiSlice";
 import { cn } from "@/utils";
+import type { RootState } from "@/store";
+import type { Patient } from "@/features/patients/types";
 import type { PatientStatus } from "@/features/patients/types";
-import type { FormData, FieldProps, AddPatientModalProps } from "./types";
-import {
-  DEPARTMENTS,
-  DOCTORS,
-  BLOOD_GROUPS,
-  STATUSES,
-  STATUS_COLORS,
-  STEPS,
-  defaultForm,
-} from "./constants";
+import type { FormData, AddPatientModalProps } from "./types";
+import { STEPS, defaultForm } from "./constants";
 import { validateStep, buildPatient, getNextId } from "./helpers";
-
-const Field = memo(({ label, error, children }: FieldProps): React.ReactElement => (
-  <div>
-    <label
-      className={cn(
-        "block text-[11px] font-semibold uppercase tracking-[0.04em] mb-[6px]",
-        error ? "text-accent-red" : "text-text-tertiary",
-      )}
-    >
-      {label}
-      {error && <span className="text-accent-red"> *</span>}
-    </label>
-    {children}
-  </div>
-));
-
-interface StatusPillProps {
-  status: PatientStatus;
-  isSelected: boolean;
-  color: string;
-  onSelect: (status: PatientStatus) => void;
-}
-
-const StatusPill = memo(({ status, isSelected, color, onSelect }: StatusPillProps): React.ReactElement => {
-  const handleClick = useCallback(() => onSelect(status), [status, onSelect]);
-  return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="py-[7px] px-[14px] rounded-[10px] text-xs font-semibold cursor-pointer font-sans transition-all duration-150"
-      style={{
-        border: `1px solid ${isSelected ? color : "var(--border-primary)"}`,
-        background: isSelected ? `${color}18` : "var(--bg-secondary)",
-        color: isSelected ? color : "var(--text-secondary)",
-      }}
-    >
-      {status}
-    </button>
-  );
-});
+import { StepIndicator } from "./StepIndicator";
+import { Step0Personal } from "./steps/Step0Personal";
+import { Step1Clinical } from "./steps/Step1Clinical";
+import { Step2Vitals } from "./steps/Step2Vitals";
 
 export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
@@ -67,23 +23,22 @@ export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.R
   const [form, setForm] = useState<FormData>(defaultForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, boolean>>>({});
 
-  const inputCls = (field: keyof FormData): string =>
-    cn(
-      "w-full bg-bg-secondary rounded-[10px] py-[9px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
-      errors[field] ? "border border-accent-red" : "border border-border-primary",
-    );
-
-  const set =
+  const set = useCallback(
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setForm(f => ({ ...f, [field]: e.target.value }));
       setErrors(err => ({ ...err, [field]: false }));
-    };
+    },
+    [],
+  );
 
-  const validate = useCallback((stepIndex: number): boolean => {
-    const e = validateStep(stepIndex, form);
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  }, [form]);
+  const validate = useCallback(
+    (stepIndex: number): boolean => {
+      const e = validateStep(stepIndex, form);
+      setErrors(e);
+      return Object.keys(e).length === 0;
+    },
+    [form],
+  );
 
   const back = useCallback((): void => setStep(s => s - 1), []);
 
@@ -114,9 +69,12 @@ export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.R
     setForm(f => ({ ...f, status }));
   }, []);
 
-  const handleOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) onClose();
-  }, [onClose]);
+  const handleOverlayClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.target === e.currentTarget) onClose();
+    },
+    [onClose],
+  );
 
   const nextId = getNextId(patients);
 
@@ -152,266 +110,24 @@ export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.R
               <X size={16} />
             </button>
           </div>
-
-          {/* Step Indicator */}
-          <div className="flex items-center">
-            {STEPS.map((stepDef, i) => {
-              const Icon = stepDef.icon;
-              const done = step > i;
-              const active = step === i;
-              return (
-                <div key={i} className={cn("flex items-center", i < STEPS.length - 1 && "flex-1")}>
-                  <div className="flex flex-col items-center gap-1">
-                    <div
-                      className={cn(
-                        "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-[250ms]",
-                        done
-                          ? "bg-accent-cyan border-2 border-accent-cyan"
-                          : active
-                            ? "bg-[rgba(60,131,246,0.12)] border-2 border-accent-blue"
-                            : "bg-bg-tertiary border-2 border-border-primary",
-                      )}
-                    >
-                      {done ? (
-                        <Check size={14} color="white" strokeWidth={3} />
-                      ) : (
-                        <Icon size={14} color={active ? "var(--accent-blue)" : "var(--text-tertiary)"} />
-                      )}
-                    </div>
-                    <span
-                      className={cn(
-                        "text-[10px] font-semibold tracking-[0.03em]",
-                        active ? "text-accent-blue" : done ? "text-accent-cyan" : "text-text-tertiary",
-                      )}
-                    >
-                      {stepDef.label}
-                    </span>
-                  </div>
-                  {i < STEPS.length - 1 && (
-                    <div
-                      className={cn(
-                        "flex-1 h-[2px] mb-[18px] mx-[6px] transition-[background] duration-[250ms]",
-                        step > i ? "bg-accent-cyan" : "bg-border-primary",
-                      )}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <StepIndicator step={step} />
         </div>
 
         {/* Form */}
         <div className="flex-1 overflow-y-auto p-6">
           <AnimatePresence mode="wait">
-            {step === 0 && (
-              <motion.div
-                key="s0"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.18 }}
-                className="flex flex-col gap-4"
-              >
-                <Field label="Full Name" error={errors.name}>
-                  <input
-                    value={form.name}
-                    onChange={set("name")}
-                    placeholder="e.g. Riya Mehta"
-                    className={inputCls("name")}
-                  />
-                </Field>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Age" error={errors.age}>
-                    <input
-                      type="number"
-                      min={1}
-                      max={120}
-                      value={form.age}
-                      onChange={set("age")}
-                      placeholder="35"
-                      className={inputCls("age")}
-                    />
-                  </Field>
-                  <Field label="Gender">
-                    <select value={form.gender} onChange={set("gender")} className={inputCls("gender")}>
-                      <option>Male</option>
-                      <option>Female</option>
-                      <option>Other</option>
-                    </select>
-                  </Field>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Blood Group">
-                    <select value={form.bloodGroup} onChange={set("bloodGroup")} className={inputCls("bloodGroup")}>
-                      {BLOOD_GROUPS.map(bg => (
-                        <option key={bg}>{bg}</option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label="Phone" error={errors.phone}>
-                    <input
-                      value={form.phone}
-                      onChange={set("phone")}
-                      placeholder="+91 98765 12345"
-                      className={inputCls("phone")}
-                    />
-                  </Field>
-                </div>
-                <Field label="Email">
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={set("email")}
-                    placeholder="patient@email.com"
-                    className={inputCls("email")}
-                  />
-                </Field>
-                <Field label="Address">
-                  <input
-                    value={form.address}
-                    onChange={set("address")}
-                    placeholder="Street, City"
-                    className={inputCls("address")}
-                  />
-                </Field>
-              </motion.div>
-            )}
-
+            {step === 0 && <Step0Personal key="s0" form={form} errors={errors} set={set} />}
             {step === 1 && (
-              <motion.div
+              <Step1Clinical
                 key="s1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.18 }}
-                className="flex flex-col gap-4"
-              >
-                <Field label="Status">
-                  <div className="flex gap-2 flex-wrap">
-                    {STATUSES.map(status => (
-                      <StatusPill
-                        key={status}
-                        status={status}
-                        isSelected={form.status === status}
-                        color={STATUS_COLORS[status]}
-                        onSelect={handleSelectStatus}
-                      />
-                    ))}
-                  </div>
-                </Field>
-                <Field label="Diagnosis" error={errors.diagnosis}>
-                  <input
-                    value={form.diagnosis}
-                    onChange={set("diagnosis")}
-                    placeholder="e.g. Type 2 Diabetes"
-                    className={inputCls("diagnosis")}
-                  />
-                </Field>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Department">
-                    <select value={form.department} onChange={set("department")} className={inputCls("department")}>
-                      {DEPARTMENTS.map(dept => (
-                        <option key={dept}>{dept}</option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label="Attending Doctor">
-                    <select value={form.doctor} onChange={set("doctor")} className={inputCls("doctor")}>
-                      {DOCTORS.map(doctor => (
-                        <option key={doctor}>{doctor}</option>
-                      ))}
-                    </select>
-                  </Field>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Admission Date">
-                    <input
-                      type="date"
-                      value={form.admissionDate}
-                      onChange={set("admissionDate")}
-                      className={inputCls("admissionDate")}
-                    />
-                  </Field>
-                  <Field label="Tags (comma-separated)">
-                    <input
-                      value={form.tags}
-                      onChange={set("tags")}
-                      placeholder="Diabetic, High BP"
-                      className={inputCls("tags")}
-                    />
-                  </Field>
-                </div>
-              </motion.div>
+                form={form}
+                errors={errors}
+                set={set}
+                onSelectStatus={handleSelectStatus}
+              />
             )}
-
             {step === 2 && (
-              <motion.div
-                key="s2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.18 }}
-                className="flex flex-col gap-4"
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Heart Rate (bpm)" error={errors.heartRate}>
-                    <input
-                      type="number"
-                      value={form.heartRate}
-                      onChange={set("heartRate")}
-                      placeholder="72"
-                      className={inputCls("heartRate")}
-                    />
-                  </Field>
-                  <Field label="Blood Pressure" error={errors.bloodPressure}>
-                    <input
-                      value={form.bloodPressure}
-                      onChange={set("bloodPressure")}
-                      placeholder="120/80"
-                      className={inputCls("bloodPressure")}
-                    />
-                  </Field>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Temperature (°F)" error={errors.temperature}>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={form.temperature}
-                      onChange={set("temperature")}
-                      placeholder="98.6"
-                      className={inputCls("temperature")}
-                    />
-                  </Field>
-                  <Field label="Oxygen Saturation (%)" error={errors.oxygenSat}>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={form.oxygenSat}
-                      onChange={set("oxygenSat")}
-                      placeholder="98"
-                      className={inputCls("oxygenSat")}
-                    />
-                  </Field>
-                </div>
-                <Field label="Weight (kg)" error={errors.weight}>
-                  <input
-                    type="number"
-                    value={form.weight}
-                    onChange={set("weight")}
-                    placeholder="70"
-                    className={cn(inputCls("weight"), "max-w-[calc(50%-8px)]")}
-                  />
-                </Field>
-                <div className="py-3 px-4 bg-bg-tertiary rounded-[12px]">
-                  <p className="text-xs text-text-secondary">
-                    Patient ID <strong className="text-text-primary">{nextId}</strong> will be
-                    assigned on creation.
-                  </p>
-                </div>
-              </motion.div>
+              <Step2Vitals key="s2" form={form} errors={errors} set={set} nextId={nextId} />
             )}
           </AnimatePresence>
         </div>

@@ -1,10 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Patient } from "./types";
+import type { Patient, Prescription } from "./types";
 import type { ViewMode } from "@/features/ui/types";
-import { mockPatients } from "@/data/patients";
+import { mockPatients, mockPrescriptions } from "@/data/patients";
 
 interface PatientsState {
   patients: Patient[];
+  prescriptions: Prescription[];
   filteredPatients: Patient[];
   selectedPatient: Patient | null;
   viewMode: ViewMode;
@@ -16,6 +17,7 @@ interface PatientsState {
 
 const initialState: PatientsState = {
   patients: mockPatients,
+  prescriptions: mockPrescriptions,
   filteredPatients: mockPatients,
   selectedPatient: null,
   viewMode: "grid",

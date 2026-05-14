@@ -14,6 +14,7 @@ interface UIState {
 }
 
 const savedTheme = (localStorage.getItem("medcare-theme") as Theme) || "light";
+// Apply initial theme synchronously before React hydrates to prevent flash of wrong theme
 document.documentElement.setAttribute("data-theme", savedTheme);
 
 const initialState: UIState = {
@@ -63,13 +64,9 @@ const uiSlice = createSlice({
   reducers: {
     toggleTheme(state) {
       state.theme = state.theme === "dark" ? "light" : "dark";
-      localStorage.setItem("medcare-theme", state.theme);
-      document.documentElement.setAttribute("data-theme", state.theme);
     },
     setTheme(state, action: PayloadAction<Theme>) {
       state.theme = action.payload;
-      localStorage.setItem("medcare-theme", action.payload);
-      document.documentElement.setAttribute("data-theme", action.payload);
     },
     toggleSidebar(state) {
       state.sidebarOpen = !state.sidebarOpen;
