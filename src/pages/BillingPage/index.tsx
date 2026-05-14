@@ -26,39 +26,42 @@ const BillingPage = (): React.ReactElement => {
     [pendingRecords],
   );
 
-  const kpis = [
-    {
-      title: "Total Billed",
-      rawValue: totalBilled,
-      format: formatCompact,
-      sub: `${records.length} records`,
-      icon: <CreditCard size={20} />,
-      color: "var(--accent-blue)",
-    },
-    {
-      title: "Insurance Settled",
-      rawValue: insuranceCoveredTotal,
-      format: formatCompact,
-      sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`,
-      icon: <CheckCircle size={20} />,
-      color: "var(--accent-cyan)",
-    },
-    {
-      title: "Patient Outstanding",
-      rawValue: patientDueTotal,
-      format: formatCompact,
-      sub: "Across all visits",
-      icon: <TrendingUp size={20} />,
-      color: "var(--accent-purple)",
-    },
-    {
-      title: "Pending Claims",
-      rawValue: pendingRecords.length,
-      sub: formatCompact(pendingAmount) + " at risk",
-      icon: <Clock size={20} />,
-      color: "var(--accent-yellow)",
-    },
-  ];
+  const kpis = useMemo(
+    () => [
+      {
+        title: "Total Billed",
+        rawValue: totalBilled,
+        format: formatCompact,
+        sub: `${records.length} records`,
+        icon: <CreditCard size={20} />,
+        color: "var(--accent-blue)",
+      },
+      {
+        title: "Insurance Settled",
+        rawValue: insuranceCoveredTotal,
+        format: formatCompact,
+        sub: `${Math.round((insuranceCoveredTotal / totalBilled) * 100)}% of total`,
+        icon: <CheckCircle size={20} />,
+        color: "var(--accent-cyan)",
+      },
+      {
+        title: "Patient Outstanding",
+        rawValue: patientDueTotal,
+        format: formatCompact,
+        sub: "Across all visits",
+        icon: <TrendingUp size={20} />,
+        color: "var(--accent-purple)",
+      },
+      {
+        title: "Pending Claims",
+        rawValue: pendingRecords.length,
+        sub: formatCompact(pendingAmount) + " at risk",
+        icon: <Clock size={20} />,
+        color: "var(--accent-yellow)",
+      },
+    ],
+    [totalBilled, insuranceCoveredTotal, patientDueTotal, pendingRecords.length, pendingAmount, records.length],
+  );
 
   return (
     <motion.div
@@ -84,16 +87,8 @@ const BillingPage = (): React.ReactElement => {
         variants={item}
         className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-8"
       >
-        {kpis.map(k => (
-          <KpiCard
-            key={k.title}
-            title={k.title}
-            rawValue={k.rawValue}
-            format={k.format}
-            sub={k.sub}
-            icon={k.icon}
-            color={k.color}
-          />
+        {kpis.map(kpi => (
+          <KpiCard key={kpi.title} {...kpi} />
         ))}
       </motion.div>
 

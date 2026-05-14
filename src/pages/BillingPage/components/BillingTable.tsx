@@ -10,7 +10,7 @@ import { CLAIM_STATUS_COLORS, PROVIDER_SHORT } from "@/features/billing/constant
 import { item, ALL_STATUSES, PAGE_SIZE } from "../constants";
 import { BillingDetailModal } from "./BillingDetailModal";
 
-export const BillingTable = () => {
+export const BillingTable = (): React.ReactElement => {
   const records = useAppSelector(s => s.billing.records);
 
   const [search, setSearch] = useState("");
@@ -50,19 +50,18 @@ export const BillingTable = () => {
   const pagedRecords = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
   const activeFilters = statusFilter.length + providerFilter.length;
 
-  const toggleStatus = (s: ClaimStatus) => {
-    setStatusFilter(prev => (prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]));
+  const toggleStatus = (status: ClaimStatus) => {
+    setStatusFilter(prev => (prev.includes(status) ? prev.filter(x => x !== status) : [...prev, status]));
     setPage(1);
   };
-  const toggleProvider = (p: string) => {
-    setProviderFilter(prev => (prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]));
+  const toggleProvider = (provider: string) => {
+    setProviderFilter(prev => (prev.includes(provider) ? prev.filter(x => x !== provider) : [...prev, provider]));
     setPage(1);
   };
 
   return (
     <>
       <motion.div variants={item} className="glass-card rounded-20 p-6">
-        {/* Table header + controls */}
         <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
           <div>
             <h2 className="text-base font-semibold text-text-primary">Billing Records</h2>
@@ -82,6 +81,7 @@ export const BillingTable = () => {
               width={260}
             />
             <button
+              type="button"
               onClick={() => setFilterOpen(o => !o)}
               className={cn(
                 "flex items-center gap-[6px] px-[14px] py-2 rounded-[10px] text-[13px] font-medium cursor-pointer font-sans transition-all duration-150 border",
@@ -101,7 +101,6 @@ export const BillingTable = () => {
           </div>
         </div>
 
-        {/* Collapsible filter panel */}
         <motion.div
           initial={false}
           animate={{ maxHeight: filterOpen ? 200 : 0, opacity: filterOpen ? 1 : 0 }}
@@ -113,21 +112,22 @@ export const BillingTable = () => {
               <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.05em] w-[70px] shrink-0">
                 Status
               </span>
-              {ALL_STATUSES.map(s => {
-                const active = statusFilter.includes(s);
+              {ALL_STATUSES.map(status => {
+                const active = statusFilter.includes(status);
                 return (
                   <button
-                    key={s}
-                    onClick={() => toggleStatus(s)}
+                    key={status}
+                    type="button"
+                    onClick={() => toggleStatus(status)}
                     className="px-3 py-1 rounded-full text-xs cursor-pointer font-sans transition-all duration-150"
                     style={{
-                      border: `1px solid ${active ? CLAIM_STATUS_COLORS[s].color : "var(--border-primary)"}`,
-                      background: active ? CLAIM_STATUS_COLORS[s].bg : "transparent",
-                      color: active ? CLAIM_STATUS_COLORS[s].color : "var(--text-secondary)",
+                      border: `1px solid ${active ? CLAIM_STATUS_COLORS[status].color : "var(--border-primary)"}`,
+                      background: active ? CLAIM_STATUS_COLORS[status].bg : "transparent",
+                      color: active ? CLAIM_STATUS_COLORS[status].color : "var(--text-secondary)",
                       fontWeight: active ? 600 : 400,
                     }}
                   >
-                    {s}
+                    {status}
                   </button>
                 );
               })}
@@ -137,12 +137,13 @@ export const BillingTable = () => {
                 Provider
               </span>
               <div className="flex flex-wrap gap-[6px]">
-                {allProviders.map(p => {
-                  const active = providerFilter.includes(p);
+                {allProviders.map(provider => {
+                  const active = providerFilter.includes(provider);
                   return (
                     <button
-                      key={p}
-                      onClick={() => toggleProvider(p)}
+                      key={provider}
+                      type="button"
+                      onClick={() => toggleProvider(provider)}
                       className={cn(
                         "px-3 py-1 rounded-full text-xs cursor-pointer font-sans transition-all duration-150 border",
                         active
@@ -150,7 +151,7 @@ export const BillingTable = () => {
                           : "border-border-primary bg-transparent text-text-secondary",
                       )}
                     >
-                      {PROVIDER_SHORT[p] || p}
+                      {PROVIDER_SHORT[provider] || provider}
                     </button>
                   );
                 })}
@@ -158,6 +159,7 @@ export const BillingTable = () => {
             </div>
             {activeFilters > 0 && (
               <button
+                type="button"
                 onClick={() => {
                   setStatusFilter([]);
                   setProviderFilter([]);
@@ -171,7 +173,6 @@ export const BillingTable = () => {
           </div>
         </motion.div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-[13px] border-collapse">
             <thead>
@@ -203,10 +204,10 @@ export const BillingTable = () => {
                   </td>
                 </tr>
               ) : (
-                pagedRecords.map((r, i) => (
+                pagedRecords.map((record, i) => (
                   <motion.tr
-                    key={r.id}
-                    onClick={() => setSelectedRecordId(r.id)}
+                    key={record.id}
+                    onClick={() => setSelectedRecordId(record.id)}
                     whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
                     className={cn(
                       "cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary",
@@ -215,49 +216,49 @@ export const BillingTable = () => {
                   >
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
-                        <Avatar initials={r.patientAvatar} size={28} radius="50%" />
+                        <Avatar initials={record.patientAvatar} size={28} radius="50%" />
                         <span className="font-medium text-text-primary whitespace-nowrap">
-                          {r.patientName}
+                          {record.patientName}
                         </span>
                       </div>
                     </td>
                     <td className="px-3 py-3 text-text-secondary whitespace-nowrap">
-                      {new Date(r.visitDate).toLocaleDateString("en-IN", {
+                      {new Date(record.visitDate).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                       })}
                     </td>
                     <td className="px-3 py-3 text-text-secondary max-w-[200px]">
                       <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-                        {r.procedure}
+                        {record.procedure}
                       </p>
-                      <p className="text-[11px] text-text-tertiary mt-[2px]">{r.department}</p>
+                      <p className="text-[11px] text-text-tertiary mt-[2px]">{record.department}</p>
                     </td>
-                    <td className="px-3 py-3 text-text-secondary whitespace-nowrap">{r.doctor}</td>
+                    <td className="px-3 py-3 text-text-secondary whitespace-nowrap">{record.doctor}</td>
                     <td className="px-3 py-3 text-text-secondary whitespace-nowrap">
-                      {PROVIDER_SHORT[r.insuranceProvider] || r.insuranceProvider}
+                      {PROVIDER_SHORT[record.insuranceProvider] || record.insuranceProvider}
                     </td>
                     <td className="px-3 py-3 font-semibold text-text-primary whitespace-nowrap">
-                      ₹{r.totalAmount.toLocaleString("en-IN")}
+                      ₹{record.totalAmount.toLocaleString("en-IN")}
                     </td>
                     <td className="px-3 py-3">
                       <span
                         className="text-[11px] font-semibold px-[10px] py-1 rounded-[8px] whitespace-nowrap"
                         style={{
-                          background: CLAIM_STATUS_COLORS[r.claimStatus].bg,
-                          color: CLAIM_STATUS_COLORS[r.claimStatus].color,
+                          background: CLAIM_STATUS_COLORS[record.claimStatus].bg,
+                          color: CLAIM_STATUS_COLORS[record.claimStatus].color,
                         }}
                       >
-                        {r.claimStatus}
+                        {record.claimStatus}
                       </span>
                     </td>
                     <td
                       className={cn(
                         "px-3 py-3 font-semibold whitespace-nowrap",
-                        r.patientDue > 50000 ? "text-accent-red" : "text-text-primary",
+                        record.patientDue > 50000 ? "text-accent-red" : "text-text-primary",
                       )}
                     >
-                      ₹{r.patientDue.toLocaleString("en-IN")}
+                      ₹{record.patientDue.toLocaleString("en-IN")}
                     </td>
                   </motion.tr>
                 ))
@@ -266,7 +267,6 @@ export const BillingTable = () => {
           </table>
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-border-primary">
             <span className="text-[13px] text-text-secondary">
@@ -275,27 +275,30 @@ export const BillingTable = () => {
             </span>
             <div className="flex items-center gap-[6px]">
               <button
+                type="button"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={safePage === 1}
                 className="flex items-center justify-center w-8 h-8 rounded-[8px] border border-border-primary bg-bg-secondary text-text-secondary cursor-pointer disabled:cursor-not-allowed disabled:text-text-tertiary"
               >
                 <ChevronLeft size={14} />
               </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
                 <button
-                  key={p}
-                  onClick={() => setPage(p)}
+                  key={pageNum}
+                  type="button"
+                  onClick={() => setPage(pageNum)}
                   className={cn(
                     "flex items-center justify-center min-w-[32px] h-8 rounded-[8px] text-[13px] cursor-pointer font-sans border",
-                    p === safePage
+                    pageNum === safePage
                       ? "border-accent-blue bg-[rgba(60,131,246,0.1)] text-accent-blue font-semibold"
                       : "border-border-primary bg-bg-secondary text-text-secondary",
                   )}
                 >
-                  {p}
+                  {pageNum}
                 </button>
               ))}
               <button
+                type="button"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={safePage === totalPages}
                 className="flex items-center justify-center w-8 h-8 rounded-[8px] border border-border-primary bg-bg-secondary text-text-secondary cursor-pointer disabled:cursor-not-allowed disabled:text-text-tertiary"

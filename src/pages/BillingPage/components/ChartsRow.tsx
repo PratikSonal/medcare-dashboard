@@ -20,7 +20,7 @@ import { cn, formatCompact } from "@/utils";
 import { CLAIM_STATUS_COLORS, PROVIDER_SHORT } from "@/features/billing/constants";
 import { item, ttStyle, ALL_STATUSES } from "../constants";
 
-export const ChartsRow = () => {
+export const ChartsRow = (): React.ReactElement => {
   const records = useAppSelector(s => s.billing.records);
 
   const providerData = useMemo(() => {
@@ -39,10 +39,10 @@ export const ChartsRow = () => {
 
   const claimStatusData = useMemo(
     () =>
-      ALL_STATUSES.map(s => ({
-        name: s,
-        value: records.filter(r => r.claimStatus === s).length,
-        color: CLAIM_STATUS_COLORS[s].color,
+      ALL_STATUSES.map(status => ({
+        name: status,
+        value: records.filter(r => r.claimStatus === status).length,
+        color: CLAIM_STATUS_COLORS[status].color,
       })),
     [records],
   );
@@ -54,7 +54,6 @@ export const ChartsRow = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-6 mb-6">
-      {/* Provider Performance */}
       <motion.div variants={item} className="glass-card rounded-20 p-6 flex flex-col">
         <div className="mb-6">
           <h2 className="text-base font-semibold text-text-primary">Provider Performance</h2>
@@ -115,7 +114,6 @@ export const ChartsRow = () => {
         </div>
       </motion.div>
 
-      {/* Claim Status Donut */}
       <motion.div variants={item} className="glass-card rounded-20 p-6">
         <div className="mb-3">
           <h2 className="text-base font-semibold text-text-primary">Claim Status</h2>
@@ -132,24 +130,24 @@ export const ChartsRow = () => {
               outerRadius={65}
               paddingAngle={3}
             >
-              {claimStatusData.map((entry, i) => (
-                <Cell key={i} fill={entry.color} />
+              {claimStatusData.map(entry => (
+                <Cell key={entry.name} fill={entry.color} />
               ))}
             </Pie>
             <Tooltip {...ttStyle} formatter={v => [`${v} claims`]} />
           </PieChart>
         </ResponsiveContainer>
         <div className="flex flex-col gap-2 mt-1">
-          {claimStatusData.map(s => (
-            <div key={s.name} className="flex items-center justify-between">
+          {claimStatusData.map(stat => (
+            <div key={stat.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} />
-                <span className="text-xs text-text-secondary">{s.name}</span>
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: stat.color }} />
+                <span className="text-xs text-text-secondary">{stat.name}</span>
               </div>
               <div className="flex items-center gap-[6px]">
-                <span className="text-xs font-semibold text-text-primary">{s.value}</span>
+                <span className="text-xs font-semibold text-text-primary">{stat.value}</span>
                 <span className="text-[11px] text-text-tertiary">
-                  {records.length > 0 ? Math.round((s.value / records.length) * 100) : 0}%
+                  {records.length > 0 ? Math.round((stat.value / records.length) * 100) : 0}%
                 </span>
               </div>
             </div>
@@ -157,7 +155,6 @@ export const ChartsRow = () => {
         </div>
       </motion.div>
 
-      {/* Outstanding Balance Leaderboard */}
       <motion.div variants={item} className="glass-card rounded-20 p-6">
         <div className="flex items-center gap-2 mb-1">
           <Trophy size={15} className="text-accent-yellow" />
@@ -165,9 +162,9 @@ export const ChartsRow = () => {
         </div>
         <p className="text-[13px] text-text-secondary mb-4">Top 5 by patient due amount</p>
         <div className="flex flex-col gap-3">
-          {leaderboard.map((r, i) => (
+          {leaderboard.map((record, i) => (
             <motion.div
-              key={r.id}
+              key={record.id}
               whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
               className="flex items-center gap-[10px] px-2 py-1 -mx-2 rounded-[10px] cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary"
             >
@@ -179,20 +176,20 @@ export const ChartsRow = () => {
               >
                 #{i + 1}
               </span>
-              <Avatar initials={r.patientAvatar} size={28} radius="50%" />
+              <Avatar initials={record.patientAvatar} size={28} radius="50%" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
-                  {r.patientName}
+                  {record.patientName}
                 </p>
-                <p className="text-[11px] text-text-tertiary">{r.department}</p>
+                <p className="text-[11px] text-text-tertiary">{record.department}</p>
               </div>
               <span
                 className={cn(
                   "text-xs font-bold shrink-0",
-                  r.patientDue > 50000 ? "text-accent-red" : "text-text-primary",
+                  record.patientDue > 50000 ? "text-accent-red" : "text-text-primary",
                 )}
               >
-                {formatCompact(r.patientDue)}
+                {formatCompact(record.patientDue)}
               </span>
             </motion.div>
           ))}

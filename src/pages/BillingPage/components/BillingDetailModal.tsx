@@ -8,7 +8,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
 import { ALL_STATUSES } from "../constants";
 
-export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps) => {
+export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
 
@@ -37,7 +37,6 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
             className="glass-card rounded-[24px] p-8 w-full max-w-[540px] max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
-            {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <Avatar initials={record.patientAvatar} size={44} radius="50%" />
@@ -52,6 +51,7 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
                 </div>
               </div>
               <button
+                type="button"
                 onClick={onClose}
                 className="flex items-center justify-center w-8 h-8 rounded-[10px] border border-border-primary bg-transparent text-text-secondary cursor-pointer shrink-0"
               >
@@ -59,7 +59,6 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
               </button>
             </div>
 
-            {/* Visit info */}
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div className="p-3 rounded-12 bg-bg-secondary border border-border-primary">
                 <p className="text-[11px] text-text-tertiary uppercase tracking-[0.05em] mb-1">
@@ -81,7 +80,6 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
               </div>
             </div>
 
-            {/* Procedure */}
             <div className="p-3 rounded-12 bg-bg-secondary border border-border-primary mb-5">
               <p className="text-[11px] text-text-tertiary uppercase tracking-[0.05em] mb-1">
                 Procedure
@@ -90,7 +88,6 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
               <p className="text-[11px] text-text-tertiary mt-1">{record.insuranceProvider}</p>
             </div>
 
-            {/* Financial breakdown */}
             <div className="grid grid-cols-3 gap-[10px] mb-5">
               {[
                 {
@@ -108,61 +105,61 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
                   value: `₹${record.patientDue.toLocaleString("en-IN")}`,
                   color: record.patientDue > 50000 ? "var(--accent-red)" : "var(--accent-purple)",
                 },
-              ].map(f => (
+              ].map(field => (
                 <div
-                  key={f.label}
+                  key={field.label}
                   className="px-[10px] py-[14px] rounded-12 bg-bg-secondary text-center"
-                  style={{ border: `1px solid ${f.color}30` }}
+                  style={{ border: `1px solid ${field.color}30` }}
                 >
                   <p className="text-[10px] text-text-tertiary mb-[6px] uppercase tracking-[0.04em]">
-                    {f.label}
+                    {field.label}
                   </p>
-                  <p className="text-[15px] font-bold" style={{ color: f.color }}>
-                    {f.value}
+                  <p className="text-[15px] font-bold" style={{ color: field.color }}>
+                    {field.value}
                   </p>
                 </div>
               ))}
             </div>
 
-            {/* Claim status update */}
             <div className="mb-6">
               <p className="text-[13px] font-semibold text-text-secondary mb-[10px]">
                 Update Claim Status
               </p>
               <div className="flex gap-2 flex-wrap">
-                {ALL_STATUSES.map(s => {
-                  const isActive = record.claimStatus === s;
+                {ALL_STATUSES.map(status => {
+                  const isActive = record.claimStatus === status;
                   return (
                     <button
-                      key={s}
-                      onClick={() => dispatch(updateClaimStatus({ id: record.id, status: s }))}
+                      key={status}
+                      type="button"
+                      onClick={() => dispatch(updateClaimStatus({ id: record.id, status }))}
                       className="px-4 py-[6px] rounded-[10px] text-[13px] cursor-pointer font-sans transition-all duration-150"
                       style={{
-                        border: `1px solid ${isActive ? CLAIM_STATUS_COLORS[s].color : "var(--border-primary)"}`,
-                        background: isActive ? CLAIM_STATUS_COLORS[s].bg : "transparent",
-                        color: isActive ? CLAIM_STATUS_COLORS[s].color : "var(--text-secondary)",
+                        border: `1px solid ${isActive ? CLAIM_STATUS_COLORS[status].color : "var(--border-primary)"}`,
+                        background: isActive ? CLAIM_STATUS_COLORS[status].bg : "transparent",
+                        color: isActive ? CLAIM_STATUS_COLORS[status].color : "var(--text-secondary)",
                         fontWeight: isActive ? 600 : 400,
                       }}
                     >
-                      {s}
+                      {status}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Footer */}
             <div className="flex gap-[10px] justify-end pt-4 border-t border-border-primary">
               <button
+                type="button"
                 onClick={onClose}
                 className="px-5 py-[10px] rounded-12 border border-border-primary bg-transparent text-text-secondary text-[13px] font-medium cursor-pointer font-sans"
               >
                 Close
               </button>
               <button
+                type="button"
                 onClick={handleViewProfile}
-                className="px-5 py-[10px] rounded-12 border-0 text-white text-[13px] font-semibold cursor-pointer font-sans"
-                style={{ background: "var(--gradient-primary)" }}
+                className="px-5 py-[10px] rounded-12 border-0 text-white text-[13px] font-semibold cursor-pointer font-sans [background:var(--gradient-primary)]"
               >
                 View Patient Profile
               </button>
