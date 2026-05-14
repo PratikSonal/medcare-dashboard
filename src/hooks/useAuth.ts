@@ -38,7 +38,6 @@ export const useAuth = (): UseAuthReturn => {
         uid: result.user.uid,
         email: result.user.email,
         displayName: result.user.displayName,
-        photoURL: result.user.photoURL,
       }));
       await registerServiceWorker();
       showWelcomeNotification(result.user.displayName || result.user.email || "Doctor");
@@ -63,7 +62,6 @@ export const useAuth = (): UseAuthReturn => {
         uid: result.user.uid,
         email: result.user.email,
         displayName: name,
-        photoURL: result.user.photoURL,
       }));
       showWelcomeNotification(name);
       navigate("/dashboard");
