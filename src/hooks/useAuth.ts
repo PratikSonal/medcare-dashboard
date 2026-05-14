@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { setError,setUser } from "@/features/auth/authSlice";
+import { setUser } from "@/features/auth/authSlice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { auth } from "@/lib/firebase";
 import { getFirebaseErrorMessage } from "@/lib/firebase/errors";
@@ -46,7 +46,6 @@ export const useAuth = (): UseAuthReturn => {
       const code = err instanceof FirebaseError ? err.code : "";
       const msg = getFirebaseErrorMessage(code, "Login failed. Please try again.");
       setLocalError(msg);
-      dispatch(setError(msg));
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +68,6 @@ export const useAuth = (): UseAuthReturn => {
       const code = err instanceof FirebaseError ? err.code : "";
       const msg = getFirebaseErrorMessage(code, "Registration failed. Please try again.");
       setLocalError(msg);
-      dispatch(setError(msg));
     } finally {
       setIsLoading(false);
     }

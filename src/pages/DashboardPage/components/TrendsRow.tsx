@@ -12,7 +12,6 @@ import {
   YAxis,
 } from "recharts";
 
-import { metricsData } from "@/data/analytics";
 import { clearFilters,setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { Patient } from "@/features/patients/types";
 import { getStatusBg, getStatusColor } from "@/features/patients/utils";
@@ -72,6 +71,7 @@ export const TrendsRow = memo((): React.ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
+  const metrics = useAppSelector(s => s.analytics.metrics);
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("All");
 
   const handleViewAll = useCallback(() => {
@@ -82,11 +82,11 @@ export const TrendsRow = memo((): React.ReactElement => {
   const chartData = useMemo(
     () =>
       chartPeriod === "3M"
-        ? metricsData.slice(-3)
+        ? metrics.slice(-3)
         : chartPeriod === "6M"
-          ? metricsData.slice(-6)
-          : metricsData,
-    [chartPeriod],
+          ? metrics.slice(-6)
+          : metrics,
+    [chartPeriod, metrics],
   );
 
   return (

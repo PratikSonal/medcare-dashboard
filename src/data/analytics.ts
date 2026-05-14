@@ -21,4 +21,3 @@ export const departmentStats: DepartmentStat[] = [
   { name: "Others", patients: 27, color: "var(--chart-gray)" },
 ];
 
-export const todayAppointmentCount = 8;

@@ -1,2 +1,2 @@
 export { cn } from "./cn";
-export { formatCompact,formatCurrency, formatDate } from "./format";
+export { formatCompact, formatDate } from "./format";
