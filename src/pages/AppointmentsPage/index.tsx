@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Plus, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 import type { Appointment } from "@/features/appointments/types";
 import { useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
 import { KpiCard } from "@/components/ui/KpiCard";
 import NewAppointmentModal from "@/components/NewAppointmentModal";
 import { getWeekDays, formatDateKey } from "./helpers";
@@ -14,8 +15,8 @@ import { ActionRequired } from "./components/ActionRequired";
 import { TimeSlots } from "./components/TimeSlots";
 import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
 
-const AppointmentsPage = () => {
-  const appointments = useAppSelector(s => s.appointments.appointments);
+const AppointmentsPage = (): React.ReactElement => {
+  const appointments = useAppSelector((s: RootState) => s.appointments.appointments);
   const [selectedDate, setSelectedDate] = useState(new Date("2026-05-11"));
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterStatus, setFilterStatus] = useState<string>("All");
@@ -34,7 +35,7 @@ const AppointmentsPage = () => {
   const dateKey = useMemo(() => formatDateKey(selectedDate), [selectedDate]);
 
   const todayAll = useMemo(
-    () => appointments.filter(a => a.date === dateKey).sort((a, b) => a.time.localeCompare(b.time)),
+    () => appointments.filter((a: Appointment) => a.date === dateKey).sort((a: Appointment, b: Appointment) => a.time.localeCompare(b.time)),
     [appointments, dateKey],
   );
 
@@ -62,7 +63,7 @@ const AppointmentsPage = () => {
   );
 
   const hasActiveFilters = filterStatus !== "All" || filterType !== "All";
-  const doctors = useMemo(() => [...new Set(appointments.map(a => a.doctor))], [appointments]);
+  const doctors = useMemo(() => [...new Set(appointments.map((a: Appointment) => a.doctor))], [appointments]);
 
   const stats = useMemo(
     () => [

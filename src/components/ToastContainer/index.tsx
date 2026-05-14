@@ -5,8 +5,9 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { removeToast } from "@/features/ui/uiSlice";
 import type { ToastProps } from "./types";
 import { CONFIG } from "./constants";
+import type { RootState } from "@/store";
 
-const Toast = ({ id, message, type }: ToastProps) => {
+const Toast = ({ id, message, type }: ToastProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const { icon: Icon, color, bg } = CONFIG[type];
 
@@ -41,13 +42,13 @@ const Toast = ({ id, message, type }: ToastProps) => {
   );
 };
 
-export const ToastContainer = () => {
-  const toasts = useAppSelector(s => s.ui.toasts);
+export const ToastContainer = (): React.ReactElement => {
+  const toasts = useAppSelector((s: RootState) => s.ui.toasts);
 
   return (
     <div className="fixed bottom-6 right-6 z-[1100] flex flex-col-reverse gap-2 items-end">
       <AnimatePresence>
-        {toasts.map(t => (
+        {toasts.map((t: ToastProps) => (
           <Toast key={t.id} {...t} />
         ))}
       </AnimatePresence>

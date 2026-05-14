@@ -1,4 +1,4 @@
-export const registerServiceWorker = async () => {
+export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration | undefined> => {
   if ("serviceWorker" in navigator) {
     try {
       const reg = await navigator.serviceWorker.register("/sw.js");
@@ -18,12 +18,12 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
   return permission === "granted";
 };
 
-export const showLocalNotification = (title: string, body: string, icon = "/favicon.svg") => {
+export const showLocalNotification = (title: string, body: string, icon = "/favicon.svg"): void => {
   if (Notification.permission !== "granted") return;
   new Notification(title, { body, icon });
 };
 
-export const showWelcomeNotification = async (userName: string) => {
+export const showWelcomeNotification = async (userName: string): Promise<void> => {
   const granted = await requestNotificationPermission();
   if (!granted) return;
   setTimeout(() => {
@@ -34,7 +34,7 @@ export const showWelcomeNotification = async (userName: string) => {
   }, 1500);
 };
 
-export const showPatientAlertNotification = async (patientName: string, alertType: string) => {
+export const showPatientAlertNotification = async (patientName: string, alertType: string): Promise<void> => {
   const granted = await requestNotificationPermission();
   if (!granted) return;
   showLocalNotification(
@@ -43,7 +43,7 @@ export const showPatientAlertNotification = async (patientName: string, alertTyp
   );
 };
 
-export const showDailySummaryNotification = async (totalPatients: number, critical: number) => {
+export const showDailySummaryNotification = async (totalPatients: number, critical: number): Promise<void> => {
   const granted = await requestNotificationPermission();
   if (!granted) return;
   showLocalNotification(

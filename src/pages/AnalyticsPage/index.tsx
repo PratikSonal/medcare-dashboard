@@ -18,7 +18,7 @@ const totalAppointments = metricsData.reduce((s, d) => s + d.appointments, 0);
 const totalRecovered = metricsData.reduce((s, d) => s + d.recovered, 0);
 const recoveryRate = Math.round((totalRecovered / totalPatients) * 100);
 
-const AnalyticsPage = () => {
+const AnalyticsPage = (): React.ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -37,7 +37,7 @@ const AnalyticsPage = () => {
     {
       title: "Total Revenue",
       rawValue: Math.round(totalRevenue / 10000),
-      format: (n: number) => `₹${(n / 10).toFixed(1)}L`,
+      format: (n: number): string => `₹${(n / 10).toFixed(1)}L`,
       icon: <DollarSign size={20} />,
       color: "var(--accent-cyan)",
       sub: "Nov 2025 – May 2026",

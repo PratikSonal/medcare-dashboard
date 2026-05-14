@@ -2,6 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { X, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
+import type { Patient } from "@/features/patients/types";
+import type { Appointment } from "@/features/appointments/types";
 import { addToast, addNotification } from "@/features/ui/uiSlice";
 import { addAppointment } from "@/features/appointments/appointmentsSlice";
 import { cn } from "@/lib/utils";
@@ -36,7 +39,7 @@ const TrackRow = ({
   hasConflict,
   onTimelineClick,
   onBlockHover,
-}: TrackRowProps) => (
+}: TrackRowProps): React.ReactElement => (
   <div className="mb-2">
     <p className="text-[10px] text-text-tertiary mb-1">{label}</p>
     <div
@@ -86,10 +89,10 @@ const TrackRow = ({
   </div>
 );
 
-const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
+const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const patients = useAppSelector(s => s.patients.patients);
-  const appointments = useAppSelector(s => s.appointments.appointments);
+  const patients = useAppSelector((s: RootState) => s.patients.patients);
+  const appointments = useAppSelector((s: RootState) => s.appointments.appointments);
 
   const [form, setForm] = useState<FormState>({
     patientId: "",
@@ -105,18 +108,18 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
     null,
   );
 
-  const updateField = (k: keyof FormState, v: FormState[keyof FormState]) =>
+  const updateField = (k: keyof FormState, v: FormState[keyof FormState]): void =>
     setForm(f => ({ ...f, [k]: v }));
 
-  const fieldCls = (k: keyof FormState) =>
+  const fieldCls = (k: keyof FormState): string =>
     cn(
       "w-full bg-bg-tertiary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
       errors[k] ? "border border-accent-red" : "border border-border-primary",
     );
 
-  const docBusy = appointments.filter(a => a.doctor === form.doctor && a.date === form.date);
-  const patBusy = appointments.filter(a => a.patientId === form.patientId && a.date === form.date);
-  const doctors = [...new Set(appointments.map(a => a.doctor))];
+  const docBusy = appointments.filter((a: Appointment) => a.doctor === form.doctor && a.date === form.date);
+  const patBusy = appointments.filter((a: Appointment) => a.patientId === form.patientId && a.date === form.date);
+  const doctors = [...new Set(appointments.map((a: Appointment) => a.doctor))];
 
   const selConflict = form.time ? getConflict(form.time, form.duration, docBusy, patBusy) : {};
   const hasConflict = !!(selConflict.doctor || selConflict.patient);
@@ -130,13 +133,13 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props) => {
     setErrors(err => ({ ...err, time: false }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (): void => {
     const errs = validateForm(form);
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
     const appointment = buildAppointment(form, patients, appointments);
-    const pt = patients.find(p => p.id === form.patientId)!;
+    const pt = patients.find((p: Patient) => p.id === form.patientId)!;
     dispatch(addAppointment(appointment));
     dispatch(
       addToast({

@@ -17,6 +17,9 @@ import { mockBillingData } from "@/lib/mockData";
 import { showDailySummaryNotification } from "@/lib/notifications";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setFilterStatus, clearFilters } from "@/features/patients/patientsSlice";
+import type { RootState } from "@/store";
+import type { Patient } from "@/features/patients/types";
+import type { Appointment } from "@/features/appointments/types";
 import { container, item } from "./constants";
 import { CriticalBanner } from "./components/CriticalBanner";
 import { TrendsRow } from "./components/TrendsRow";
@@ -28,27 +31,27 @@ const approvalRate = Math.round(
   (mockBillingData.filter(r => r.claimStatus === "Approved").length / mockBillingData.length) * 100,
 );
 
-const DashboardPage = () => {
+const DashboardPage = (): React.ReactElement => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const patients = useAppSelector(s => s.patients.patients);
-  const appointments = useAppSelector(s => s.appointments.appointments);
+  const patients = useAppSelector((s: RootState) => s.patients.patients);
+  const appointments = useAppSelector((s: RootState) => s.appointments.appointments);
 
-  const criticalPatients = useMemo(() => patients.filter(p => p.status === "Critical"), [patients]);
-  const activeCount = useMemo(() => patients.filter(p => p.status === "Active").length, [patients]);
+  const criticalPatients = useMemo(() => patients.filter((p: Patient) => p.status === "Critical"), [patients]);
+  const activeCount = useMemo(() => patients.filter((p: Patient) => p.status === "Active").length, [patients]);
   const dischargedCount = useMemo(
-    () => patients.filter(p => p.status === "Discharged").length,
+    () => patients.filter((p: Patient) => p.status === "Discharged").length,
     [patients],
   );
   const recoveringCount = useMemo(
-    () => patients.filter(p => p.status === "Recovering").length,
+    () => patients.filter((p: Patient) => p.status === "Recovering").length,
     [patients],
   );
-  const departmentCount = useMemo(() => new Set(patients.map(p => p.department)).size, [patients]);
-  const doctorCount = useMemo(() => new Set(patients.map(p => p.doctor)).size, [patients]);
+  const departmentCount = useMemo(() => new Set(patients.map((p: Patient) => p.department)).size, [patients]);
+  const doctorCount = useMemo(() => new Set(patients.map((p: Patient) => p.doctor)).size, [patients]);
   const todayAppointments = useMemo(
-    () => appointments.filter(a => a.date === "2026-05-11"),
+    () => appointments.filter((a: Appointment) => a.date === "2026-05-11"),
     [appointments],
   );
 

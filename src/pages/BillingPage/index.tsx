@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, TrendingUp, Clock, CheckCircle } from "lucide-react";
 import { useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
+import type { BillingRecord } from "@/features/billing/types";
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { formatCompact } from "@/lib/utils";
@@ -9,18 +11,18 @@ import { container, item } from "./constants";
 import { ChartsRow } from "./components/ChartsRow";
 import { BillingTable } from "./components/BillingTable";
 
-const BillingPage = () => {
-  const records = useAppSelector(s => s.billing.records);
+const BillingPage = (): React.ReactElement => {
+  const records = useAppSelector((s: RootState) => s.billing.records);
 
-  const totalBilled = useMemo(() => records.reduce((s, r) => s + r.totalAmount, 0), [records]);
+  const totalBilled = useMemo(() => records.reduce((s: number, r: BillingRecord) => s + r.totalAmount, 0), [records]);
   const insuranceCoveredTotal = useMemo(
-    () => records.reduce((s, r) => s + r.insuranceCovered, 0),
+    () => records.reduce((s: number, r: BillingRecord) => s + r.insuranceCovered, 0),
     [records],
   );
-  const patientDueTotal = useMemo(() => records.reduce((s, r) => s + r.patientDue, 0), [records]);
-  const pendingRecords = useMemo(() => records.filter(r => r.claimStatus === "Pending"), [records]);
+  const patientDueTotal = useMemo(() => records.reduce((s: number, r: BillingRecord) => s + r.patientDue, 0), [records]);
+  const pendingRecords = useMemo(() => records.filter((r: BillingRecord) => r.claimStatus === "Pending"), [records]);
   const pendingAmount = useMemo(
-    () => pendingRecords.reduce((s, r) => s + r.totalAmount, 0),
+    () => pendingRecords.reduce((s: number, r: BillingRecord) => s + r.totalAmount, 0),
     [pendingRecords],
   );
 

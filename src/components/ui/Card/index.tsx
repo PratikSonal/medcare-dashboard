@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { CardProps, StatCardProps } from "./types";
 
-export const Card = ({ children, className, hover = false, onClick, style }: CardProps) => (
+export const Card = ({ children, className, hover = false, onClick, style }: CardProps): React.ReactElement => (
   <div
     onClick={onClick}
     className={cn(
@@ -22,7 +22,7 @@ export const StatCard = ({
   positive = true,
   icon,
   color = "var(--accent-blue)",
-}: StatCardProps) => (
+}: StatCardProps): React.ReactElement => (
   <Card hover className="relative overflow-hidden">
     <div
       className="absolute inset-0 opacity-5 pointer-events-none"

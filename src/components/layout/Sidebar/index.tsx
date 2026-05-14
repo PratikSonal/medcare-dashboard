@@ -3,17 +3,18 @@ import { LogOut, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { logout } from "@/features/auth/authSlice";
+import type { RootState } from "@/store";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import styles from "./Sidebar.module.scss";
 import { navItems } from "./constants";
 
-export const Sidebar = () => {
+export const Sidebar = (): React.ReactElement => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const user = useAppSelector(s => s.auth.user);
+  const user = useAppSelector((s: RootState) => s.auth.user);
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     await signOut(auth);
     dispatch(logout());
     navigate("/login");

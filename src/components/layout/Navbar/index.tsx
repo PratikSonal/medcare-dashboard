@@ -17,6 +17,7 @@ import { toggleTheme, markAllRead, markNotificationRead } from "@/features/ui/ui
 import styles from "./Navbar.module.scss";
 import type { FilterType } from "./types";
 import { timeAgo } from "./helpers";
+import type { RootState } from "@/store";
 
 const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
   error: { icon: <AlertCircle size={14} />, color: "var(--accent-red)", bg: "rgba(239,68,68,0.12)" },
@@ -25,11 +26,11 @@ const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: str
   warning: { icon: <AlertTriangle size={14} />, color: "var(--accent-yellow)", bg: "rgba(245,158,11,0.12)" },
 };
 
-export const Navbar = () => {
+export const Navbar = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const theme = useAppSelector(s => s.ui.theme);
-  const { notifications, unreadCount } = useAppSelector(s => s.ui);
-  const user = useAppSelector(s => s.auth.user);
+  const theme = useAppSelector((s: RootState) => s.ui.theme);
+  const { notifications, unreadCount } = useAppSelector((s: RootState) => s.ui);
+  const user = useAppSelector((s: RootState) => s.auth.user);
   const [showNotifs, setShowNotifs] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
 

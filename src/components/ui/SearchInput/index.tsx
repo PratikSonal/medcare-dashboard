@@ -7,7 +7,7 @@ export const SearchInput = ({
   onChange,
   placeholder = "Search...",
   width,
-}: SearchInputProps) => (
+}: SearchInputProps): React.ReactElement => (
   <div className={cn("relative", !width && "flex-1")} style={width ? { width } : undefined}>
     <Search
       size={15}
@@ -15,7 +15,7 @@ export const SearchInput = ({
     />
     <input
       value={value}
-      onChange={e => onChange(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
       placeholder={placeholder}
       className={cn(
         "w-full bg-bg-secondary border border-border-primary rounded-12",

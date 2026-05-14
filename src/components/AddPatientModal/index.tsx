@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Check } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { addPatient } from "@/features/patients/patientsSlice";
+import type { RootState } from "@/store";
+import type { Patient } from "@/features/patients/types";
 import { addToast } from "@/features/ui/uiSlice";
 import { cn } from "@/lib/utils";
 import type { FormData, FieldProps, AddPatientModalProps } from "./types";
@@ -17,7 +19,7 @@ import {
 } from "./constants";
 import { validateStep, buildPatient, getNextId } from "./helpers";
 
-const Field = ({ label, error, children }: FieldProps) => {
+const Field = ({ label, error, children }: FieldProps): React.ReactElement => {
   return (
     <div>
       <label
@@ -34,14 +36,14 @@ const Field = ({ label, error, children }: FieldProps) => {
   );
 };
 
-export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
+export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const patients = useAppSelector(s => s.patients.patients);
+  const patients = useAppSelector((s: RootState) => s.patients.patients);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormData>(defaultForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, boolean>>>({});
 
-  const inputCls = (field: keyof FormData) =>
+  const inputCls = (field: keyof FormData): string =>
     cn(
       "w-full bg-bg-secondary rounded-[10px] py-[9px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
       errors[field] ? "border border-accent-red" : "border border-border-primary",
@@ -59,14 +61,14 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps) => {
     return Object.keys(e).length === 0;
   };
 
-  const next = () => {
+  const next = (): void => {
     if (validate(step)) setStep(s => s + 1);
   };
-  const back = () => setStep(s => s - 1);
+  const back = (): void => setStep(s => s - 1);
 
-  const submit = () => {
+  const submit = (): void => {
     if (!validate(2)) return;
-    const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1), 10)));
+    const maxId = Math.max(...patients.map((p: Patient) => parseInt(p.id.slice(1), 10)));
     const patient = buildPatient(form, maxId);
     dispatch(addPatient(patient));
     dispatch(addToast({ message: `${patient.name} added successfully`, type: "success" }));

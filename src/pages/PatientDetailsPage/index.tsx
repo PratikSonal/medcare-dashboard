@@ -4,6 +4,7 @@ import { Grid3X3, List, UserPlus } from "lucide-react";
 import { AddPatientModal } from "@/components/AddPatientModal";
 import { Button } from "@/components/ui/Button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
 import { setViewMode, setSelectedPatient, clearFilters } from "@/features/patients/patientsSlice";
 import { showPatientAlertNotification } from "@/lib/notifications";
 import type { Patient } from "@/features/patients/types";
@@ -12,12 +13,12 @@ import { FilterBar } from "./components/FilterBar";
 import { PatientGrid } from "./components/PatientGrid";
 import { PatientListView } from "./components/PatientListView";
 
-const PatientDetailsPage = () => {
+const PatientDetailsPage = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const { patients, filteredPatients, viewMode } = useAppSelector(s => s.patients);
+  const { patients, filteredPatients, viewMode } = useAppSelector((s: RootState) => s.patients);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const handlePatientClick = async (patient: Patient) => {
+  const handlePatientClick = async (patient: Patient): Promise<void> => {
     dispatch(setSelectedPatient(patient));
     if (patient.status === "Critical")
       await showPatientAlertNotification(patient.name, patient.diagnosis);

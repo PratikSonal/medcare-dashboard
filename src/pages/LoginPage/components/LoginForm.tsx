@@ -7,7 +7,7 @@ import { AuthInput } from "@/components/ui/AuthInput";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema } from "@/lib/validators";
 
-export const LoginForm = () => {
+export const LoginForm = (): React.ReactElement => {
   const { signIn, isLoading, error, clearError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +30,7 @@ export const LoginForm = () => {
     await signIn(email, password);
   };
 
-  const handleChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>): void => {
     setter(e.target.value);
     setValidationError(null);
     clearError();

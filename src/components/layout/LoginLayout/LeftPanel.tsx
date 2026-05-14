@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity } from "lucide-react";
 import { slides } from "./constants";
+import type { Slide } from "./types";
 
-const FeatureCarousel = () => {
+const FeatureCarousel = (): React.ReactElement => {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ const FeatureCarousel = () => {
         </AnimatePresence>
       </div>
       <div className="flex items-center gap-[6px] mt-5">
-        {slides.map((s, i) => (
+        {slides.map((s: Slide, i: number) => (
           <button
             key={i}
             onClick={() => setActive(i)}
@@ -71,7 +72,7 @@ const FeatureCarousel = () => {
   );
 };
 
-export const LeftPanel = () => (
+export const LeftPanel = (): React.ReactElement => (
   <motion.div
     initial={{ opacity: 0, x: -40 }}
     animate={{ opacity: 1, x: 0 }}

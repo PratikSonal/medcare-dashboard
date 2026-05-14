@@ -9,7 +9,7 @@ export const AuthInput = ({
   rightElement,
   className,
   ...props
-}: AuthInputProps) => (
+}: AuthInputProps): React.ReactElement => (
   <div className="flex flex-col gap-[6px]">
     <div className="flex items-center justify-between">
       <label htmlFor={inputId} className="text-[13px] font-medium text-text-secondary">

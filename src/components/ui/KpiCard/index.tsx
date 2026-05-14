@@ -23,7 +23,7 @@ export const KpiCard = ({
   active,
   size = "md",
   variants,
-}: KpiCardProps) => {
+}: KpiCardProps): React.ReactElement => {
   const [hovered, setHovered] = useState(false);
   const count = useCountUp(rawValue ?? 0);
   const displayValue =

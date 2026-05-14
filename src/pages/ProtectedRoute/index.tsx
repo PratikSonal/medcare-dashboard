@@ -5,13 +5,15 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setUser } from "@/features/auth/authSlice";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import type { User } from "firebase/auth";
+import type { RootState } from "@/store";
 
-export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
-  const { isAuthenticated, isLoading } = useAppSelector(s => s.auth);
+export const ProtectedRoute = ({ children }: React.PropsWithChildren): React.ReactElement => {
+  const { isAuthenticated, isLoading } = useAppSelector((s: RootState) => s.auth);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, user => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
       if (user) {
         dispatch(
           setUser({

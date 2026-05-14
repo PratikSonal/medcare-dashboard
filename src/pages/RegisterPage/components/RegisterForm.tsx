@@ -7,7 +7,7 @@ import { AuthInput } from "@/components/ui/AuthInput";
 import { useAuth } from "@/hooks/useAuth";
 import { registerSchema } from "@/lib/validators";
 
-export const RegisterForm = () => {
+export const RegisterForm = (): React.ReactElement => {
   const { register, isLoading, error, clearError } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +32,7 @@ export const RegisterForm = () => {
     await register(name, email, password);
   };
 
-  const handleChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>): void => {
     setter(e.target.value);
     setValidationError(null);
     clearError();

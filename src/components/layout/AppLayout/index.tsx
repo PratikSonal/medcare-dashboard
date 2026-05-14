@@ -6,10 +6,11 @@ import { PatientModal } from "@/components/PatientModal";
 import { ToastContainer } from "@/components/ToastContainer";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
+import type { RootState } from "@/store";
 
-export const AppLayout = () => {
+export const AppLayout = (): React.ReactElement => {
   const dispatch = useAppDispatch();
-  const selectedPatient = useAppSelector(s => s.patients.selectedPatient);
+  const selectedPatient = useAppSelector((s: RootState) => s.patients.selectedPatient);
 
   return (
     <div className="dot-grid min-h-screen bg-bg-primary">

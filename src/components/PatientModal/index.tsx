@@ -25,6 +25,8 @@ import { APPT_STATUS_COLORS, APPT_TYPE_COLORS, CLAIM_STATUS_COLORS } from "@/lib
 import { Avatar } from "@/components/ui/Avatar";
 import { mockBillingData, mockPrescriptions } from "@/lib/mockData";
 import type { Props, TabId, VitalBadgeProps } from "./types";
+import type { RootState } from "@/store";
+import type { Appointment } from "@/features/appointments/types";
 import { PRESCRIPTION_COLORS } from "./constants";
 
 const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
@@ -35,7 +37,7 @@ const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactN
   "No-Show": { ...APPT_STATUS_COLORS["No-Show"], icon: <XCircle size={11} /> },
 };
 
-const VitalBadge = ({ icon, label, value, alert = false }: VitalBadgeProps) => (
+const VitalBadge = ({ icon, label, value, alert = false }: VitalBadgeProps): React.ReactElement => (
   <motion.div
     whileHover={{ scale: 1.1, transition: { duration: 0.2, ease: "easeOut" } }}
     className={cn(
@@ -51,13 +53,13 @@ const VitalBadge = ({ icon, label, value, alert = false }: VitalBadgeProps) => (
   </motion.div>
 );
 
-export const PatientModal = ({ patient, onClose }: Props) => {
+export const PatientModal = ({ patient, onClose }: Props): React.ReactElement => {
   const [tab, setTab] = useState<TabId>("overview");
 
-  const allAppointments = useAppSelector(s => s.appointments.appointments);
+  const allAppointments = useAppSelector((s: RootState) => s.appointments.appointments);
   const billingRecords = mockBillingData.filter(r => r.patientId === patient.id);
   const prescriptions = mockPrescriptions.filter(r => r.patientId === patient.id);
-  const appointments = allAppointments.filter(a => a.patientId === patient.id);
+  const appointments = allAppointments.filter((a: Appointment) => a.patientId === patient.id);
   const billing = billingRecords[0];
 
   const tabs = [
