@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone } from "lucide-react";
+import { Phone, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import type { AppointmentDetailModalProps } from "./types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
@@ -96,7 +96,9 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
                       : "bg-[rgba(245,158,11,0.08)] border border-[rgba(245,158,11,0.2)]",
                   )}
                 >
-                  <p className="text-[20px] mb-1">{app.intakeComplete ? "✅" : "⏳"}</p>
+                  <div className="flex justify-center mb-1">
+                    {app.intakeComplete ? <CheckCircle size={20} /> : <Clock size={20} />}
+                  </div>
                   <p
                     className={cn(
                       "text-xs font-semibold",
@@ -117,7 +119,9 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
                       : "bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)]",
                   )}
                 >
-                  <p className="text-[20px] mb-1">{app.insuranceVerified ? "✅" : "❌"}</p>
+                  <div className="flex justify-center mb-1">
+                    {app.insuranceVerified ? <CheckCircle size={20} /> : <XCircle size={20} />}
+                  </div>
                   <p
                     className={cn(
                       "text-xs font-semibold",
@@ -134,7 +138,7 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
 
               {app.notes && (
                 <div className="p-[14px] rounded-[14px] bg-[rgba(245,158,11,0.08)] border border-[rgba(245,158,11,0.2)]">
-                  <p className="text-xs font-semibold text-accent-yellow mb-[6px]">⚠️ Doctor Notes</p>
+                  <p className="flex items-center gap-[5px] text-xs font-semibold text-accent-yellow mb-[6px]"><AlertTriangle size={12} /> Doctor Notes</p>
                   <p className="text-[13px] text-text-secondary leading-[1.6]">{app.notes}</p>
                 </div>
               )}

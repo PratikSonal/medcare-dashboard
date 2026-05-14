@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Grid3X3, List, UserPlus } from "lucide-react";
+import { Grid3X3, List, UserPlus, Search } from "lucide-react";
 import { AddPatientModal } from "@/components/AddPatientModal";
 import { Button } from "@/components/ui/Button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
@@ -97,7 +97,7 @@ const PatientDetailsPage = (): React.ReactElement => {
 
       {filteredPatients.length === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-          <p className="text-[40px] mb-4">🔍</p>
+          <Search size={40} className="mx-auto mb-4 text-text-tertiary opacity-40" />
           <p className="text-[18px] font-semibold text-text-primary">No patients found</p>
           <p className="text-sm text-text-secondary mt-2">Try adjusting your search or filters</p>
           <Button variant="outline" onClick={() => dispatch(clearFilters())} className="mt-4">

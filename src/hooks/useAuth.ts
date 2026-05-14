@@ -8,7 +8,7 @@ import {
 import { FirebaseError } from "firebase/app";
 import { auth } from "@/lib/firebase";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { setError } from "@/features/auth/authSlice";
+import { setUser, setError } from "@/features/auth/authSlice";
 import { showWelcomeNotification, registerServiceWorker } from "@/lib/notifications";
 import { getFirebaseErrorMessage } from "@/lib/errorMessages";
 
@@ -33,6 +33,12 @@ export const useAuth = (): UseAuthReturn => {
     setIsLoading(true);
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
+      dispatch(setUser({
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: result.user.displayName,
+        photoURL: result.user.photoURL,
+      }));
       await registerServiceWorker();
       showWelcomeNotification(result.user.displayName || result.user.email || "Doctor");
       navigate("/dashboard");
@@ -52,6 +58,12 @@ export const useAuth = (): UseAuthReturn => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(result.user, { displayName: name });
+      dispatch(setUser({
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: name,
+        photoURL: result.user.photoURL,
+      }));
       showWelcomeNotification(name);
       navigate("/dashboard");
     } catch (err) {

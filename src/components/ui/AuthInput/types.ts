@@ -7,4 +7,5 @@ export interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon: LucideIcon;
   headerRight?: ReactNode;
   rightElement?: ReactNode;
+  error?: string;
 }

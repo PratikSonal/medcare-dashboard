@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, Check, X, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
@@ -102,7 +102,7 @@ export const AppointmentsTable = () => {
                   <td className="px-3 py-3">
                     <div className="flex gap-1">
                       <span
-                        className="text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
+                        className="flex items-center gap-[3px] text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
                         style={{
                           background: app.intakeComplete
                             ? "rgba(14,165,233,0.1)"
@@ -110,10 +110,10 @@ export const AppointmentsTable = () => {
                           color: app.intakeComplete ? "var(--accent-cyan)" : "var(--accent-yellow)",
                         }}
                       >
-                        {app.intakeComplete ? "✓ Intake" : "⏳ Intake"}
+                        {app.intakeComplete ? <><Check size={9} /> Intake</> : <><Clock size={9} /> Intake</>}
                       </span>
                       <span
-                        className="text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
+                        className="flex items-center gap-[3px] text-[10px] px-[6px] py-[2px] rounded-[5px] whitespace-nowrap"
                         style={{
                           background: app.insuranceVerified
                             ? "rgba(14,165,233,0.1)"
@@ -121,7 +121,7 @@ export const AppointmentsTable = () => {
                           color: app.insuranceVerified ? "var(--accent-cyan)" : "var(--accent-red)",
                         }}
                       >
-                        {app.insuranceVerified ? "✓ Ins." : "✗ Ins."}
+                        {app.insuranceVerified ? <><Check size={9} /> Ins.</> : <><X size={9} /> Ins.</>}
                       </span>
                     </div>
                   </td>

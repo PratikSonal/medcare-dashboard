@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, CheckCircle, XCircle, Phone, UserX } from "lucide-react";
+import { Calendar, CheckCircle, XCircle, Phone, UserX, Check, X, Clock, AlertTriangle } from "lucide-react";
 import type { AppointmentListProps } from "./types";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { updateAppointmentStatus } from "@/features/appointments/appointmentsSlice";
@@ -75,7 +75,7 @@ export const AppointmentList = ({
                         <p className="text-[11px] text-text-tertiary">{app.phone}</p>
                       </div>
                       {app.notes && (
-                        <p className="text-[11px] text-accent-yellow mt-1">⚠️ {app.notes}</p>
+                        <p className="flex items-center gap-1 text-[11px] text-accent-yellow mt-1"><AlertTriangle size={10} /> {app.notes}</p>
                       )}
                     </div>
                   </div>
@@ -142,23 +142,23 @@ export const AppointmentList = ({
                     <div className="flex gap-[6px]">
                       <span
                         className={cn(
-                          "text-[10px] py-[2px] px-[6px] rounded-[6px]",
+                          "flex items-center gap-[3px] text-[10px] py-[2px] px-[6px] rounded-[6px]",
                           app.intakeComplete
                             ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
                             : "bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.2)]",
                         )}
                       >
-                        {app.intakeComplete ? "✓ Intake" : "⏳ Intake"}
+                        {app.intakeComplete ? <><Check size={9} /> Intake</> : <><Clock size={9} /> Intake</>}
                       </span>
                       <span
                         className={cn(
-                          "text-[10px] py-[2px] px-[6px] rounded-[6px]",
+                          "flex items-center gap-[3px] text-[10px] py-[2px] px-[6px] rounded-[6px]",
                           app.insuranceVerified
                             ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
                             : "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.2)]",
                         )}
                       >
-                        {app.insuranceVerified ? "✓ Insured" : "✗ Insurance"}
+                        {app.insuranceVerified ? <><Check size={9} /> Insured</> : <><X size={9} /> Insurance</>}
                       </span>
                     </div>
                   </div>

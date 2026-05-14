@@ -64,7 +64,7 @@ export const Navbar = (): React.ReactElement => {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 320, damping: 22, delay: 0.1 }}
-          className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 bg-gradient-primary"
+          className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 [background:var(--gradient-primary)]"
         >
           {initial}
         </motion.div>

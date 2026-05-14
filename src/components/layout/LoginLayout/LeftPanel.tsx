@@ -78,7 +78,7 @@ export const LeftPanel = (): React.ReactElement => (
 
     <div className="pt-[40px] px-[48px] relative z-[1]">
       <div className="flex items-center gap-[10px]">
-        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 bg-gradient-primary">
+        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 [background:var(--gradient-primary)]">
           <Activity size={18} color="white" />
         </div>
         <span className="gradient-text text-[18px] font-bold">MedCare</span>

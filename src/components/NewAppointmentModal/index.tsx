@@ -467,13 +467,13 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
           <button
             onClick={handleSubmit}
             disabled={hasConflict}
-            className="flex-[2] py-3 rounded-[12px] border-0 cursor-pointer font-sans text-sm font-semibold disabled:cursor-not-allowed"
+            className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-[12px] border-0 cursor-pointer font-sans text-sm font-semibold disabled:cursor-not-allowed"
             style={{
               background: hasConflict ? "var(--bg-tertiary)" : "var(--gradient-primary)",
               color: hasConflict ? "var(--text-tertiary)" : "white",
             }}
           >
-            {hasConflict ? "⛔ Conflicts — Change Time" : "Book Appointment"}
+            {hasConflict ? <><AlertTriangle size={14} /> Conflicts — Change Time</> : "Book Appointment"}
           </button>
         </div>
       </motion.div>

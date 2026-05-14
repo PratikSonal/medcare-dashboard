@@ -1,39 +1,31 @@
-import { useState, useId } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/Button";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema } from "@/lib/validators";
+import type { LoginFields } from "@/lib/validators";
 
 export const LoginForm = (): React.ReactElement => {
   const { signIn, isLoading, error, clearError } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const emailId = useId();
-  const passwordId = useId();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFields>({
+    resolver: zodResolver(loginSchema),
+    mode: "onTouched",
+  });
 
-  const displayError = validationError ?? error;
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const result = loginSchema.safeParse({ email, password });
-    if (!result.success) {
-      setValidationError(result.error.issues[0].message);
-      return;
-    }
-    setValidationError(null);
-    await signIn(email, password);
-  };
-
-  const handleChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setter(e.target.value);
-    setValidationError(null);
+  const onSubmit = async (data: LoginFields): Promise<void> => {
     clearError();
+    await signIn(data.email, data.password);
   };
 
   return (
@@ -51,27 +43,26 @@ export const LoginForm = (): React.ReactElement => {
           <p className="text-sm text-text-secondary">Sign in to your MedCare account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[14px]" noValidate>
           <AuthInput
-            inputId={emailId}
+            inputId="email"
             label="Email Address"
             icon={Mail}
             type="email"
             placeholder="doctor@medcare.com"
-            value={email}
-            onChange={handleChange(setEmail)}
             autoComplete="email"
+            error={errors.email?.message}
+            {...register("email")}
           />
 
           <AuthInput
-            inputId={passwordId}
+            inputId="password"
             label="Password"
             icon={Lock}
             type={showPassword ? "text" : "password"}
             placeholder="••••••••"
-            value={password}
-            onChange={handleChange(setPassword)}
             autoComplete="current-password"
+            error={errors.password?.message}
             headerRight={
               <button
                 type="button"
@@ -90,10 +81,11 @@ export const LoginForm = (): React.ReactElement => {
                 {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             }
+            {...register("password")}
           />
 
           <AnimatePresence>
-            {displayError && (
+            {error && (
               <motion.p
                 key="error"
                 initial={{ opacity: 0, y: -6 }}
@@ -102,7 +94,8 @@ export const LoginForm = (): React.ReactElement => {
                 className="flex items-center gap-2 py-[10px] px-[14px] rounded-[10px] text-[13px] bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] text-accent-red"
                 role="alert"
               >
-                ⚠️ {displayError}
+                <AlertCircle size={14} />
+                {error}
               </motion.p>
             )}
           </AnimatePresence>
@@ -110,8 +103,7 @@ export const LoginForm = (): React.ReactElement => {
           <Button
             type="submit"
             loading={isLoading}
-            className="w-full mt-[6px] p-[13px] text-[14px] rounded-12 font-semibold"
-            style={{ background: "var(--gradient-primary)" }}
+            className="w-full mt-[6px] p-[13px] text-[14px] rounded-12 font-semibold [background:var(--gradient-primary)]"
           >
             Sign In to MedCare
           </Button>

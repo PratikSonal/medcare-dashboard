@@ -4,7 +4,7 @@ export const Avatar = ({ initials, size = 36, radius }: AvatarProps): React.Reac
   const r = radius ?? (size <= 32 ? "50%" : `${Math.round(size * 0.3)}px`);
   return (
     <div
-      className="flex items-center justify-center shrink-0 font-bold text-white bg-gradient-primary"
+      className="flex items-center justify-center shrink-0 font-bold text-white [background:var(--gradient-primary)]"
       style={{
         width: size,
         height: size,

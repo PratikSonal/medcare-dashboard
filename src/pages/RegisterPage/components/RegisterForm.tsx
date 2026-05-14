@@ -1,41 +1,31 @@
-import { useState, useId } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/Button";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { useAuth } from "@/hooks/useAuth";
 import { registerSchema } from "@/lib/validators";
+import type { RegisterFields } from "@/lib/validators";
 
 export const RegisterForm = (): React.ReactElement => {
-  const { register, isLoading, error, clearError } = useAuth();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { register: registerUser, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const nameId = useId();
-  const emailId = useId();
-  const passwordId = useId();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFields>({
+    resolver: zodResolver(registerSchema),
+    mode: "onTouched",
+  });
 
-  const displayError = validationError ?? error;
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const result = registerSchema.safeParse({ name, email, password });
-    if (!result.success) {
-      setValidationError(result.error.issues[0].message);
-      return;
-    }
-    setValidationError(null);
-    await register(name, email, password);
-  };
-
-  const handleChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setter(e.target.value);
-    setValidationError(null);
+  const onSubmit = async (data: RegisterFields): Promise<void> => {
     clearError();
+    await registerUser(data.name, data.email, data.password);
   };
 
   return (
@@ -53,38 +43,37 @@ export const RegisterForm = (): React.ReactElement => {
           <p className="text-sm text-text-secondary">Create your account to get started</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[14px]" noValidate>
           <AuthInput
-            inputId={nameId}
+            inputId="name"
             label="Full Name"
             icon={User}
             type="text"
             placeholder="Dr. Jane Smith"
-            value={name}
-            onChange={handleChange(setName)}
             autoComplete="name"
+            error={errors.name?.message}
+            {...register("name")}
           />
 
           <AuthInput
-            inputId={emailId}
+            inputId="email"
             label="Email Address"
             icon={Mail}
             type="email"
             placeholder="doctor@medcare.com"
-            value={email}
-            onChange={handleChange(setEmail)}
             autoComplete="email"
+            error={errors.email?.message}
+            {...register("email")}
           />
 
           <AuthInput
-            inputId={passwordId}
+            inputId="password"
             label="Password"
             icon={Lock}
             type={showPassword ? "text" : "password"}
             placeholder="Min. 6 characters"
-            value={password}
-            onChange={handleChange(setPassword)}
             autoComplete="new-password"
+            error={errors.password?.message}
             rightElement={
               <button
                 type="button"
@@ -95,10 +84,11 @@ export const RegisterForm = (): React.ReactElement => {
                 {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             }
+            {...register("password")}
           />
 
           <AnimatePresence>
-            {displayError && (
+            {error && (
               <motion.p
                 key="error"
                 initial={{ opacity: 0, y: -6 }}
@@ -107,7 +97,8 @@ export const RegisterForm = (): React.ReactElement => {
                 className="flex items-center gap-2 py-[10px] px-[14px] rounded-[10px] text-[13px] bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] text-accent-red"
                 role="alert"
               >
-                ⚠️ {displayError}
+                <AlertCircle size={14} />
+                {error}
               </motion.p>
             )}
           </AnimatePresence>
@@ -115,8 +106,7 @@ export const RegisterForm = (): React.ReactElement => {
           <Button
             type="submit"
             loading={isLoading}
-            className="w-full mt-[6px] p-[13px] text-[14px] rounded-12 font-semibold"
-            style={{ background: "var(--gradient-primary)" }}
+            className="w-full mt-[6px] p-[13px] text-[14px] rounded-12 font-semibold [background:var(--gradient-primary)]"
           >
             Create Account
           </Button>
