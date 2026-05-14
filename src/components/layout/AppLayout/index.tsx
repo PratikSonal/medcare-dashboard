@@ -18,7 +18,7 @@ export const AppLayout = (): React.ReactElement => {
     <div className="dot-grid min-h-screen bg-bg-primary">
       <Sidebar />
       <Navbar />
-      <main className="min-h-screen ml-[264px] pt-[76px]">
+      <main className="min-h-screen ml-0 sm:ml-[264px] pt-[76px]">
         <div className="p-6">
           <Suspense fallback={<PageLoader />}>
             <Outlet />

@@ -82,7 +82,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-[4px] z-[1000] flex items-center justify-center p-6"
+      className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-[4px] z-[1000] flex items-end sm:items-center justify-center sm:p-6"
       onClick={e => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -92,7 +92,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 12 }}
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[540px] bg-bg-card rounded-[24px] border border-border-primary shadow-[0_24px_80px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden max-h-[calc(100vh-48px)]"
+        className="w-full sm:max-w-[540px] bg-bg-card rounded-t-[24px] sm:rounded-[24px] border border-border-primary shadow-[0_24px_80px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden max-h-[92vh]"
       >
         {/* Header */}
         <div className="py-6 px-6 pb-5 border-b border-border-primary shrink-0">

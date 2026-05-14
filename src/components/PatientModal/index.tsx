@@ -84,7 +84,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[rgba(0,0,0,0.7)] backdrop-blur-[8px]"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 bg-[rgba(0,0,0,0.7)] backdrop-blur-[8px]"
       onClick={onClose}
     >
       <motion.div
@@ -92,7 +92,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: "spring", duration: 0.4 }}
-        className="w-full max-w-[660px] max-h-[90vh] flex flex-col rounded-[24px] bg-bg-secondary border border-border-primary"
+        className="w-full sm:max-w-[660px] max-h-[92vh] sm:max-h-[90vh] flex flex-col rounded-t-[24px] sm:rounded-[24px] bg-bg-secondary border border-border-primary"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}

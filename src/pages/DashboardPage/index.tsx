@@ -195,7 +195,7 @@ const DashboardPage = (): React.ReactElement => {
       <CriticalBanner />
       <TrendsRow />
 
-      <motion.div variants={item} className="grid grid-cols-5 gap-4 mb-6">
+      <motion.div variants={item} className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
         {quickStats.map(s => (
           <KpiCard key={s.title} size="sm" {...s} />
         ))}

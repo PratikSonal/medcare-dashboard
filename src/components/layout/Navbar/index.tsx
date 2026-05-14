@@ -10,10 +10,11 @@ import {
   Info,
   CheckCircle,
   AlertTriangle,
+  Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { toggleTheme, markAllRead, markNotificationRead } from "@/features/ui/uiSlice";
+import { toggleTheme, markAllRead, markNotificationRead, toggleSidebar } from "@/features/ui/uiSlice";
 import styles from "./Navbar.module.scss";
 import type { FilterType } from "./types";
 import { timeAgo } from "./helpers";
@@ -41,12 +42,22 @@ export const Navbar = (): React.ReactElement => {
   return (
     <motion.header
       className={cn(
-        "fixed top-[14px] right-5 left-[284px] z-40 flex items-center justify-between gap-2",
+        "fixed top-[14px] right-5 z-40 flex items-center justify-between gap-2",
+        "left-4 sm:left-[284px]",
         "bg-bg-card border border-border-primary rounded-full h-12",
         "px-4 backdrop-blur-md transition-[background,border-color,box-shadow] duration-[400ms]",
         styles.navbar,
       )}
     >
+      {/* Hamburger — mobile only */}
+      <button
+        onClick={() => dispatch(toggleSidebar())}
+        className="sm:hidden bg-transparent border-0 cursor-pointer text-text-secondary flex items-center p-0 shrink-0"
+        aria-label="Open navigation"
+      >
+        <Menu size={18} />
+      </button>
+
       {/* Welcome section */}
       <div className="flex items-center gap-[10px]">
         <motion.div

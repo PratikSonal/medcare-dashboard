@@ -33,7 +33,7 @@ export const FinancialBreakdown = () => (
         Insurance coverage and billing analysis
       </p>
     </div>
-    <div className="grid grid-cols-[1fr_340px] gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-[1fr_340px] gap-6">
       <div className="glass-card rounded-20 p-6">
         <h3 className="text-[15px] font-semibold text-text-primary mb-1">
           Provider Coverage Analysis

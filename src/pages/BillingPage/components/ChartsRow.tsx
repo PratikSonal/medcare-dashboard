@@ -53,7 +53,7 @@ export const ChartsRow = () => {
   );
 
   return (
-    <div className="grid grid-cols-[2fr_1fr_1fr] gap-6 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-6 mb-6">
       {/* Provider Performance */}
       <motion.div variants={item} className="glass-card rounded-20 p-6 flex flex-col">
         <div className="mb-6">

@@ -146,7 +146,7 @@ const AppointmentsPage = (): React.ReactElement => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="grid grid-cols-4 gap-3 mb-6"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"
       >
         {stats.map((s, i) => (
           <motion.div
@@ -169,7 +169,7 @@ const AppointmentsPage = (): React.ReactElement => {
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-[1fr_320px] gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_320px] gap-6">
         {/* Left — Calendar + List */}
         <div>
           <WeekStrip

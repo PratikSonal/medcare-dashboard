@@ -18,7 +18,7 @@ document.documentElement.setAttribute("data-theme", savedTheme);
 
 const initialState: UIState = {
   theme: savedTheme,
-  sidebarOpen: true,
+  sidebarOpen: false,
   toasts: [],
   notifications: [
     {

@@ -16,7 +16,7 @@ import { item, ttStyle } from "../constants";
 import { renderLabel } from "../helper";
 
 export const ChartsRow = () => (
-  <div className="grid grid-cols-[1fr_320px] gap-6 mb-6">
+  <div className="grid grid-cols-1 sm:grid-cols-[1fr_320px] gap-6 mb-6">
     <motion.div variants={item} className="glass-card rounded-20 p-6">
       <div className="mb-6">
         <h2 className="text-base font-semibold text-text-primary">Revenue Overview</h2>

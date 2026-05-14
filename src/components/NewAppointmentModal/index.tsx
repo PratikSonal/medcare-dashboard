@@ -162,7 +162,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[rgba(0,0,0,0.75)] backdrop-blur-[8px]"
+      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4 bg-[rgba(0,0,0,0.75)] backdrop-blur-[8px]"
       onClick={onClose}
     >
       <motion.div
@@ -170,7 +170,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.92, opacity: 0, y: 16 }}
         transition={{ type: "spring", duration: 0.35 }}
-        className="w-full max-w-[680px] rounded-[24px] bg-bg-secondary border border-border-primary overflow-hidden max-h-[90vh] flex flex-col"
+        className="w-full sm:max-w-[680px] rounded-t-[24px] sm:rounded-[24px] bg-bg-secondary border border-border-primary overflow-hidden max-h-[92vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
