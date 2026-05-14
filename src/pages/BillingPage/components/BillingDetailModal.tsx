@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { updateClaimStatus } from "@/features/billing/billingSlice";
 import { Avatar } from "@/components/ui/Avatar";
-import { CLAIM_STATUS_COLORS } from "@/lib/constants";
+import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
 import { ALL_STATUSES } from "../constants";
 
 export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps) => {

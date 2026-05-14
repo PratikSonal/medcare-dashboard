@@ -12,7 +12,7 @@ import {
   AlertTriangle,
   Menu,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { toggleTheme, markAllRead, markNotificationRead, toggleSidebar } from "@/features/ui/uiSlice";
 import styles from "./Navbar.module.scss";

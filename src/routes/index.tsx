@@ -1,5 +1,10 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import type { User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { setUser } from "@/features/auth/authSlice";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/pages/ProtectedRoute";
 
@@ -11,8 +16,28 @@ const PatientDetailsPage = lazy(() => import("@/pages/PatientDetailsPage"));
 const AppointmentsPage = lazy(() => import("@/pages/AppointmentsPage"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 
+const AuthInitializer = (): null => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
+      dispatch(
+        setUser(
+          user
+            ? { uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL }
+            : null,
+        ),
+      );
+    });
+    return () => unsub();
+  }, [dispatch]);
+
+  return null;
+};
+
 export const AppRouter = () => (
   <BrowserRouter>
+    <AuthInitializer />
     <Suspense fallback={null}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />

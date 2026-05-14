@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import type { WeekStripProps } from "./types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAppSelector } from "@/hooks/useAppDispatch";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { DAY_NAMES } from "../constants";
 import { formatDateKey } from "../helpers";
 

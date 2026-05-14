@@ -6,7 +6,7 @@ import { addPatient } from "@/features/patients/patientsSlice";
 import type { RootState } from "@/store";
 import type { Patient } from "@/features/patients/types";
 import { addToast } from "@/features/ui/uiSlice";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import type { FormData, FieldProps, AddPatientModalProps } from "./types";
 import {
   DEPARTMENTS,

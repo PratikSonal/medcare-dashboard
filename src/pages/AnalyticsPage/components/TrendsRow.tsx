@@ -11,7 +11,7 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { metricsData } from "@/lib/mockData";
+import { metricsData } from "@/data/analytics";
 import { item, ttStyle } from "../constants";
 
 export const TrendsRow = () => (

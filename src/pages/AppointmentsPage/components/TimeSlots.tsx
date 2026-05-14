@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
 import type { TimeSlotsProps } from "./types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { STATUS_CONFIG } from "../statusConfig";
 
 export const TimeSlots = ({ todayAll }: TimeSlotsProps) => (

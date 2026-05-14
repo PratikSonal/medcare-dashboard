@@ -11,7 +11,7 @@ import {
   setFilterDepartment,
   clearFilters,
 } from "@/features/patients/patientsSlice";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { DEPARTMENTS, STATUSES } from "../constants";
 
 export const FilterBar = () => {

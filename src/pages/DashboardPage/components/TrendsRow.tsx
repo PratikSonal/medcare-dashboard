@@ -13,8 +13,9 @@ import {
 } from "recharts";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient, clearFilters } from "@/features/patients/patientsSlice";
-import { metricsData } from "@/lib/mockData";
-import { getStatusBg, getStatusColor, cn } from "@/lib/utils";
+import { metricsData } from "@/data/analytics";
+import { getStatusBg, getStatusColor } from "@/features/patients/utils";
+import { cn } from "@/utils";
 import { item } from "../constants";
 
 export const TrendsRow = () => {

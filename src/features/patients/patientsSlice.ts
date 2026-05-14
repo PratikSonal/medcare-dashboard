@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Patient } from "./types";
 import type { ViewMode } from "@/features/ui/types";
-import { mockPatients } from "@/lib/mockData";
+import { mockPatients } from "@/data/patients";
 
 interface PatientsState {
   patients: Patient[];

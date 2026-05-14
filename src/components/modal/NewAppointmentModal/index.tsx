@@ -7,7 +7,7 @@ import type { Patient } from "@/features/patients/types";
 import type { Appointment } from "@/features/appointments/types";
 import { addToast, addNotification } from "@/features/ui/uiSlice";
 import { addAppointment } from "@/features/appointments/appointmentsSlice";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import type { Props, FormState, TrackRowProps } from "./types";
 import {
   TSTART,

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TrendingUp, DollarSign, Users, Activity } from "lucide-react";
-import { metricsData } from "@/lib/mockData";
+import { metricsData } from "@/data/analytics";
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { useAppDispatch } from "@/hooks/useAppDispatch";

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, Activity } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { logout } from "@/features/auth/authSlice";
 import { toggleSidebar } from "@/features/ui/uiSlice";

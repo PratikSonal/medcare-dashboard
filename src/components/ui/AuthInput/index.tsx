@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import type { AuthInputProps } from "./types";
 
 export const AuthInput = ({

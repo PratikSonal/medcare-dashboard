@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import type { CardProps, StatCardProps } from "./types";
 
 export const Card = ({ children, className, hover = false, onClick, style }: CardProps): React.ReactElement => (

@@ -6,7 +6,7 @@ import type { RootState } from "@/store";
 import type { BillingRecord } from "@/features/billing/types";
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
-import { formatCompact } from "@/lib/utils";
+import { formatCompact } from "@/utils";
 import { container, item } from "./constants";
 import { ChartsRow } from "./components/ChartsRow";
 import { BillingTable } from "./components/BillingTable";

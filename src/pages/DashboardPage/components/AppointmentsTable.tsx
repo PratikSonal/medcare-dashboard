@@ -4,8 +4,8 @@ import { Calendar, ChevronRight, Check, X, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
-import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/features/appointments/constants";
+import { cn } from "@/utils";
 import { item } from "../constants";
 
 export const AppointmentsTable = () => {

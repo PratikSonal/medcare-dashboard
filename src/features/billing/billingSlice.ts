@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { mockBillingData } from "@/lib/mockData";
+import { mockBillingData } from "@/data/billing";
 import type { BillingRecord, ClaimStatus } from "./types";
 
 interface BillingState {

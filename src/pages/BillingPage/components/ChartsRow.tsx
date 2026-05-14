@@ -16,8 +16,8 @@ import {
 import { Trophy } from "lucide-react";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { Avatar } from "@/components/ui/Avatar";
-import { cn, formatCompact, PROVIDER_SHORT } from "@/lib/utils";
-import { CLAIM_STATUS_COLORS } from "@/lib/constants";
+import { cn, formatCompact } from "@/utils";
+import { CLAIM_STATUS_COLORS, PROVIDER_SHORT } from "@/features/billing/constants";
 import { item, ttStyle, ALL_STATUSES } from "../constants";
 
 export const ChartsRow = () => {

@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Activity, Heart } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
-import { getStatusBg, getStatusColor, formatDate, cn } from "@/lib/utils";
+import { getStatusBg, getStatusColor } from "@/features/patients/utils";
+import { formatDate, cn } from "@/utils";
 import type { PatientCardProps, PatientGridProps } from "./types";
 import { container, item } from "../constants";
 

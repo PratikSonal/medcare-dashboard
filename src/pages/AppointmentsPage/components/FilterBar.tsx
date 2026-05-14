@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, ChevronDown, X } from "lucide-react";
-import { APPT_TYPE_COLORS } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { APPT_TYPE_COLORS } from "@/features/appointments/constants";
+import { cn } from "@/utils";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ALL_STATUSES } from "../constants";
 import type { FilterBarProps } from "./types";

@@ -1,9 +1,9 @@
-import { Suspense } from "react";
+import { Suspense, useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Sidebar } from "../Sidebar";
 import { Navbar } from "../Navbar";
-import { PatientModal } from "@/components/PatientModal";
+import { PatientModal } from "@/components/modal/PatientModal";
 import { ToastContainer } from "@/components/ToastContainer";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
@@ -13,6 +13,8 @@ import type { RootState } from "@/store";
 export const AppLayout = (): React.ReactElement => {
   const dispatch = useAppDispatch();
   const selectedPatient = useAppSelector((s: RootState) => s.patients.selectedPatient);
+
+  const handleCloseModal = useCallback(() => dispatch(setSelectedPatient(null)), [dispatch]);
 
   return (
     <div className="dot-grid min-h-screen bg-bg-primary">
@@ -26,12 +28,7 @@ export const AppLayout = (): React.ReactElement => {
         </div>
       </main>
       <AnimatePresence>
-        {selectedPatient && (
-          <PatientModal
-            patient={selectedPatient}
-            onClose={() => dispatch(setSelectedPatient(null))}
-          />
-        )}
+        {selectedPatient && <PatientModal patient={selectedPatient} onClose={handleCloseModal} />}
       </AnimatePresence>
       <ToastContainer />
     </div>

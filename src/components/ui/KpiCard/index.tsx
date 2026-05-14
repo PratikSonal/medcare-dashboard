@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import type { KpiCardProps } from "./types";
 

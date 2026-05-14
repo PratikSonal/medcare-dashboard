@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
-import { mockBillingData } from "@/lib/mockData";
-import { showDailySummaryNotification } from "@/lib/notifications";
+import { mockBillingData } from "@/data/billing";
+import { showDailySummaryNotification } from "@/services/notifications";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setFilterStatus, clearFilters } from "@/features/patients/patientsSlice";
 import type { RootState } from "@/store";

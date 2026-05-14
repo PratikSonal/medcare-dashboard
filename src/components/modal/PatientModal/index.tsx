@@ -21,11 +21,14 @@ import {
   XCircle,
 } from "lucide-react";
 import { useAppSelector } from "@/hooks/useAppDispatch";
-import { getStatusBg, getStatusColor, formatDate, cn } from "@/lib/utils";
+import { getStatusBg, getStatusColor } from "@/features/patients/utils";
+import { formatDate, cn } from "@/utils";
 import { Badge } from "@/components/ui/Badge";
-import { APPT_STATUS_COLORS, APPT_TYPE_COLORS, CLAIM_STATUS_COLORS } from "@/lib/constants";
+import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/features/appointments/constants";
+import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
 import { Avatar } from "@/components/ui/Avatar";
-import { mockBillingData, mockPrescriptions } from "@/lib/mockData";
+import { mockBillingData } from "@/data/billing";
+import { mockPrescriptions } from "@/data/patients";
 import type { Props, TabId, VitalBadgeProps } from "./types";
 import type { RootState } from "@/store";
 import type { Appointment } from "@/features/appointments/types";

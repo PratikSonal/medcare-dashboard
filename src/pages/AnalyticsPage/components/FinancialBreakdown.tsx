@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { cn, formatCompact, PROVIDER_SHORT } from "@/lib/utils";
-import { mockBillingData } from "@/lib/mockData";
+import { cn, formatCompact } from "@/utils";
+import { PROVIDER_SHORT } from "@/features/billing/constants";
+import { mockBillingData } from "@/data/billing";
 import { item, PROC_COLORS } from "../constants";
 
 const totalBilled = mockBillingData.reduce((s, r) => s + r.totalAmount, 0);

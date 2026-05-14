@@ -9,8 +9,8 @@ import { FirebaseError } from "firebase/app";
 import { auth } from "@/lib/firebase";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setUser, setError } from "@/features/auth/authSlice";
-import { showWelcomeNotification, registerServiceWorker } from "@/lib/notifications";
-import { getFirebaseErrorMessage } from "@/lib/errorMessages";
+import { showWelcomeNotification, registerServiceWorker } from "@/services/notifications";
+import { getFirebaseErrorMessage } from "@/lib/firebase/errors";
 
 interface UseAuthReturn {
   signIn: (email: string, password: string) => Promise<void>;

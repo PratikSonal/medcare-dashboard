@@ -11,7 +11,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { metricsData, departmentStats } from "@/lib/mockData";
+import { metricsData, departmentStats } from "@/data/analytics";
 import { item, ttStyle } from "../constants";
 import { renderLabel } from "../helper";
 

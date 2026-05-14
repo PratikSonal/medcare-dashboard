@@ -5,8 +5,8 @@ import type { ClaimStatus } from "@/features/billing/types";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { Avatar } from "@/components/ui/Avatar";
-import { cn, PROVIDER_SHORT } from "@/lib/utils";
-import { CLAIM_STATUS_COLORS } from "@/lib/constants";
+import { cn } from "@/utils";
+import { CLAIM_STATUS_COLORS, PROVIDER_SHORT } from "@/features/billing/constants";
 import { item, ALL_STATUSES, PAGE_SIZE } from "../constants";
 import { BillingDetailModal } from "./BillingDetailModal";
 

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useAppSelector } from "@/hooks/useAppDispatch";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { Avatar } from "@/components/ui/Avatar";
 import { item, STATUS_CELLS } from "../constants";
 

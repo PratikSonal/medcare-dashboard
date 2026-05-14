@@ -5,7 +5,7 @@ import type { Appointment } from "@/features/appointments/types";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
 import { KpiCard } from "@/components/ui/KpiCard";
-import NewAppointmentModal from "@/components/NewAppointmentModal";
+import NewAppointmentModal from "@/components/modal/NewAppointmentModal";
 import { getWeekDays, formatDateKey } from "./helpers";
 import { WeekStrip } from "./components/WeekStrip";
 import { FilterBar } from "./components/FilterBar";
@@ -35,7 +35,10 @@ const AppointmentsPage = (): React.ReactElement => {
   const dateKey = useMemo(() => formatDateKey(selectedDate), [selectedDate]);
 
   const todayAll = useMemo(
-    () => appointments.filter((a: Appointment) => a.date === dateKey).sort((a: Appointment, b: Appointment) => a.time.localeCompare(b.time)),
+    () =>
+      appointments
+        .filter((a: Appointment) => a.date === dateKey)
+        .sort((a: Appointment, b: Appointment) => a.time.localeCompare(b.time)),
     [appointments, dateKey],
   );
 
@@ -63,7 +66,10 @@ const AppointmentsPage = (): React.ReactElement => {
   );
 
   const hasActiveFilters = filterStatus !== "All" || filterType !== "All";
-  const doctors = useMemo(() => [...new Set(appointments.map((a: Appointment) => a.doctor))], [appointments]);
+  const doctors = useMemo(
+    () => [...new Set(appointments.map((a: Appointment) => a.doctor))],
+    [appointments],
+  );
 
   const stats = useMemo(
     () => [

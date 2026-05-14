@@ -4,7 +4,7 @@ import type { AppointmentDetailModalProps } from "./types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { Avatar } from "@/components/ui/Avatar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { STATUS_CONFIG } from "../statusConfig";
 
 export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalProps) => {

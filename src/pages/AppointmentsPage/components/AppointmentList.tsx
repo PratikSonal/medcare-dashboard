@@ -4,9 +4,9 @@ import type { AppointmentListProps } from "./types";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { updateAppointmentStatus } from "@/features/appointments/appointmentsSlice";
 import { addToast } from "@/features/ui/uiSlice";
-import { APPT_TYPE_COLORS } from "@/lib/constants";
+import { APPT_TYPE_COLORS } from "@/features/appointments/constants";
 import { Avatar } from "@/components/ui/Avatar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import { container, item } from "../constants";
 import { STATUS_CONFIG } from "../statusConfig";
 

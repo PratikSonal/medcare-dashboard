@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Avatar } from "@/components/ui/Avatar";
-import { getStatusBg, getStatusColor, formatDate } from "@/lib/utils";
+import { getStatusBg, getStatusColor } from "@/features/patients/utils";
+import { formatDate } from "@/utils";
 import type { PatientListRowProps, PatientListViewProps } from "./types";
 import { container, item } from "../constants";
 
