@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { memo, useCallback, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ClaimStatus } from "@/features/billing/types";
@@ -10,7 +10,7 @@ import { CLAIM_STATUS_COLORS, PROVIDER_SHORT } from "@/features/billing/constant
 import { item, ALL_STATUSES, PAGE_SIZE } from "../constants";
 import { BillingDetailModal } from "./BillingDetailModal";
 
-export const BillingTable = (): React.ReactElement => {
+export const BillingTable = memo((): React.ReactElement => {
   const records = useAppSelector(s => s.billing.records);
 
   const [search, setSearch] = useState("");
@@ -23,6 +23,8 @@ export const BillingTable = (): React.ReactElement => {
   const selectedRecord = selectedRecordId
     ? (records.find(r => r.id === selectedRecordId) ?? null)
     : null;
+
+  const handleCloseModal = useCallback(() => setSelectedRecordId(null), []);
 
   const allProviders = useMemo(
     () => [...new Set(records.map(r => r.insuranceProvider))],
@@ -50,14 +52,20 @@ export const BillingTable = (): React.ReactElement => {
   const pagedRecords = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
   const activeFilters = statusFilter.length + providerFilter.length;
 
-  const toggleStatus = (status: ClaimStatus) => {
+  const toggleStatus = useCallback((status: ClaimStatus) => {
     setStatusFilter(prev => (prev.includes(status) ? prev.filter(x => x !== status) : [...prev, status]));
     setPage(1);
-  };
-  const toggleProvider = (provider: string) => {
+  }, []);
+  const toggleProvider = useCallback((provider: string) => {
     setProviderFilter(prev => (prev.includes(provider) ? prev.filter(x => x !== provider) : [...prev, provider]));
     setPage(1);
-  };
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setStatusFilter([]);
+    setProviderFilter([]);
+    setPage(1);
+  }, []);
 
   return (
     <>
@@ -160,11 +168,7 @@ export const BillingTable = (): React.ReactElement => {
             {activeFilters > 0 && (
               <button
                 type="button"
-                onClick={() => {
-                  setStatusFilter([]);
-                  setProviderFilter([]);
-                  setPage(1);
-                }}
+                onClick={handleClearFilters}
                 className="mt-3 text-xs text-accent-red bg-transparent border-0 cursor-pointer font-sans p-0"
               >
                 Clear all filters
@@ -310,7 +314,7 @@ export const BillingTable = (): React.ReactElement => {
         )}
       </motion.div>
 
-      <BillingDetailModal record={selectedRecord} onClose={() => setSelectedRecordId(null)} />
+      <BillingDetailModal record={selectedRecord} onClose={handleCloseModal} />
     </>
   );
-};
+});

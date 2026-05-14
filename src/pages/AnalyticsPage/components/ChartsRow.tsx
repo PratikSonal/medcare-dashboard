@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -16,7 +17,7 @@ import type { RootState } from "@/store";
 import { item, ttStyle } from "../constants";
 import { renderLabel } from "../helper";
 
-export const ChartsRow = (): React.ReactElement => {
+export const ChartsRow = memo((): React.ReactElement => {
   const metrics = useAppSelector((s: RootState) => s.analytics.metrics);
   const deptStats = useAppSelector((s: RootState) => s.analytics.departmentStats);
 
@@ -98,4 +99,4 @@ export const ChartsRow = (): React.ReactElement => {
       </motion.div>
     </div>
   );
-};
+});

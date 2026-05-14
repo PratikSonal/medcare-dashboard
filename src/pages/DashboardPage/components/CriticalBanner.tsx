@@ -1,16 +1,65 @@
-import { useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient, setFilterStatus } from "@/features/patients/patientsSlice";
 import { item } from "../constants";
+import type { Patient } from "@/features/patients/types";
 
-export const CriticalBanner = (): React.ReactElement | null => {
+interface CriticalPatientCardProps {
+  patient: Patient;
+  index: number;
+}
+
+const CriticalPatientCard = memo(({ patient, index }: CriticalPatientCardProps): React.ReactElement => {
+  const dispatch = useAppDispatch();
+
+  const handleClick = useCallback(() => {
+    dispatch(setSelectedPatient(patient));
+  }, [patient, dispatch]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.09, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+      whileHover={{ x: 4, y: -2, transition: { duration: 0.22, ease: "easeOut" } }}
+      onClick={handleClick}
+      className="flex items-center gap-[10px] px-[14px] py-[10px] rounded-12 bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] cursor-pointer flex-1 min-w-[220px] transition-colors duration-200 hover:bg-[rgba(239,68,68,0.14)] shadow-[0_2px_8px_rgba(239,68,68,0.12),0_1px_3px_rgba(239,68,68,0.08)]"
+    >
+      <div className="relative w-8 h-8 shrink-0">
+        <div
+          className="absolute inset-0 rounded-full bg-accent-red"
+          style={{ animation: "ping-red 2s ease-out infinite" }}
+        />
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white bg-accent-red relative z-10">
+          {patient.avatar}
+        </div>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
+          {patient.name}
+        </p>
+        <p className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
+          {patient.diagnosis} · {patient.department}
+        </p>
+      </div>
+      <ChevronRight size={14} className="text-accent-red shrink-0" />
+    </motion.div>
+  );
+});
+
+export const CriticalBanner = memo((): React.ReactElement | null => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const patients = useAppSelector(s => s.patients.patients);
   const criticalPatients = useMemo(() => patients.filter(p => p.status === "Critical"), [patients]);
+
+  const handleViewAll = useCallback(() => {
+    dispatch(setFilterStatus("Critical"));
+    navigate("/patients");
+  }, [dispatch, navigate]);
 
   if (criticalPatients.length === 0) return null;
 
@@ -28,47 +77,17 @@ export const CriticalBanner = (): React.ReactElement | null => {
         </p>
         <button
           type="button"
-          onClick={() => {
-            dispatch(setFilterStatus("Critical"));
-            navigate("/patients");
-          }}
+          onClick={handleViewAll}
           className="ml-auto flex items-center gap-[3px] text-xs text-accent-red bg-transparent border-0 cursor-pointer font-sans font-medium shrink-0"
         >
           View all <ChevronRight size={13} />
         </button>
       </div>
       <div className="flex flex-wrap gap-[10px]">
-        {criticalPatients.map((p, i) => (
-          <motion.div
-            key={p.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.09, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={{ x: 4, y: -2, transition: { duration: 0.22, ease: "easeOut" } }}
-            onClick={() => dispatch(setSelectedPatient(p))}
-            className="flex items-center gap-[10px] px-[14px] py-[10px] rounded-12 bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] cursor-pointer flex-1 min-w-[220px] transition-colors duration-200 hover:bg-[rgba(239,68,68,0.14)] shadow-[0_2px_8px_rgba(239,68,68,0.12),0_1px_3px_rgba(239,68,68,0.08)]"
-          >
-            <div className="relative w-8 h-8 shrink-0">
-              <div
-                className="absolute inset-0 rounded-full bg-accent-red"
-                style={{ animation: "ping-red 2s ease-out infinite" }}
-              />
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white bg-accent-red relative z-10">
-                {p.avatar}
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
-                {p.name}
-              </p>
-              <p className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
-                {p.diagnosis} · {p.department}
-              </p>
-            </div>
-            <ChevronRight size={14} className="text-accent-red shrink-0" />
-          </motion.div>
+        {criticalPatients.map((patient, i) => (
+          <CriticalPatientCard key={patient.id} patient={patient} index={i} />
         ))}
       </div>
     </motion.div>
   );
-};
+});

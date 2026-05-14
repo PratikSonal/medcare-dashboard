@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { loginSchema } from "@/lib/validators";
 import type { LoginFields } from "@/lib/validators";
 
-export const LoginForm = (): React.ReactElement => {
+export const LoginForm = memo((): React.ReactElement => {
   const { signIn, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -23,10 +23,12 @@ export const LoginForm = (): React.ReactElement => {
     mode: "onTouched",
   });
 
-  const onSubmit = async (data: LoginFields): Promise<void> => {
+  const onSubmit = useCallback(async (data: LoginFields): Promise<void> => {
     clearError();
     await signIn(data.email, data.password);
-  };
+  }, [clearError, signIn]);
+
+  const handleTogglePassword = useCallback(() => setShowPassword(v => !v), []);
 
   return (
     <motion.div
@@ -75,7 +77,7 @@ export const LoginForm = (): React.ReactElement => {
               <button
                 type="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                onClick={() => setShowPassword(v => !v)}
+                onClick={handleTogglePassword}
                 className="bg-transparent border-0 cursor-pointer text-text-tertiary flex items-center p-0"
               >
                 {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -118,4 +120,4 @@ export const LoginForm = (): React.ReactElement => {
       </div>
     </motion.div>
   );
-};
+});

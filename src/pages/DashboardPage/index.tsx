@@ -62,13 +62,18 @@ const DashboardPage = (): React.ReactElement => {
     [appointments],
   );
 
-  const { totalBilled, pendingClaims, approvalRate } = useMemo(() => ({
-    totalBilled: mockBillingData.reduce((sum, record) => sum + record.totalAmount, 0),
-    pendingClaims: mockBillingData.filter(record => record.claimStatus === "Pending").length,
-    approvalRate: Math.round(
-      (mockBillingData.filter(record => record.claimStatus === "Approved").length / mockBillingData.length) * 100,
-    ),
-  }), []);
+  const { totalBilled, pendingClaims, approvalRate } = useMemo(
+    () => ({
+      totalBilled: mockBillingData.reduce((sum, record) => sum + record.totalAmount, 0),
+      pendingClaims: mockBillingData.filter(record => record.claimStatus === "Pending").length,
+      approvalRate: Math.round(
+        (mockBillingData.filter(record => record.claimStatus === "Approved").length /
+          mockBillingData.length) *
+          100,
+      ),
+    }),
+    [],
+  );
 
   const kpis = useMemo(
     () => [
@@ -79,7 +84,10 @@ const DashboardPage = (): React.ReactElement => {
         positive: true,
         icon: <Users size={20} />,
         color: "var(--accent-blue)",
-        onClick: () => { dispatch(clearFilters()); navigate("/patients"); },
+        onClick: () => {
+          dispatch(clearFilters());
+          navigate("/patients");
+        },
       },
       {
         title: "Active Cases",
@@ -88,7 +96,10 @@ const DashboardPage = (): React.ReactElement => {
         positive: true,
         icon: <Activity size={20} />,
         color: "var(--accent-cyan)",
-        onClick: () => { dispatch(setFilterStatus("Active")); navigate("/patients"); },
+        onClick: () => {
+          dispatch(setFilterStatus("Active"));
+          navigate("/patients");
+        },
       },
       {
         title: "Critical Alerts",
@@ -97,7 +108,10 @@ const DashboardPage = (): React.ReactElement => {
         positive: false,
         icon: <AlertTriangle size={20} />,
         color: "var(--accent-red)",
-        onClick: () => { dispatch(setFilterStatus("Critical")); navigate("/patients"); },
+        onClick: () => {
+          dispatch(setFilterStatus("Critical"));
+          navigate("/patients");
+        },
       },
       {
         title: "Appointments Today",
@@ -117,7 +131,16 @@ const DashboardPage = (): React.ReactElement => {
         onClick: () => navigate("/billing"),
       },
     ],
-    [patients.length, activeCount, criticalCount, todayAppointments.length, totalBilled, pendingClaims, navigate, dispatch],
+    [
+      patients.length,
+      activeCount,
+      criticalCount,
+      todayAppointments.length,
+      totalBilled,
+      pendingClaims,
+      navigate,
+      dispatch,
+    ],
   );
 
   const quickStats = useMemo(
@@ -128,7 +151,10 @@ const DashboardPage = (): React.ReactElement => {
         sub: "Patients released",
         icon: <UserCheck size={20} />,
         color: "var(--text-tertiary)",
-        onClick: () => { dispatch(setFilterStatus("Discharged")); navigate("/patients"); },
+        onClick: () => {
+          dispatch(setFilterStatus("Discharged"));
+          navigate("/patients");
+        },
       },
       {
         title: "Recovering",
@@ -136,7 +162,10 @@ const DashboardPage = (): React.ReactElement => {
         sub: "In recovery phase",
         icon: <Activity size={20} />,
         color: "var(--accent-yellow)",
-        onClick: () => { dispatch(setFilterStatus("Recovering")); navigate("/patients"); },
+        onClick: () => {
+          dispatch(setFilterStatus("Recovering"));
+          navigate("/patients");
+        },
       },
       {
         title: "Departments",
@@ -161,16 +190,21 @@ const DashboardPage = (): React.ReactElement => {
         color: "var(--accent-cyan)",
       },
     ],
-    [dischargedCount, recoveringCount, departmentCount, doctorCount, approvalRate, navigate, dispatch],
+    [
+      dischargedCount,
+      recoveringCount,
+      departmentCount,
+      doctorCount,
+      approvalRate,
+      navigate,
+      dispatch,
+    ],
   );
 
   useEffect(() => {
-    const t = setTimeout(
-      () => showDailySummaryNotification(patients.length, criticalCount),
-      5000,
-    );
+    const t = setTimeout(() => showDailySummaryNotification(patients.length, criticalCount), 5000);
     return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

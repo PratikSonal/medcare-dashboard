@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import type { WeekStripProps } from "./types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -6,14 +7,14 @@ import { cn } from "@/utils";
 import { DAY_NAMES } from "../constants";
 import { formatDateKey } from "../helpers";
 
-export const WeekStrip = ({
+export const WeekStrip = memo(({
   weekDays,
   baseDate,
   selectedDate,
   onSelectDate,
   onPrevWeek,
   onNextWeek,
-}: WeekStripProps) => {
+}: WeekStripProps): React.ReactElement => {
   const appointments = useAppSelector(s => s.appointments.appointments);
 
   return (
@@ -29,12 +30,14 @@ export const WeekStrip = ({
         </h3>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={onPrevWeek}
             className="w-8 h-8 rounded-[10px] flex items-center justify-center border border-border-primary bg-bg-tertiary cursor-pointer text-text-secondary"
           >
             <ChevronLeft size={15} />
           </button>
           <button
+            type="button"
             onClick={onNextWeek}
             className="w-8 h-8 rounded-[10px] flex items-center justify-center border border-border-primary bg-bg-tertiary cursor-pointer text-text-secondary"
           >
@@ -50,6 +53,7 @@ export const WeekStrip = ({
           return (
             <motion.button
               key={key}
+              type="button"
               onClick={() => onSelectDate(day)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
@@ -98,4 +102,4 @@ export const WeekStrip = ({
       </div>
     </motion.div>
   );
-};
+});

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, ChevronDown, X } from "lucide-react";
 import { APPT_TYPE_COLORS } from "@/features/appointments/constants";
@@ -6,7 +7,7 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { ALL_STATUSES } from "../constants";
 import type { FilterBarProps } from "./types";
 
-export const FilterBar = ({
+export const FilterBar = memo(({
   searchQuery,
   onSearchChange,
   filterStatus,
@@ -17,7 +18,7 @@ export const FilterBar = ({
   onToggleFilters,
   hasActiveFilters,
   onClearFilters,
-}: FilterBarProps) => (
+}: FilterBarProps): React.ReactElement => (
   <div className="mb-4">
     <div className="flex gap-[10px] items-center">
       <SearchInput
@@ -26,6 +27,7 @@ export const FilterBar = ({
         placeholder="Search by patient, doctor, type, clinic, insurance…"
       />
       <button
+        type="button"
         onClick={onToggleFilters}
         className={cn(
           "flex items-center gap-[7px] py-[10px] px-4 rounded-[12px] text-[13px] font-medium border cursor-pointer font-sans whitespace-nowrap",
@@ -43,14 +45,12 @@ export const FilterBar = ({
         )}
         <ChevronDown
           size={14}
-          style={{
-            transition: "transform 200ms",
-            transform: showFilters ? "rotate(180deg)" : "none",
-          }}
+          className={cn("transition-transform duration-200", showFilters && "rotate-180")}
         />
       </button>
       {hasActiveFilters && (
         <button
+          type="button"
           onClick={onClearFilters}
           className="flex items-center gap-[5px] py-[10px] px-3 rounded-[12px] text-xs font-medium border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans"
         >
@@ -74,18 +74,19 @@ export const FilterBar = ({
                 Status
               </p>
               <div className="flex flex-wrap gap-[6px]">
-                {["All", ...ALL_STATUSES].map(s => (
+                {["All", ...ALL_STATUSES].map(status => (
                   <button
-                    key={s}
-                    onClick={() => onFilterStatus(s)}
+                    key={status}
+                    type="button"
+                    onClick={() => onFilterStatus(status)}
                     className={cn(
                       "py-[5px] px-3 rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-150 border-0",
-                      filterStatus === s
+                      filterStatus === status
                         ? "bg-accent-blue text-white"
                         : "bg-bg-tertiary text-text-secondary",
                     )}
                   >
-                    {s}
+                    {status}
                   </button>
                 ))}
               </div>
@@ -95,20 +96,21 @@ export const FilterBar = ({
                 Appointment Type
               </p>
               <div className="flex flex-wrap gap-[6px]">
-                {["All", ...Object.keys(APPT_TYPE_COLORS)].map(t => (
+                {["All", ...Object.keys(APPT_TYPE_COLORS)].map(apptType => (
                   <button
-                    key={t}
-                    onClick={() => onFilterType(t)}
+                    key={apptType}
+                    type="button"
+                    onClick={() => onFilterType(apptType)}
                     className="py-[5px] px-3 rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-150 border-0"
                     style={{
                       background:
-                        filterType === t
-                          ? (APPT_TYPE_COLORS[t] ?? "var(--accent-blue)")
+                        filterType === apptType
+                          ? (APPT_TYPE_COLORS[apptType] ?? "var(--accent-blue)")
                           : "var(--bg-tertiary)",
-                      color: filterType === t ? "white" : "var(--text-secondary)",
+                      color: filterType === apptType ? "white" : "var(--text-secondary)",
                     }}
                   >
-                    {t}
+                    {apptType}
                   </button>
                 ))}
               </div>
@@ -118,4 +120,4 @@ export const FilterBar = ({
       )}
     </AnimatePresence>
   </div>
-);
+));

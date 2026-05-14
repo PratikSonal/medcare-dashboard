@@ -1,11 +1,11 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/utils";
 import { Avatar } from "@/components/ui/Avatar";
 import { item, STATUS_CELLS } from "../constants";
 
-export const DoctorPerformance = (): React.ReactElement => {
+export const DoctorPerformance = memo((): React.ReactElement => {
   const patients = useAppSelector(s => s.patients.patients);
 
   const doctorData = useMemo(() => {
@@ -135,4 +135,4 @@ export const DoctorPerformance = (): React.ReactElement => {
       </div>
     </motion.div>
   );
-};
+});

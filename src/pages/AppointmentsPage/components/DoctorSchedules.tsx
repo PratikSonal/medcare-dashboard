@@ -1,9 +1,10 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
 import type { DoctorSchedulesProps } from "./types";
 import { Avatar } from "@/components/ui/Avatar";
 
-export const DoctorSchedules = ({ doctors, todayAll }: DoctorSchedulesProps) => (
+export const DoctorSchedules = memo(({ doctors, todayAll }: DoctorSchedulesProps): React.ReactElement => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
@@ -14,19 +15,19 @@ export const DoctorSchedules = ({ doctors, todayAll }: DoctorSchedulesProps) => 
       <User size={15} className="text-accent-blue" /> Doctor Schedules
     </h3>
     <div className="flex flex-col gap-[10px]">
-      {doctors.map(doc => {
-        const docApps = todayAll.filter(a => a.doctor === doc);
+      {doctors.map(doctor => {
+        const docApps = todayAll.filter(a => a.doctor === doctor);
         const confirmed = docApps.filter(a => a.status === "Confirmed").length;
         return (
           <motion.div
-            key={doc}
+            key={doctor}
             whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
             className="flex items-center justify-between py-[10px] px-3 rounded-[12px] bg-bg-tertiary"
           >
             <div className="flex items-center gap-[10px]">
-              <Avatar initials={doc.split(" ").slice(-1)[0][0]} size={30} radius="50%" />
+              <Avatar initials={doctor.split(" ").slice(-1)[0][0]} size={30} radius="50%" />
               <div>
-                <p className="text-xs font-semibold text-text-primary">{doc.replace("Dr. ", "")}</p>
+                <p className="text-xs font-semibold text-text-primary">{doctor.replace("Dr. ", "")}</p>
                 <p className="text-[10px] text-text-tertiary">{docApps.length} today</p>
               </div>
             </div>
@@ -49,4 +50,4 @@ export const DoctorSchedules = ({ doctors, todayAll }: DoctorSchedulesProps) => 
       })}
     </div>
   </motion.div>
-);
+));

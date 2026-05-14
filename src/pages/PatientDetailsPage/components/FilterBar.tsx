@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X, ChevronDown } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
@@ -14,11 +14,15 @@ import {
 import { cn } from "@/utils";
 import { DEPARTMENTS, STATUSES } from "../constants";
 
-export const FilterBar = (): React.ReactElement => {
+export const FilterBar = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();
   const { searchQuery, filterStatus, filterDepartment } = useAppSelector(s => s.patients);
   const [showFilters, setShowFilters] = useState(false);
   const hasActiveFilters = filterStatus !== "All" || filterDepartment !== "All";
+
+  const handleSearchChange = useCallback((v: string) => dispatch(setSearchQuery(v)), [dispatch]);
+  const handleToggleFilters = useCallback(() => setShowFilters(prev => !prev), []);
+  const handleClearFilters = useCallback(() => dispatch(clearFilters()), [dispatch]);
 
   return (
     <>
@@ -30,12 +34,12 @@ export const FilterBar = (): React.ReactElement => {
       >
         <SearchInput
           value={searchQuery}
-          onChange={v => dispatch(setSearchQuery(v))}
+          onChange={handleSearchChange}
           placeholder="Search by name, diagnosis, doctor..."
         />
         <button
           type="button"
-          onClick={() => setShowFilters(!showFilters)}
+          onClick={handleToggleFilters}
           className={cn(
             "flex items-center gap-2 py-[10px] px-4 rounded-[12px] text-[13px] font-medium border cursor-pointer font-sans transition-all duration-200",
             hasActiveFilters
@@ -53,7 +57,7 @@ export const FilterBar = (): React.ReactElement => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => dispatch(clearFilters())}
+            onClick={handleClearFilters}
             className="flex items-center gap-[6px]"
           >
             <X size={14} /> Clear
@@ -114,4 +118,4 @@ export const FilterBar = (): React.ReactElement => {
       </AnimatePresence>
     </>
   );
-};
+});

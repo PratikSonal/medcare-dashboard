@@ -2,12 +2,12 @@ import type { Patient } from "@/features/patients/types";
 
 export interface PatientCardProps {
   patient: Patient;
-  onClick: () => void;
+  onPatientClick: (patient: Patient) => void;
 }
 
 export interface PatientListRowProps {
   patient: Patient;
-  onClick: () => void;
+  onPatientClick: (patient: Patient) => void;
 }
 
 export interface PatientGridProps {

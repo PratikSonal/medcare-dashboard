@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from "lucide-react";
@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { registerSchema } from "@/lib/validators";
 import type { RegisterFields } from "@/lib/validators";
 
-export const RegisterForm = (): React.ReactElement => {
+export const RegisterForm = memo((): React.ReactElement => {
   const { register: registerUser, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -23,10 +23,12 @@ export const RegisterForm = (): React.ReactElement => {
     mode: "onTouched",
   });
 
-  const onSubmit = async (data: RegisterFields): Promise<void> => {
+  const onSubmit = useCallback(async (data: RegisterFields): Promise<void> => {
     clearError();
     await registerUser(data.name, data.email, data.password);
-  };
+  }, [clearError, registerUser]);
+
+  const handleTogglePassword = useCallback(() => setShowPassword(v => !v), []);
 
   return (
     <motion.div
@@ -78,7 +80,7 @@ export const RegisterForm = (): React.ReactElement => {
               <button
                 type="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                onClick={() => setShowPassword(v => !v)}
+                onClick={handleTogglePassword}
                 className="bg-transparent border-0 cursor-pointer text-text-tertiary flex items-center p-0"
               >
                 {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -121,4 +123,4 @@ export const RegisterForm = (): React.ReactElement => {
       </div>
     </motion.div>
   );
-};
+});

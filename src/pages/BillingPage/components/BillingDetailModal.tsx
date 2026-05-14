@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import type { BillingDetailModalProps } from "./types";
@@ -8,16 +9,16 @@ import { Avatar } from "@/components/ui/Avatar";
 import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
 import { ALL_STATUSES } from "../constants";
 
-export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps): React.ReactElement => {
+export const BillingDetailModal = memo(({ record, onClose }: BillingDetailModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
 
-  const handleViewProfile = () => {
+  const handleViewProfile = useCallback(() => {
     if (!record) return;
     const patient = patients.find(p => p.id === record.patientId);
     if (patient) dispatch(setSelectedPatient(patient));
     onClose();
-  };
+  }, [record, patients, dispatch, onClose]);
 
   return (
     <AnimatePresence>
@@ -169,4 +170,4 @@ export const BillingDetailModal = ({ record, onClose }: BillingDetailModalProps)
       )}
     </AnimatePresence>
   );
-};
+});

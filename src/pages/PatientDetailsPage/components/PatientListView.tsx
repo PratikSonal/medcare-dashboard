@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Avatar } from "@/components/ui/Avatar";
 import { getStatusBg, getStatusColor } from "@/features/patients/utils";
@@ -5,10 +6,10 @@ import { formatDate } from "@/utils";
 import type { PatientListRowProps, PatientListViewProps } from "./types";
 import { container, item } from "../constants";
 
-const PatientListRow = ({ patient, onClick }: PatientListRowProps): React.ReactElement => (
+const PatientListRow = memo(({ patient, onPatientClick }: PatientListRowProps): React.ReactElement => (
   <motion.tr
     variants={item}
-    onClick={onClick}
+    onClick={() => onPatientClick(patient)}
     whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
     className="cursor-pointer border-b border-border-primary transition-colors duration-200 hover:bg-bg-tertiary"
   >
@@ -39,9 +40,9 @@ const PatientListRow = ({ patient, onClick }: PatientListRowProps): React.ReactE
       {formatDate(patient.lastVisit)}
     </td>
   </motion.tr>
-);
+));
 
-export const PatientListView = ({ filteredPatients, onPatientClick }: PatientListViewProps): React.ReactElement => (
+export const PatientListView = memo(({ filteredPatients, onPatientClick }: PatientListViewProps): React.ReactElement => (
   <motion.div
     key="list"
     initial={{ opacity: 0 }}
@@ -72,9 +73,9 @@ export const PatientListView = ({ filteredPatients, onPatientClick }: PatientLis
       </thead>
       <motion.tbody variants={container} initial="hidden" animate="show">
         {filteredPatients.map(patient => (
-          <PatientListRow key={patient.id} patient={patient} onClick={() => onPatientClick(patient)} />
+          <PatientListRow key={patient.id} patient={patient} onPatientClick={onPatientClick} />
         ))}
       </motion.tbody>
     </table>
   </motion.div>
-);
+));

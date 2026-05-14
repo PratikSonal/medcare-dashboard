@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import type { AppointmentDetailModalProps } from "./types";
@@ -7,16 +8,16 @@ import { Avatar } from "@/components/ui/Avatar";
 import { cn } from "@/utils";
 import { STATUS_CONFIG } from "../statusConfig";
 
-export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalProps) => {
+export const AppointmentDetailModal = memo(({ app, onClose }: AppointmentDetailModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
 
-  const handleViewPatient = () => {
+  const handleViewPatient = useCallback(() => {
     if (!app) return;
     const patient = patients.find(p => p.id === app.patientId);
     if (patient) dispatch(setSelectedPatient(patient));
     onClose();
-  };
+  }, [app, patients, dispatch, onClose]);
 
   return (
     <AnimatePresence>
@@ -145,15 +146,16 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
 
               <div className="flex gap-[10px]">
                 <button
+                  type="button"
                   onClick={onClose}
                   className="flex-1 py-3 rounded-[12px] border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans text-sm font-medium"
                 >
                   Close
                 </button>
                 <button
+                  type="button"
                   onClick={handleViewPatient}
-                  className="flex-1 py-3 rounded-[12px] border-0 text-white cursor-pointer font-sans text-sm font-semibold"
-                  style={{ background: "var(--gradient-primary)" }}
+                  className="flex-1 py-3 rounded-[12px] border-0 text-white cursor-pointer font-sans text-sm font-semibold [background:var(--gradient-primary)]"
                 >
                   View Patient
                 </button>
@@ -164,4 +166,4 @@ export const AppointmentDetailModal = ({ app, onClose }: AppointmentDetailModalP
       )}
     </AnimatePresence>
   );
-};
+});

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -20,7 +20,7 @@ import { cn, formatCompact } from "@/utils";
 import { CLAIM_STATUS_COLORS, PROVIDER_SHORT } from "@/features/billing/constants";
 import { item, ttStyle, ALL_STATUSES } from "../constants";
 
-export const ChartsRow = (): React.ReactElement => {
+export const ChartsRow = memo((): React.ReactElement => {
   const records = useAppSelector(s => s.billing.records);
 
   const providerData = useMemo(() => {
@@ -197,4 +197,4 @@ export const ChartsRow = (): React.ReactElement => {
       </motion.div>
     </div>
   );
-};
+});

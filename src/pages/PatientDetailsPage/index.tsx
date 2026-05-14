@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Grid3X3, List, UserPlus, Search } from "lucide-react";
 import { AddPatientModal } from "@/components/modal/AddPatientModal";
@@ -18,11 +18,15 @@ const PatientDetailsPage = (): React.ReactElement => {
   const { patients, filteredPatients, viewMode } = useAppSelector((s: RootState) => s.patients);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const handlePatientClick = async (patient: Patient): Promise<void> => {
+  const handlePatientClick = useCallback(async (patient: Patient): Promise<void> => {
     dispatch(setSelectedPatient(patient));
     if (patient.status === "Critical")
       await showPatientAlertNotification(patient.name, patient.diagnosis);
-  };
+  }, [dispatch]);
+
+  const handleOpenAddModal = useCallback(() => setShowAddModal(true), []);
+  const handleCloseAddModal = useCallback(() => setShowAddModal(false), []);
+  const handleClearFilters = useCallback(() => dispatch(clearFilters()), [dispatch]);
 
   return (
     <div className="max-w-[1280px] mx-auto">
@@ -37,7 +41,7 @@ const PatientDetailsPage = (): React.ReactElement => {
           <div className="flex items-center gap-3">
             <motion.button
               type="button"
-              onClick={() => setShowAddModal(true)}
+              onClick={handleOpenAddModal}
               whileHover="hover"
               initial="rest"
               className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white shadow-[0_4px_14px_rgba(60,131,246,0.3)] [background:var(--gradient-primary)]"
@@ -101,7 +105,7 @@ const PatientDetailsPage = (): React.ReactElement => {
           <Search size={40} className="mx-auto mb-4 text-text-tertiary opacity-40" />
           <p className="text-[18px] font-semibold text-text-primary">No patients found</p>
           <p className="text-sm text-text-secondary mt-2">Try adjusting your search or filters</p>
-          <Button variant="outline" onClick={() => dispatch(clearFilters())} className="mt-4">
+          <Button variant="outline" onClick={handleClearFilters} className="mt-4">
             Clear Filters
           </Button>
         </motion.div>
@@ -112,7 +116,7 @@ const PatientDetailsPage = (): React.ReactElement => {
       `}</style>
 
       <AnimatePresence>
-        {showAddModal && <AddPatientModal onClose={() => setShowAddModal(false)} />}
+        {showAddModal && <AddPatientModal onClose={handleCloseAddModal} />}
       </AnimatePresence>
     </div>
   );

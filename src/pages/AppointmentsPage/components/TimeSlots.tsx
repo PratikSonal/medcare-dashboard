@@ -1,10 +1,11 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
 import type { TimeSlotsProps } from "./types";
 import { cn } from "@/utils";
 import { STATUS_CONFIG } from "../statusConfig";
 
-export const TimeSlots = ({ todayAll }: TimeSlotsProps) => (
+export const TimeSlots = memo(({ todayAll }: TimeSlotsProps): React.ReactElement => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
@@ -39,4 +40,4 @@ export const TimeSlots = ({ todayAll }: TimeSlotsProps) => (
       ))
     )}
   </motion.div>
-);
+));

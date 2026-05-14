@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Plus, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 import type { Appointment } from "@/features/appointments/types";
@@ -7,6 +7,7 @@ import type { RootState } from "@/store";
 import { KpiCard } from "@/components/ui/KpiCard";
 import NewAppointmentModal from "@/components/modal/NewAppointmentModal";
 import { getWeekDays, formatDateKey } from "./helpers";
+import { TODAY_DATE } from "./constants";
 import { WeekStrip } from "./components/WeekStrip";
 import { FilterBar } from "./components/FilterBar";
 import { AppointmentList } from "./components/AppointmentList";
@@ -17,7 +18,7 @@ import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
 
 const AppointmentsPage = (): React.ReactElement => {
   const appointments = useAppSelector((s: RootState) => s.appointments.appointments);
-  const [selectedDate, setSelectedDate] = useState(new Date("2026-05-11"));
+  const [selectedDate, setSelectedDate] = useState(new Date(TODAY_DATE));
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterStatus, setFilterStatus] = useState<string>("All");
   const [filterType, setFilterType] = useState<string>("All");
@@ -27,7 +28,7 @@ const AppointmentsPage = (): React.ReactElement => {
   const [showNewAppModal, setShowNewAppModal] = useState(false);
 
   const { baseDate, weekDays } = useMemo(() => {
-    const d = new Date("2026-05-11");
+    const d = new Date(TODAY_DATE);
     d.setDate(d.getDate() + weekOffset * 7);
     return { baseDate: d, weekDays: getWeekDays(d) };
   }, [weekOffset]);
@@ -66,6 +67,18 @@ const AppointmentsPage = (): React.ReactElement => {
   );
 
   const hasActiveFilters = filterStatus !== "All" || filterType !== "All";
+
+  const handleClearFilters = useCallback(() => {
+    setFilterStatus("All");
+    setFilterType("All");
+  }, []);
+  const handlePrevWeek = useCallback(() => setWeekOffset(w => w - 1), []);
+  const handleNextWeek = useCallback(() => setWeekOffset(w => w + 1), []);
+  const handleToggleFilters = useCallback(() => setShowFilters(f => !f), []);
+  const handleOpenNewAppModal = useCallback(() => setShowNewAppModal(true), []);
+  const handleCloseNewAppModal = useCallback(() => setShowNewAppModal(false), []);
+  const handleCloseDetailModal = useCallback(() => setSelectedApp(null), []);
+
   const doctors = useMemo(
     () => [...new Set(appointments.map((a: Appointment) => a.doctor))],
     [appointments],
@@ -111,7 +124,6 @@ const AppointmentsPage = (): React.ReactElement => {
 
   return (
     <div className="max-w-[1280px] mx-auto">
-      {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
@@ -126,11 +138,11 @@ const AppointmentsPage = (): React.ReactElement => {
             </p>
           </div>
           <motion.button
-            onClick={() => setShowNewAppModal(true)}
+            type="button"
+            onClick={handleOpenNewAppModal}
             whileHover="hover"
             initial="rest"
-            className="flex items-center gap-2 py-[10px] px-5 rounded-[12px] border-0 text-white font-semibold cursor-pointer font-sans text-sm"
-            style={{ background: "var(--gradient-primary)" }}
+            className="flex items-center gap-2 py-[10px] px-5 rounded-[12px] border-0 text-white font-semibold cursor-pointer font-sans text-sm [background:var(--gradient-primary)]"
           >
             <motion.span
               variants={{
@@ -147,44 +159,42 @@ const AppointmentsPage = (): React.ReactElement => {
         <div className="glow-line mt-5" />
       </motion.div>
 
-      {/* Daily Stats */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
         className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"
       >
-        {stats.map((s, i) => (
+        {stats.map((stat, i) => (
           <motion.div
-            key={s.label}
+            key={stat.label}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.06 }}
           >
             <KpiCard
               size="sm"
-              title={s.label}
-              rawValue={s.value}
-              sub={s.desc}
-              icon={s.icon}
-              color={s.color}
-              active={filterStatus === s.filter}
-              onClick={() => setFilterStatus(s.filter)}
+              title={stat.label}
+              rawValue={stat.value}
+              sub={stat.desc}
+              icon={stat.icon}
+              color={stat.color}
+              active={filterStatus === stat.filter}
+              onClick={() => setFilterStatus(stat.filter)}
             />
           </motion.div>
         ))}
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_320px] gap-6">
-        {/* Left — Calendar + List */}
         <div>
           <WeekStrip
             weekDays={weekDays}
             baseDate={baseDate}
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
-            onPrevWeek={() => setWeekOffset(w => w - 1)}
-            onNextWeek={() => setWeekOffset(w => w + 1)}
+            onPrevWeek={handlePrevWeek}
+            onNextWeek={handleNextWeek}
           />
           <FilterBar
             searchQuery={searchQuery}
@@ -194,12 +204,9 @@ const AppointmentsPage = (): React.ReactElement => {
             filterType={filterType}
             onFilterType={setFilterType}
             showFilters={showFilters}
-            onToggleFilters={() => setShowFilters(f => !f)}
+            onToggleFilters={handleToggleFilters}
             hasActiveFilters={hasActiveFilters}
-            onClearFilters={() => {
-              setFilterStatus("All");
-              setFilterType("All");
-            }}
+            onClearFilters={handleClearFilters}
           />
           <AppointmentList
             todayApps={todayApps}
@@ -209,7 +216,6 @@ const AppointmentsPage = (): React.ReactElement => {
           />
         </div>
 
-        {/* Right sidebar */}
         <div className="flex flex-col gap-4">
           <DoctorSchedules doctors={doctors} todayAll={todayAll} />
           <ActionRequired todayAll={todayAll} />
@@ -221,12 +227,12 @@ const AppointmentsPage = (): React.ReactElement => {
         {showNewAppModal && (
           <NewAppointmentModal
             defaultDate={formatDateKey(selectedDate)}
-            onClose={() => setShowNewAppModal(false)}
+            onClose={handleCloseNewAppModal}
           />
         )}
       </AnimatePresence>
 
-      <AppointmentDetailModal app={selectedApp} onClose={() => setSelectedApp(null)} />
+      <AppointmentDetailModal app={selectedApp} onClose={handleCloseDetailModal} />
     </div>
   );
 };

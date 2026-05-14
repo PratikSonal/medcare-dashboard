@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -15,7 +16,7 @@ import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
 import { item, ttStyle } from "../constants";
 
-export const TrendsRow = (): React.ReactElement => {
+export const TrendsRow = memo((): React.ReactElement => {
   const metrics = useAppSelector((s: RootState) => s.analytics.metrics);
 
   return (
@@ -101,4 +102,4 @@ export const TrendsRow = (): React.ReactElement => {
       </motion.div>
     </div>
   );
-};
+});

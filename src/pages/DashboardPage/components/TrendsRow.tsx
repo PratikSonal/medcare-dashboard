@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { memo, useCallback, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -17,14 +17,65 @@ import { metricsData } from "@/data/analytics";
 import { getStatusBg, getStatusColor } from "@/features/patients/utils";
 import { cn } from "@/utils";
 import { item } from "../constants";
+import type { Patient } from "@/features/patients/types";
 
 type ChartPeriod = "3M" | "6M" | "All";
 
-export const TrendsRow = (): React.ReactElement => {
+interface RecentPatientRowProps {
+  patient: Patient;
+  index: number;
+}
+
+const RecentPatientRow = memo(({ patient, index }: RecentPatientRowProps): React.ReactElement => {
   const dispatch = useAppDispatch();
+
+  const handleClick = useCallback(() => {
+    dispatch(setSelectedPatient(patient));
+  }, [patient, dispatch]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.07 }}
+      whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
+      onClick={handleClick}
+      className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-12 cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary"
+    >
+      <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 [background:var(--gradient-primary)]">
+        {patient.avatar}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
+          {patient.name}
+        </p>
+        <p className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
+          {patient.diagnosis}
+        </p>
+      </div>
+      <span
+        className="text-[10px] font-medium px-[7px] py-[3px] rounded-[8px] shrink-0"
+        style={{
+          background: getStatusBg(patient.status),
+          color: getStatusColor(patient.status),
+        }}
+      >
+        {patient.status}
+      </span>
+    </motion.div>
+  );
+});
+
+export const TrendsRow = memo((): React.ReactElement => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const patients = useAppSelector(s => s.patients.patients);
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("All");
+
+  const handleViewAll = useCallback(() => {
+    dispatch(clearFilters());
+    navigate("/patients");
+  }, [dispatch, navigate]);
 
   const chartData = useMemo(
     () =>
@@ -135,10 +186,7 @@ export const TrendsRow = (): React.ReactElement => {
           <h2 className="text-base font-semibold text-text-primary">Recent Patients</h2>
           <button
             type="button"
-            onClick={() => {
-              dispatch(clearFilters());
-              navigate("/patients");
-            }}
+            onClick={handleViewAll}
             className="flex items-center gap-[3px] text-xs text-accent-blue bg-transparent border-0 cursor-pointer font-sans font-medium"
           >
             View all <ChevronRight size={13} />
@@ -146,41 +194,10 @@ export const TrendsRow = (): React.ReactElement => {
         </div>
         <div className="flex flex-col gap-[6px]">
           {patients.slice(0, 6).map((patient, i) => (
-            <motion.div
-              key={patient.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.07 }}
-              whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
-              onClick={() => dispatch(setSelectedPatient(patient))}
-              className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-12 cursor-pointer transition-colors duration-200 hover:bg-bg-tertiary"
-            >
-              <div
-                className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 [background:var(--gradient-primary)]"
-              >
-                {patient.avatar}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
-                  {patient.name}
-                </p>
-                <p className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
-                  {patient.diagnosis}
-                </p>
-              </div>
-              <span
-                className="text-[10px] font-medium px-[7px] py-[3px] rounded-[8px] shrink-0"
-                style={{
-                  background: getStatusBg(patient.status),
-                  color: getStatusColor(patient.status),
-                }}
-              >
-                {patient.status}
-              </span>
-            </motion.div>
+            <RecentPatientRow key={patient.id} patient={patient} index={i} />
           ))}
         </div>
       </motion.div>
     </div>
   );
-};
+});

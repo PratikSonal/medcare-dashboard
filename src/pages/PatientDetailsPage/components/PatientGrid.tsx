@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Activity, Heart } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
@@ -6,12 +7,12 @@ import { formatDate, cn } from "@/utils";
 import type { PatientCardProps, PatientGridProps } from "./types";
 import { container, item } from "../constants";
 
-const PatientCard = ({ patient, onClick }: PatientCardProps): React.ReactElement => {
+const PatientCard = memo(({ patient, onPatientClick }: PatientCardProps): React.ReactElement => {
   const isCritical = patient.status === "Critical";
   return (
     <motion.div
       variants={item}
-      onClick={onClick}
+      onClick={() => onPatientClick(patient)}
       whileHover={{ y: -3, transition: { duration: 0.2 } }}
       className={cn(
         "glass-card rounded-20 p-5 cursor-pointer relative overflow-hidden",
@@ -92,9 +93,9 @@ const PatientCard = ({ patient, onClick }: PatientCardProps): React.ReactElement
       </div>
     </motion.div>
   );
-};
+});
 
-export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridProps): React.ReactElement => (
+export const PatientGrid = memo(({ filteredPatients, onPatientClick }: PatientGridProps): React.ReactElement => (
   <motion.div
     key="grid"
     variants={container}
@@ -104,7 +105,7 @@ export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridPro
     className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4"
   >
     {filteredPatients.map(patient => (
-      <PatientCard key={patient.id} patient={patient} onClick={() => onPatientClick(patient)} />
+      <PatientCard key={patient.id} patient={patient} onPatientClick={onPatientClick} />
     ))}
   </motion.div>
-);
+));
