@@ -14,7 +14,7 @@ import {
 import { cn } from "@/utils";
 import { DEPARTMENTS, STATUSES } from "../constants";
 
-export const FilterBar = () => {
+export const FilterBar = (): React.ReactElement => {
   const dispatch = useAppDispatch();
   const { searchQuery, filterStatus, filterDepartment } = useAppSelector(s => s.patients);
   const [showFilters, setShowFilters] = useState(false);
@@ -34,6 +34,7 @@ export const FilterBar = () => {
           placeholder="Search by name, diagnosis, doctor..."
         />
         <button
+          type="button"
           onClick={() => setShowFilters(!showFilters)}
           className={cn(
             "flex items-center gap-2 py-[10px] px-4 rounded-[12px] text-[13px] font-medium border cursor-pointer font-sans transition-all duration-200",
@@ -45,10 +46,7 @@ export const FilterBar = () => {
           <Filter size={15} /> Filters {hasActiveFilters && <Badge variant="info">Active</Badge>}
           <ChevronDown
             size={14}
-            style={{
-              transition: "transform 200ms",
-              transform: showFilters ? "rotate(180deg)" : "none",
-            }}
+            className={cn("transition-transform duration-200", showFilters && "rotate-180")}
           />
         </button>
         {hasActiveFilters && (
@@ -92,18 +90,19 @@ export const FilterBar = () => {
                     {label}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {items.map(s => (
+                    {items.map(option => (
                       <button
-                        key={s}
-                        onClick={() => dispatch(action(s))}
+                        key={option}
+                        type="button"
+                        onClick={() => dispatch(action(option))}
                         className={cn(
                           "py-[6px] px-3 rounded-[10px] text-xs font-medium border-0 cursor-pointer font-sans transition-all duration-200",
-                          current === s
+                          current === option
                             ? "bg-accent-blue text-white"
                             : "bg-bg-tertiary text-text-secondary",
                         )}
                       >
-                        {s}
+                        {option}
                       </button>
                     ))}
                   </div>

@@ -36,11 +36,11 @@ const PatientDetailsPage = (): React.ReactElement => {
           </div>
           <div className="flex items-center gap-3">
             <motion.button
+              type="button"
               onClick={() => setShowAddModal(true)}
               whileHover="hover"
               initial="rest"
-              className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white shadow-[0_4px_14px_rgba(60,131,246,0.3)]"
-              style={{ background: "var(--gradient-primary)" }}
+              className="flex items-center gap-[7px] py-[9px] px-[18px] rounded-[12px] text-[13px] font-semibold border-0 cursor-pointer font-sans text-white shadow-[0_4px_14px_rgba(60,131,246,0.3)] [background:var(--gradient-primary)]"
             >
               <motion.span
                 variants={{
@@ -60,6 +60,7 @@ const PatientDetailsPage = (): React.ReactElement => {
               ].map(({ mode, icon, label }) => (
                 <button
                   key={mode}
+                  type="button"
                   onClick={() => dispatch(setViewMode(mode))}
                   className={cn(
                     "flex items-center gap-[6px] py-[7px] px-[14px] rounded-[8px] text-[13px] font-medium border-0 cursor-pointer font-sans transition-all duration-200",

@@ -6,7 +6,7 @@ import { formatDate, cn } from "@/utils";
 import type { PatientCardProps, PatientGridProps } from "./types";
 import { container, item } from "../constants";
 
-const PatientCard = ({ patient, onClick }: PatientCardProps) => {
+const PatientCard = ({ patient, onClick }: PatientCardProps): React.ReactElement => {
   const isCritical = patient.status === "Critical";
   return (
     <motion.div
@@ -25,8 +25,7 @@ const PatientCard = ({ patient, onClick }: PatientCardProps) => {
         />
       )}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.15]"
-        style={{ background: "var(--gradient-card)" }}
+        className="absolute inset-0 pointer-events-none opacity-[0.15] [background:var(--gradient-card)]"
       />
       <div className="relative">
         <div className="flex items-start gap-3 mb-[14px]">
@@ -95,7 +94,7 @@ const PatientCard = ({ patient, onClick }: PatientCardProps) => {
   );
 };
 
-export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridProps) => (
+export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridProps): React.ReactElement => (
   <motion.div
     key="grid"
     variants={container}
@@ -104,8 +103,8 @@ export const PatientGrid = ({ filteredPatients, onPatientClick }: PatientGridPro
     exit={{ opacity: 0 }}
     className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4"
   >
-    {filteredPatients.map(p => (
-      <PatientCard key={p.id} patient={p} onClick={() => onPatientClick(p)} />
+    {filteredPatients.map(patient => (
+      <PatientCard key={patient.id} patient={patient} onClick={() => onPatientClick(patient)} />
     ))}
   </motion.div>
 );

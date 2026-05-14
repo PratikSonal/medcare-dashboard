@@ -5,7 +5,7 @@ import { formatDate } from "@/utils";
 import type { PatientListRowProps, PatientListViewProps } from "./types";
 import { container, item } from "../constants";
 
-const PatientListRow = ({ patient, onClick }: PatientListRowProps) => (
+const PatientListRow = ({ patient, onClick }: PatientListRowProps): React.ReactElement => (
   <motion.tr
     variants={item}
     onClick={onClick}
@@ -41,7 +41,7 @@ const PatientListRow = ({ patient, onClick }: PatientListRowProps) => (
   </motion.tr>
 );
 
-export const PatientListView = ({ filteredPatients, onPatientClick }: PatientListViewProps) => (
+export const PatientListView = ({ filteredPatients, onPatientClick }: PatientListViewProps): React.ReactElement => (
   <motion.div
     key="list"
     initial={{ opacity: 0 }}
@@ -71,8 +71,8 @@ export const PatientListView = ({ filteredPatients, onPatientClick }: PatientLis
         </tr>
       </thead>
       <motion.tbody variants={container} initial="hidden" animate="show">
-        {filteredPatients.map(p => (
-          <PatientListRow key={p.id} patient={p} onClick={() => onPatientClick(p)} />
+        {filteredPatients.map(patient => (
+          <PatientListRow key={patient.id} patient={patient} onClick={() => onPatientClick(patient)} />
         ))}
       </motion.tbody>
     </table>
