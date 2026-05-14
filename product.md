@@ -33,6 +33,7 @@ Live at: `medcare-dashboard.vercel.app` (pending) | GitHub: `medcare-dashboard` 
 src/
 ├── components/
 │   ├── ui/               — Badge, Button, Card, Input, AuthInput, KpiCard, Avatar, SearchInput, PageLoader
+│   ├── RouteError/       — `useRouteError()` error page rendered by React Router's `errorElement`
 │   ├── layout/
 │   │   ├── AppLayout/    — authenticated shell (sidebar + navbar + outlet)
 │   │   ├── LoginLayout/  — unauthenticated shell (LeftPanel + slot); used by LoginPage + RegisterPage
@@ -51,9 +52,9 @@ src/
 │   │   │   │   ├── Step0Personal.tsx   — name/age/gender/blood/phone/email/address
 │   │   │   │   ├── Step1Clinical.tsx   — status pills (StatusPill sub-component), diagnosis, department, doctor, dates
 │   │   │   │   └── Step2Vitals.tsx     — HR/BP/temp/O₂/weight + patient ID preview
-│   │   │   ├── helpers.ts        — validateStep, buildPatient, getNextId, getInputCls
+│   │   │   ├── helpers.ts        — buildPatient, getNextId, getInputCls
 │   │   │   ├── constants.ts      — DEPARTMENTS, DOCTORS, STATUSES, STATUS_COLORS (derived from PATIENT_STATUS_COLORS)
-│   │   │   └── types.ts          — FormData, FieldProps, AddPatientModalProps, StepProps
+│   │   │   └── types.ts          — AddPatientFormData (re-export), AddPatientModalProps, StepProps (RHF register/control/errors)
 │   │   ├── NewAppointmentModal   — appointment + conflict detection (DurationButton, SlotButton sub-components)
 │   │   └── PatientModal/         — patient detail viewer
 │   │       ├── index.tsx         — shell with header + tabs (~150 lines)
@@ -82,13 +83,13 @@ src/
 │   ├── mockData.ts       — seed data for Redux slices
 │   ├── notifications.ts  — push notification helpers
 │   ├── utils.ts          — cn(), formatDate(), status color helpers
-│   └── validators.ts     — Zod schemas (loginSchema, registerSchema)
+│   └── validators.ts     — Zod schemas: `loginSchema`, `registerSchema`, `addPatientSchema`, `newAppointmentSchema` + inferred types `AddPatientFormData`, `NewAppointmentFormData`
 ├── pages/
 │   ├── LoginPage/        — LoginLayout + LoginForm
 │   ├── RegisterPage/     — LoginLayout + RegisterForm
 │   ├── DashboardPage, AnalyticsPage, PatientDetailsPage, AppointmentsPage, BillingPage
 │   └── ProtectedRoute/   — Firebase auth state guard
-├── routes/           — AppRouter (lazy page imports, BrowserRouter)
+├── routes/           — AppRouter (lazy page imports, BrowserRouter); all protected routes use `errorElement={<RouteError />}`
 ├── store/            — Redux store config
 ├── styles/           — globals.css (CSS variables, keyframes, utility classes)
 └── types/            — shared TypeScript types
@@ -151,7 +152,7 @@ public/sw.js          — Service Worker (push notifications)
 - Redux `authSlice` receives the error string via `dispatch(setError(msg))` but loading is **not** tracked in Redux — form-submit loading lives in local state only (avoids the "stuck-true" bug where `setLoading(true)` was called but the `finally` block never ran).
 - `LoginLayout` is the unauthenticated shell: `<LeftPanel />` (always dark, private to `LoginLayout`) + a right-side children slot. Both `LoginPage` and `RegisterPage` compose it.
 - `AuthInput` (`src/components/ui/AuthInput/`) — generic labeled input with `htmlFor`/`id` a11y pairing, `icon`, `headerRight` (for "Forgot password?"), and `rightElement` (for show/hide toggle) slots.
-- Zod schemas in `src/lib/validators.ts`: `loginSchema` (email + password), `registerSchema` extends `loginSchema` with `name`. Both forms call `schema.safeParse()` before submitting; `result.error.issues[0].message` surfaces the first validation error.
+- Zod schemas in `src/lib/validators.ts`: `loginSchema` (email + password), `registerSchema` extends `loginSchema` with `name`, `addPatientSchema` (full 3-step patient form), `newAppointmentSchema` (appointment booking). Auth forms use `schema.safeParse()`; modals use RHF `zodResolver` with `trigger(STEP_FIELDS[step])` for per-step validation. `stepErrors` (filtered via `useMemo` to current step's field keys) prevents cross-step zodResolver error bleed.
 
 ### Login Page
 - **Left panel**: Always dark (`#0c111d`) regardless of theme — the 5 remaining hex color values (`#0c111d`, `#1d2839`, `#f8fafc`, `#9ca3af`, `#4b5563`) are intentional (panel is always dark; tracked for CSS var migration in fix.md P2)
