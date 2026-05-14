@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/utils";
 import type { SearchInputProps } from "./types";
 
-export const SearchInput = ({
+export const SearchInput = memo(({
   value,
   onChange,
   placeholder = "Search...",
@@ -26,6 +27,7 @@ export const SearchInput = ({
     />
     {value && (
       <button
+        type="button"
         onClick={() => onChange("")}
         className="absolute right-[10px] top-1/2 -translate-y-1/2 flex p-[2px] bg-transparent border-0 cursor-pointer text-text-tertiary"
       >
@@ -33,4 +35,4 @@ export const SearchInput = ({
       </button>
     )}
   </div>
-);
+));

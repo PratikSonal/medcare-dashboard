@@ -1,10 +1,10 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/utils";
 import type { ButtonProps } from "./types";
 import { variantClasses, sizeClasses } from "./constants";
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", loading, disabled, children, ...props }, ref) => (
     <button
       ref={ref}
@@ -22,5 +22,5 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       {children}
     </button>
   ),
-);
+));
 Button.displayName = "Button";

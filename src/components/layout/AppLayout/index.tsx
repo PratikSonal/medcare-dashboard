@@ -1,4 +1,4 @@
-import { Suspense, useCallback } from "react";
+import { memo, Suspense, useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Sidebar } from "../Sidebar";
@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { RootState } from "@/store";
 
-export const AppLayout = (): React.ReactElement => {
+export const AppLayout = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();
   const selectedPatient = useAppSelector((s: RootState) => s.patients.selectedPatient);
 
@@ -33,4 +33,4 @@ export const AppLayout = (): React.ReactElement => {
       <ToastContainer />
     </div>
   );
-};
+});

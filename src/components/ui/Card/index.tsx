@@ -1,7 +1,8 @@
+import { memo } from "react";
 import { cn } from "@/utils";
 import type { CardProps, StatCardProps } from "./types";
 
-export const Card = ({ children, className, hover = false, onClick, style }: CardProps): React.ReactElement => (
+export const Card = memo(({ children, className, hover = false, onClick, style }: CardProps): React.ReactElement => (
   <div
     onClick={onClick}
     className={cn(
@@ -13,9 +14,9 @@ export const Card = ({ children, className, hover = false, onClick, style }: Car
   >
     {children}
   </div>
-);
+));
 
-export const StatCard = ({
+export const StatCard = memo(({
   title,
   value,
   change,
@@ -26,9 +27,7 @@ export const StatCard = ({
   <Card hover className="relative overflow-hidden">
     <div
       className="absolute inset-0 opacity-5 pointer-events-none"
-      style={{
-        background: `radial-gradient(circle at top right, ${color}, transparent)`,
-      }}
+      style={{ background: `radial-gradient(circle at top right, ${color}, transparent)` }}
     />
     <div className="relative flex items-start justify-between">
       <div>
@@ -51,4 +50,4 @@ export const StatCard = ({
       </div>
     </div>
   </Card>
-);
+));

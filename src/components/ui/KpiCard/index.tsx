@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import type { KpiCardProps } from "./types";
 
-export const KpiCard = ({
+export const KpiCard = memo(({
   title,
   value,
   rawValue,
@@ -41,15 +41,13 @@ export const KpiCard = ({
       className={cn(
         "glass-card relative overflow-hidden",
         sm ? "rounded-16 p-[18px]" : "rounded-20 p-6",
+        onClick ? "cursor-pointer" : "cursor-default",
       )}
       whileHover={{ y: -3, transition: { duration: 0.2 } }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       onClick={onClick}
-      style={{
-        cursor: onClick ? "pointer" : "default",
-        ...(active ? { border: `1px solid ${color}50` } : {}),
-      }}
+      style={active ? { border: `1px solid ${color}50` } : undefined}
     >
       <div
         className="absolute inset-0 pointer-events-none transition-opacity duration-200"
@@ -69,8 +67,11 @@ export const KpiCard = ({
             {title}
           </p>
           <p
-            className={cn("font-bold leading-none", sm ? "text-[28px]" : "text-[32px]")}
-            style={{ color: sm ? color : "var(--text-primary)" }}
+            className={cn(
+              "font-bold leading-none",
+              sm ? "text-[28px]" : "text-[32px] text-text-primary",
+            )}
+            style={sm ? { color } : undefined}
           >
             {displayValue}
           </p>
@@ -108,4 +109,4 @@ export const KpiCard = ({
       </div>
     </motion.div>
   );
-};
+});

@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, Activity } from "lucide-react";
 import { cn } from "@/utils";
@@ -10,21 +11,26 @@ import { auth } from "@/lib/firebase";
 import styles from "./Sidebar.module.scss";
 import { navItems } from "./constants";
 
-export const Sidebar = (): React.ReactElement => {
+export const Sidebar = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((s: RootState) => s.auth.user);
   const sidebarOpen = useAppSelector((s: RootState) => s.ui.sidebarOpen);
 
-  const handleLogout = async (): Promise<void> => {
+  const closeSidebar = useCallback((): void => {
+    dispatch(toggleSidebar());
+  }, [dispatch]);
+
+  const handleLogout = useCallback(async (): Promise<void> => {
     await signOut(auth);
     dispatch(logout());
     navigate("/login");
-  };
+  }, [dispatch, navigate]);
 
-  const closeSidebar = (): void => {
-    dispatch(toggleSidebar());
-  };
+  const handleNavClick = useCallback((): void => {
+    document.documentElement.scrollTop = 0;
+    if (window.innerWidth < 640) closeSidebar();
+  }, [closeSidebar]);
 
   return (
     <>
@@ -42,7 +48,6 @@ export const Sidebar = (): React.ReactElement => {
           "bg-bg-secondary border border-border-primary rounded-20",
           "h-[calc(100vh-24px)] w-60",
           "transition-transform duration-300 ease-in-out",
-          // Mobile: slide off-screen when closed, always show on sm+
           sidebarOpen ? "translate-x-0" : "-translate-x-[calc(100%+16px)]",
           "sm:translate-x-0",
           styles.sidebar,
@@ -59,16 +64,7 @@ export const Sidebar = (): React.ReactElement => {
         {/* Nav */}
         <nav className="flex-1 px-2 py-1 flex flex-col gap-[2px] overflow-y-auto">
           {navItems.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className="no-underline"
-              onClick={(): void => {
-                document.documentElement.scrollTop = 0;
-                // Close drawer on mobile after navigation
-                if (window.innerWidth < 640) closeSidebar();
-              }}
-            >
+            <NavLink key={to} to={to} className="no-underline" onClick={handleNavClick}>
               {({ isActive }) => (
                 <div
                   className={cn(
@@ -104,6 +100,7 @@ export const Sidebar = (): React.ReactElement => {
           )}
 
           <button
+            type="button"
             onClick={handleLogout}
             className={cn(
               "flex items-center gap-3 px-3 py-[10px] rounded-12 w-full border-0 bg-transparent cursor-pointer text-text-secondary font-sans",
@@ -117,4 +114,4 @@ export const Sidebar = (): React.ReactElement => {
       </aside>
     </>
   );
-};
+});

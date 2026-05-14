@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Check } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
@@ -7,6 +7,7 @@ import type { RootState } from "@/store";
 import type { Patient } from "@/features/patients/types";
 import { addToast } from "@/features/ui/uiSlice";
 import { cn } from "@/utils";
+import type { PatientStatus } from "@/features/patients/types";
 import type { FormData, FieldProps, AddPatientModalProps } from "./types";
 import {
   DEPARTMENTS,
@@ -19,24 +20,47 @@ import {
 } from "./constants";
 import { validateStep, buildPatient, getNextId } from "./helpers";
 
-const Field = ({ label, error, children }: FieldProps): React.ReactElement => {
-  return (
-    <div>
-      <label
-        className={cn(
-          "block text-[11px] font-semibold uppercase tracking-[0.04em] mb-[6px]",
-          error ? "text-accent-red" : "text-text-tertiary",
-        )}
-      >
-        {label}
-        {error && <span className="text-accent-red"> *</span>}
-      </label>
-      {children}
-    </div>
-  );
-};
+const Field = memo(({ label, error, children }: FieldProps): React.ReactElement => (
+  <div>
+    <label
+      className={cn(
+        "block text-[11px] font-semibold uppercase tracking-[0.04em] mb-[6px]",
+        error ? "text-accent-red" : "text-text-tertiary",
+      )}
+    >
+      {label}
+      {error && <span className="text-accent-red"> *</span>}
+    </label>
+    {children}
+  </div>
+));
 
-export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactElement => {
+interface StatusPillProps {
+  status: PatientStatus;
+  isSelected: boolean;
+  color: string;
+  onSelect: (status: PatientStatus) => void;
+}
+
+const StatusPill = memo(({ status, isSelected, color, onSelect }: StatusPillProps): React.ReactElement => {
+  const handleClick = useCallback(() => onSelect(status), [status, onSelect]);
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className="py-[7px] px-[14px] rounded-[10px] text-xs font-semibold cursor-pointer font-sans transition-all duration-150"
+      style={{
+        border: `1px solid ${isSelected ? color : "var(--border-primary)"}`,
+        background: isSelected ? `${color}18` : "var(--bg-secondary)",
+        color: isSelected ? color : "var(--text-secondary)",
+      }}
+    >
+      {status}
+    </button>
+  );
+});
+
+export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector((s: RootState) => s.patients.patients);
   const [step, setStep] = useState(0);
@@ -55,25 +79,44 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
       setErrors(err => ({ ...err, [field]: false }));
     };
 
-  const validate = (s: number): boolean => {
-    const e = validateStep(s, form);
+  const validate = useCallback((stepIndex: number): boolean => {
+    const e = validateStep(stepIndex, form);
     setErrors(e);
     return Object.keys(e).length === 0;
-  };
+  }, [form]);
 
-  const next = (): void => {
+  const back = useCallback((): void => setStep(s => s - 1), []);
+
+  const next = useCallback((): void => {
     if (validate(step)) setStep(s => s + 1);
-  };
-  const back = (): void => setStep(s => s - 1);
+  }, [validate, step]);
 
-  const submit = (): void => {
+  const submit = useCallback((): void => {
     if (!validate(2)) return;
-    const maxId = Math.max(...patients.map((p: Patient) => parseInt(p.id.slice(1), 10)));
+    const maxId = Math.max(...patients.map((patient: Patient) => parseInt(patient.id.slice(1), 10)));
     const patient = buildPatient(form, maxId);
     dispatch(addPatient(patient));
     dispatch(addToast({ message: `${patient.name} added successfully`, type: "success" }));
     onClose();
-  };
+  }, [validate, patients, form, dispatch, onClose]);
+
+  const handleBackOrClose = useCallback((): void => {
+    if (step === 0) onClose();
+    else back();
+  }, [step, onClose, back]);
+
+  const handleNextOrSubmit = useCallback((): void => {
+    if (step < 2) next();
+    else submit();
+  }, [step, next, submit]);
+
+  const handleSelectStatus = useCallback((status: PatientStatus) => {
+    setForm(f => ({ ...f, status }));
+  }, []);
+
+  const handleOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  }, [onClose]);
 
   const nextId = getNextId(patients);
 
@@ -83,9 +126,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-[rgba(0,0,0,0.6)] backdrop-blur-[4px] z-[1000] flex items-end sm:items-center justify-center sm:p-6"
-      onClick={e => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      onClick={handleOverlayClick}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0, y: 12 }}
@@ -104,6 +145,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
               </p>
             </div>
             <button
+              type="button"
               onClick={onClose}
               className="p-[6px] rounded-[10px] bg-bg-tertiary border-0 cursor-pointer text-text-tertiary flex"
             >
@@ -113,8 +155,8 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
 
           {/* Step Indicator */}
           <div className="flex items-center">
-            {STEPS.map((s, i) => {
-              const Icon = s.icon;
+            {STEPS.map((stepDef, i) => {
+              const Icon = stepDef.icon;
               const done = step > i;
               const active = step === i;
               return (
@@ -142,7 +184,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
                         active ? "text-accent-blue" : done ? "text-accent-cyan" : "text-text-tertiary",
                       )}
                     >
-                      {s.label}
+                      {stepDef.label}
                     </span>
                   </div>
                   {i < STEPS.length - 1 && (
@@ -192,11 +234,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
                     />
                   </Field>
                   <Field label="Gender">
-                    <select
-                      value={form.gender}
-                      onChange={set("gender")}
-                      className={inputCls("gender")}
-                    >
+                    <select value={form.gender} onChange={set("gender")} className={inputCls("gender")}>
                       <option>Male</option>
                       <option>Female</option>
                       <option>Other</option>
@@ -205,11 +243,7 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Blood Group">
-                    <select
-                      value={form.bloodGroup}
-                      onChange={set("bloodGroup")}
-                      className={inputCls("bloodGroup")}
-                    >
+                    <select value={form.bloodGroup} onChange={set("bloodGroup")} className={inputCls("bloodGroup")}>
                       {BLOOD_GROUPS.map(bg => (
                         <option key={bg}>{bg}</option>
                       ))}
@@ -255,20 +289,14 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
               >
                 <Field label="Status">
                   <div className="flex gap-2 flex-wrap">
-                    {STATUSES.map(s => (
-                      <button
-                        key={s}
-                        onClick={() => setForm(f => ({ ...f, status: s }))}
-                        className="py-[7px] px-[14px] rounded-[10px] text-xs font-semibold cursor-pointer font-sans transition-all duration-150"
-                        style={{
-                          border: `1px solid ${form.status === s ? STATUS_COLORS[s] : "var(--border-primary)"}`,
-                          background:
-                            form.status === s ? `${STATUS_COLORS[s]}18` : "var(--bg-secondary)",
-                          color: form.status === s ? STATUS_COLORS[s] : "var(--text-secondary)",
-                        }}
-                      >
-                        {s}
-                      </button>
+                    {STATUSES.map(status => (
+                      <StatusPill
+                        key={status}
+                        status={status}
+                        isSelected={form.status === status}
+                        color={STATUS_COLORS[status]}
+                        onSelect={handleSelectStatus}
+                      />
                     ))}
                   </div>
                 </Field>
@@ -282,24 +310,16 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
                 </Field>
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Department">
-                    <select
-                      value={form.department}
-                      onChange={set("department")}
-                      className={inputCls("department")}
-                    >
-                      {DEPARTMENTS.map(d => (
-                        <option key={d}>{d}</option>
+                    <select value={form.department} onChange={set("department")} className={inputCls("department")}>
+                      {DEPARTMENTS.map(dept => (
+                        <option key={dept}>{dept}</option>
                       ))}
                     </select>
                   </Field>
                   <Field label="Attending Doctor">
-                    <select
-                      value={form.doctor}
-                      onChange={set("doctor")}
-                      className={inputCls("doctor")}
-                    >
-                      {DOCTORS.map(d => (
-                        <option key={d}>{d}</option>
+                    <select value={form.doctor} onChange={set("doctor")} className={inputCls("doctor")}>
+                      {DOCTORS.map(doctor => (
+                        <option key={doctor}>{doctor}</option>
                       ))}
                     </select>
                   </Field>
@@ -399,13 +419,15 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
         {/* Footer */}
         <div className="py-4 px-6 pb-6 border-t border-border-primary flex justify-between shrink-0">
           <button
-            onClick={step === 0 ? onClose : back}
+            type="button"
+            onClick={handleBackOrClose}
             className="py-[10px] px-5 rounded-[12px] text-[13px] font-medium border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans"
           >
             {step === 0 ? "Cancel" : "← Back"}
           </button>
           <button
-            onClick={step < 2 ? next : submit}
+            type="button"
+            onClick={handleNextOrSubmit}
             className={cn(
               "py-[10px] px-6 rounded-[12px] text-[13px] font-semibold border-0 text-white cursor-pointer font-sans shadow-[0_4px_14px_rgba(60,131,246,0.3)]",
               step < 2 ? "bg-accent-blue" : "bg-accent-cyan",
@@ -417,4 +439,4 @@ export const AddPatientModal = ({ onClose }: AddPatientModalProps): React.ReactE
       </motion.div>
     </motion.div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
@@ -7,13 +7,15 @@ import type { ToastProps } from "./types";
 import { CONFIG } from "./constants";
 import type { RootState } from "@/store";
 
-const Toast = ({ id, message, type }: ToastProps): React.ReactElement => {
+const Toast = memo(({ id, message, type }: ToastProps): React.ReactElement => {
   const dispatch = useAppDispatch();
   const { icon: Icon, color, bg } = CONFIG[type];
 
+  const handleDismiss = useCallback(() => dispatch(removeToast(id)), [id, dispatch]);
+
   useEffect(() => {
-    const t = setTimeout(() => dispatch(removeToast(id)), 3500);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => dispatch(removeToast(id)), 3500);
+    return () => clearTimeout(timer);
   }, [id, dispatch]);
 
   return (
@@ -33,25 +35,26 @@ const Toast = ({ id, message, type }: ToastProps): React.ReactElement => {
       </div>
       <p className="flex-1 text-[13px] font-medium text-text-primary leading-[1.4]">{message}</p>
       <button
-        onClick={() => dispatch(removeToast(id))}
+        type="button"
+        onClick={handleDismiss}
         className="p-[2px] border-0 bg-transparent cursor-pointer text-text-tertiary flex shrink-0"
       >
         <X size={14} />
       </button>
     </motion.div>
   );
-};
+});
 
-export const ToastContainer = (): React.ReactElement => {
+export const ToastContainer = memo((): React.ReactElement => {
   const toasts = useAppSelector((s: RootState) => s.ui.toasts);
 
   return (
     <div className="fixed bottom-6 right-6 z-[1100] flex flex-col-reverse gap-2 items-end">
       <AnimatePresence>
-        {toasts.map((t: ToastProps) => (
-          <Toast key={t.id} {...t} />
+        {toasts.map((toast: ToastProps) => (
+          <Toast key={toast.id} {...toast} />
         ))}
       </AnimatePresence>
     </div>
   );
-};
+});

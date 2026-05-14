@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -42,7 +42,7 @@ const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactN
   "No-Show": { ...APPT_STATUS_COLORS["No-Show"], icon: <XCircle size={11} /> },
 };
 
-const VitalBadge = ({ icon, label, value, alert = false }: VitalBadgeProps): React.ReactElement => (
+const VitalBadge = memo(({ icon, label, value, alert = false }: VitalBadgeProps): React.ReactElement => (
   <motion.div
     whileHover={{ scale: 1.1, transition: { duration: 0.2, ease: "easeOut" } }}
     className={cn(
@@ -56,10 +56,45 @@ const VitalBadge = ({ icon, label, value, alert = false }: VitalBadgeProps): Rea
     <p className="text-[10px] text-text-tertiary mt-1 text-center">{label}</p>
     <p className="text-xs font-bold text-text-primary mt-[2px] text-center">{value}</p>
   </motion.div>
-);
+));
 
-export const PatientModal = ({ patient, onClose }: Props): React.ReactElement => {
-  const [tab, setTab] = useState<TabId>("overview");
+interface TabButtonProps {
+  tabId: TabId;
+  label: string;
+  icon: React.ReactNode;
+  count?: number;
+  isActive: boolean;
+  onTabSelect: (id: TabId) => void;
+}
+
+const TabButton = memo(({ tabId, label, icon, count, isActive, onTabSelect }: TabButtonProps): React.ReactElement => {
+  const handleClick = useCallback(() => onTabSelect(tabId), [tabId, onTabSelect]);
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cn(
+        "flex items-center gap-[6px] py-[7px] px-[14px] rounded-[10px] text-[13px] font-medium border-0 cursor-pointer font-sans transition-all duration-200 whitespace-nowrap shrink-0",
+        isActive ? "bg-accent-blue text-white" : "bg-transparent text-text-secondary",
+      )}
+    >
+      {icon} {label}
+      {count !== undefined && count > 0 && (
+        <span
+          className={cn(
+            "text-[10px] py-[1px] px-[6px] rounded-full font-semibold",
+            isActive ? "bg-[rgba(255,255,255,0.25)] text-white" : "bg-bg-tertiary text-text-tertiary",
+          )}
+        >
+          {count}
+        </span>
+      )}
+    </button>
+  );
+});
+
+export const PatientModal = memo(({ patient, onClose }: Props): React.ReactElement => {
+  const [activeTab, setActiveTab] = useState<TabId>("overview");
 
   const allAppointments = useAppSelector((s: RootState) => s.appointments.appointments);
   const billingRecords = mockBillingData.filter(r => r.patientId === patient.id);
@@ -84,6 +119,9 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
     },
   ];
 
+  const handleTabSelect = useCallback((id: TabId) => setActiveTab(id), []);
+  const handleStopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -98,7 +136,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: "spring", duration: 0.4 }}
         className="w-full sm:max-w-[660px] max-h-[92vh] sm:max-h-[90vh] flex flex-col rounded-t-[24px] sm:rounded-[24px] bg-bg-secondary border border-border-primary"
-        onClick={e => e.stopPropagation()}
+        onClick={handleStopPropagation}
       >
         {/* Header */}
         <div className="p-6 border-b border-border-primary shrink-0 relative">
@@ -108,6 +146,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
                 <AlertTriangle size={14} /> Critical patient — immediate attention required
               </div>
               <button
+                type="button"
                 onClick={onClose}
                 className="shrink-0 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary"
               >
@@ -116,6 +155,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
             </div>
           ) : (
             <button
+              type="button"
               onClick={onClose}
               className="absolute top-6 right-6 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary"
             >
@@ -151,36 +191,23 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
 
         {/* Tabs */}
         <div className="flex gap-1 py-3 px-6 border-b border-border-primary shrink-0 overflow-x-auto">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={cn(
-                "flex items-center gap-[6px] py-[7px] px-[14px] rounded-[10px] text-[13px] font-medium border-0 cursor-pointer font-sans transition-all duration-200 whitespace-nowrap shrink-0",
-                tab === t.id ? "bg-accent-blue text-white" : "bg-transparent text-text-secondary",
-              )}
-            >
-              {t.icon} {t.label}
-              {"count" in t && t.count! > 0 && (
-                <span
-                  className={cn(
-                    "text-[10px] py-[1px] px-[6px] rounded-full font-semibold",
-                    tab === t.id
-                      ? "bg-[rgba(255,255,255,0.25)] text-white"
-                      : "bg-bg-tertiary text-text-tertiary",
-                  )}
-                >
-                  {t.count}
-                </span>
-              )}
-            </button>
+          {tabs.map(tabDef => (
+            <TabButton
+              key={tabDef.id}
+              tabId={tabDef.id}
+              label={tabDef.label}
+              icon={tabDef.icon}
+              count={"count" in tabDef ? tabDef.count : undefined}
+              isActive={activeTab === tabDef.id}
+              onTabSelect={handleTabSelect}
+            />
           ))}
         </div>
 
         {/* Tab content */}
         <div className="overflow-y-auto p-6 flex-1">
           <AnimatePresence mode="wait">
-            {tab === "overview" && (
+            {activeTab === "overview" && (
               <motion.div
                 key="overview"
                 initial={{ opacity: 0, y: 8 }}
@@ -260,7 +287,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
               </motion.div>
             )}
 
-            {tab === "appointments" && (
+            {activeTab === "appointments" && (
               <motion.div
                 key="appointments"
                 initial={{ opacity: 0, y: 8 }}
@@ -357,7 +384,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
               </motion.div>
             )}
 
-            {tab === "billing" && (
+            {activeTab === "billing" && (
               <motion.div
                 key="billing"
                 initial={{ opacity: 0, y: 8 }}
@@ -402,19 +429,19 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
                         Billing History
                       </h3>
                       <div className="flex flex-col gap-2">
-                        {billingRecords.map(r => (
+                        {billingRecords.map(record => (
                           <div
-                            key={r.id}
+                            key={record.id}
                             className="p-[14px] rounded-[14px] bg-bg-tertiary border border-border-primary"
                           >
                             <div className="flex items-start justify-between gap-3 mb-[10px]">
                               <div>
                                 <p className="text-[13px] font-semibold text-text-primary">
-                                  {r.procedure}
+                                  {record.procedure}
                                 </p>
                                 <p className="text-[11px] text-text-tertiary mt-[2px]">
-                                  {r.department} ·{" "}
-                                  {new Date(r.visitDate).toLocaleDateString("en-IN", {
+                                  {record.department} ·{" "}
+                                  {new Date(record.visitDate).toLocaleDateString("en-IN", {
                                     day: "numeric",
                                     month: "short",
                                     year: "numeric",
@@ -424,26 +451,26 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
                               <span
                                 className="text-[11px] font-semibold py-[3px] px-[10px] rounded-[8px] shrink-0"
                                 style={{
-                                  background: CLAIM_STATUS_COLORS[r.claimStatus].bg,
-                                  color: CLAIM_STATUS_COLORS[r.claimStatus].color,
+                                  background: CLAIM_STATUS_COLORS[record.claimStatus].bg,
+                                  color: CLAIM_STATUS_COLORS[record.claimStatus].color,
                                 }}
                               >
-                                {r.claimStatus}
+                                {record.claimStatus}
                               </span>
                             </div>
                             <div className="grid grid-cols-3 gap-2">
                               {[
                                 {
                                   label: "Total",
-                                  value: `₹${r.totalAmount.toLocaleString("en-IN")}`,
+                                  value: `₹${record.totalAmount.toLocaleString("en-IN")}`,
                                 },
                                 {
                                   label: "Insurance",
-                                  value: `₹${r.insuranceCovered.toLocaleString("en-IN")}`,
+                                  value: `₹${record.insuranceCovered.toLocaleString("en-IN")}`,
                                 },
                                 {
                                   label: "Patient Due",
-                                  value: `₹${r.patientDue.toLocaleString("en-IN")}`,
+                                  value: `₹${record.patientDue.toLocaleString("en-IN")}`,
                                 },
                               ].map(({ label, value }) => (
                                 <div key={label}>
@@ -466,7 +493,7 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
               </motion.div>
             )}
 
-            {tab === "prescriptions" && (
+            {activeTab === "prescriptions" && (
               <motion.div
                 key="prescriptions"
                 initial={{ opacity: 0, y: 8 }}
@@ -547,4 +574,4 @@ export const PatientModal = ({ patient, onClose }: Props): React.ReactElement =>
       </motion.div>
     </motion.div>
   );
-};
+});

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -15,6 +15,7 @@ import {
 import { cn } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { toggleTheme, markAllRead, markNotificationRead, toggleSidebar } from "@/features/ui/uiSlice";
+import type { Notification } from "@/features/ui/types";
 import styles from "./Navbar.module.scss";
 import type { FilterType } from "./types";
 import { timeAgo } from "./helpers";
@@ -27,7 +28,76 @@ const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: str
   warning: { icon: <AlertTriangle size={14} />, color: "var(--accent-yellow)", bg: "rgba(245,158,11,0.12)" },
 };
 
-export const Navbar = (): React.ReactElement => {
+interface NotificationItemProps {
+  notification: Notification;
+  onRead: (id: string) => void;
+}
+
+const NotificationItem = memo(({ notification, onRead }: NotificationItemProps): React.ReactElement => {
+  const handleClick = useCallback(() => onRead(notification.id), [notification.id, onRead]);
+  const config = typeConfig[notification.type];
+
+  return (
+    <div
+      onClick={handleClick}
+      className={cn(
+        "flex gap-3 px-4 py-3 items-start border-b border-border-primary",
+        styles.notifItem,
+        !notification.read && "bg-[rgba(60,131,246,0.04)]",
+      )}
+    >
+      <div
+        className={cn(
+          "w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0",
+          styles.iconBox,
+        )}
+        style={
+          {
+            "--notif-color": config.color,
+            background: config.bg,
+            color: config.color,
+          } as React.CSSProperties
+        }
+      >
+        {config.icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-xs font-semibold mb-[2px]" style={{ color: config.color }}>
+            {notification.title}
+          </p>
+          {!notification.read && (
+            <div className="w-[7px] h-[7px] rounded-full bg-accent-blue shrink-0 mt-[3px]" />
+          )}
+        </div>
+        <p className="text-xs text-text-secondary leading-[1.5]">{notification.message}</p>
+        <p className="text-[11px] text-text-tertiary mt-1">{timeAgo(notification.timestamp)}</p>
+      </div>
+    </div>
+  );
+});
+
+interface FilterTabProps {
+  filterType: FilterType;
+  isActive: boolean;
+  label: string;
+  onFilterClick: (filter: FilterType) => void;
+}
+
+const FilterTab = memo(({ filterType, isActive, label, onFilterClick }: FilterTabProps): React.ReactElement => {
+  const handleClick = useCallback(() => onFilterClick(filterType), [filterType, onFilterClick]);
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cn(styles.filterTab, isActive && styles.active)}
+    >
+      {label}
+    </button>
+  );
+});
+
+export const Navbar = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();
   const theme = useAppSelector((s: RootState) => s.ui.theme);
   const { notifications, unreadCount } = useAppSelector((s: RootState) => s.ui);
@@ -38,6 +108,14 @@ export const Navbar = (): React.ReactElement => {
   const visible = filter === "unread" ? notifications.filter(n => !n.read) : notifications;
   const displayName = user?.displayName || user?.email?.split("@")[0] || "Doctor";
   const initial = displayName[0].toUpperCase();
+
+  const handleToggleSidebar = useCallback(() => dispatch(toggleSidebar()), [dispatch]);
+  const handleToggleTheme = useCallback(() => dispatch(toggleTheme()), [dispatch]);
+  const handleToggleNotifs = useCallback(() => setShowNotifs(v => !v), []);
+  const handleMarkAllRead = useCallback(() => dispatch(markAllRead()), [dispatch]);
+  const handleCloseNotifs = useCallback(() => setShowNotifs(false), []);
+  const handleSetFilter = useCallback((f: FilterType) => setFilter(f), []);
+  const handleNotifRead = useCallback((id: string) => dispatch(markNotificationRead(id)), [dispatch]);
 
   return (
     <motion.header
@@ -51,7 +129,8 @@ export const Navbar = (): React.ReactElement => {
     >
       {/* Hamburger — mobile only */}
       <button
-        onClick={() => dispatch(toggleSidebar())}
+        type="button"
+        onClick={handleToggleSidebar}
         className="sm:hidden bg-transparent border-0 cursor-pointer text-text-secondary flex items-center p-0 shrink-0"
         aria-label="Open navigation"
       >
@@ -90,13 +169,13 @@ export const Navbar = (): React.ReactElement => {
 
       <div className="flex items-center gap-1 ml-auto">
         {/* Theme toggle */}
-        <button onClick={() => dispatch(toggleTheme())} className={styles.iconBtn}>
+        <button type="button" onClick={handleToggleTheme} className={styles.iconBtn}>
           {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
         </button>
 
         {/* Notifications */}
         <div className="relative">
-          <button onClick={() => setShowNotifs(!showNotifs)} className={styles.iconBtn}>
+          <button type="button" onClick={handleToggleNotifs} className={styles.iconBtn}>
             <span className={unreadCount > 0 ? styles.bellRing : undefined}>
               <Bell size={15} />
             </span>
@@ -114,7 +193,7 @@ export const Navbar = (): React.ReactElement => {
           <AnimatePresence>
             {showNotifs && (
               <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowNotifs(false)} />
+                <div className="fixed inset-0 z-40" onClick={handleCloseNotifs} />
                 <motion.div
                   initial={{ opacity: 0, y: 8, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -128,14 +207,16 @@ export const Navbar = (): React.ReactElement => {
                     <div className="flex items-center gap-2">
                       {unreadCount > 0 && (
                         <button
-                          onClick={() => dispatch(markAllRead())}
+                          type="button"
+                          onClick={handleMarkAllRead}
                           className="text-xs text-accent-blue bg-transparent border-0 cursor-pointer flex items-center gap-1 font-sans whitespace-nowrap"
                         >
                           <CheckCheck size={12} /> Mark all read
                         </button>
                       )}
                       <button
-                        onClick={() => setShowNotifs(false)}
+                        type="button"
+                        onClick={handleCloseNotifs}
                         className="bg-transparent border-0 cursor-pointer text-text-tertiary flex"
                       >
                         <X size={14} />
@@ -145,16 +226,18 @@ export const Navbar = (): React.ReactElement => {
 
                   {/* Filter tabs */}
                   <div className="flex px-4 pt-2 border-b border-border-primary">
-                    {(["all", "unread"] as const).map(f => (
-                      <button
-                        key={f}
-                        onClick={() => setFilter(f)}
-                        className={cn(styles.filterTab, filter === f && styles.active)}
-                      >
-                        {f === "all"
-                          ? "All"
-                          : `Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`}
-                      </button>
+                    {(["all", "unread"] as const).map(filterType => (
+                      <FilterTab
+                        key={filterType}
+                        filterType={filterType}
+                        isActive={filter === filterType}
+                        label={
+                          filterType === "all"
+                            ? "All"
+                            : `Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`
+                        }
+                        onFilterClick={handleSetFilter}
+                      />
                     ))}
                   </div>
 
@@ -165,49 +248,12 @@ export const Navbar = (): React.ReactElement => {
                         No unread notifications
                       </div>
                     ) : (
-                      visible.map(n => (
-                        <div
-                          key={n.id}
-                          onClick={() => dispatch(markNotificationRead(n.id))}
-                          className={cn(
-                            "flex gap-3 px-4 py-3 items-start border-b border-border-primary",
-                            styles.notifItem,
-                          )}
-                          style={{ background: !n.read ? "rgba(60,131,246,0.04)" : "transparent" }}
-                        >
-                          <div
-                            className={cn(
-                              "w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0",
-                              styles.iconBox,
-                            )}
-                            style={
-                              {
-                                "--notif-color": typeConfig[n.type].color,
-                                background: typeConfig[n.type].bg,
-                                color: typeConfig[n.type].color,
-                              } as React.CSSProperties
-                            }
-                          >
-                            {typeConfig[n.type].icon}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <p
-                                className="text-xs font-semibold mb-[2px]"
-                                style={{ color: typeConfig[n.type].color }}
-                              >
-                                {n.title}
-                              </p>
-                              {!n.read && (
-                                <div className="w-[7px] h-[7px] rounded-full bg-accent-blue shrink-0 mt-[3px]" />
-                              )}
-                            </div>
-                            <p className="text-xs text-text-secondary leading-[1.5]">{n.message}</p>
-                            <p className="text-[11px] text-text-tertiary mt-1">
-                              {timeAgo(n.timestamp)}
-                            </p>
-                          </div>
-                        </div>
+                      visible.map(notification => (
+                        <NotificationItem
+                          key={notification.id}
+                          notification={notification}
+                          onRead={handleNotifRead}
+                        />
                       ))
                     )}
                   </div>
@@ -219,4 +265,4 @@ export const Navbar = (): React.ReactElement => {
       </div>
     </motion.header>
   );
-};
+});

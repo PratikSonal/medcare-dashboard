@@ -1,16 +1,40 @@
-import { useState, useEffect } from "react";
+import { memo, useCallback, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity } from "lucide-react";
 import { slides } from "./constants";
 import type { Slide } from "./types";
 
-const FeatureCarousel = (): React.ReactElement => {
+interface DotButtonProps {
+  index: number;
+  isActive: boolean;
+  color: string;
+  onDotClick: (index: number) => void;
+}
+
+const DotButton = memo(({ index, isActive, color, onDotClick }: DotButtonProps): React.ReactElement => {
+  const handleClick = useCallback(() => onDotClick(index), [index, onDotClick]);
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className="h-[6px] rounded-full border-0 cursor-pointer p-0 transition-all duration-300"
+      style={{
+        width: isActive ? "20px" : "6px",
+        background: isActive ? color : "#1d2839",
+      }}
+    />
+  );
+});
+
+const FeatureCarousel = memo((): React.ReactElement => {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setActive(p => (p + 1) % slides.length), 3000);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setActive(p => (p + 1) % slides.length), 3000);
+    return () => clearInterval(timer);
   }, []);
+
+  const handleDotClick = useCallback((index: number) => setActive(index), []);
 
   const slide = slides[active];
   const Icon = slide.icon;
@@ -50,23 +74,21 @@ const FeatureCarousel = (): React.ReactElement => {
         </AnimatePresence>
       </div>
       <div className="flex items-center gap-[6px] mt-5">
-        {slides.map((s: Slide, i: number) => (
-          <button
+        {slides.map((slide: Slide, i: number) => (
+          <DotButton
             key={i}
-            onClick={() => setActive(i)}
-            className="h-[6px] rounded-full border-0 cursor-pointer p-0 transition-all duration-300"
-            style={{
-              width: i === active ? "20px" : "6px",
-              background: i === active ? s.color : "#1d2839",
-            }}
+            index={i}
+            isActive={i === active}
+            color={slide.color}
+            onDotClick={handleDotClick}
           />
         ))}
       </div>
     </>
   );
-};
+});
 
-export const LeftPanel = (): React.ReactElement => (
+export const LeftPanel = memo((): React.ReactElement => (
   <motion.div
     initial={{ opacity: 0, x: -40 }}
     animate={{ opacity: 1, x: 0 }}
@@ -109,4 +131,4 @@ export const LeftPanel = (): React.ReactElement => (
       </p>
     </div>
   </motion.div>
-);
+));

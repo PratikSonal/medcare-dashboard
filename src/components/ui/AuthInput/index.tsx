@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/utils";
 import type { AuthInputProps } from "./types";
 
-export const AuthInput = ({
+export const AuthInput = memo(({
   inputId,
   label,
   icon: Icon,
@@ -50,4 +51,4 @@ export const AuthInput = ({
       </p>
     )}
   </div>
-);
+));

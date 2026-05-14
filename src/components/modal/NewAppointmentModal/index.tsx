@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { X, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/hooks/useAppDispatch";
@@ -29,7 +29,7 @@ import {
   buildAppointment,
 } from "./helpers";
 
-const TrackRow = ({
+const TrackRow = memo(({
   label,
   busy,
   color,
@@ -87,9 +87,65 @@ const TrackRow = ({
       )}
     </div>
   </div>
-);
+));
 
-const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElement => {
+interface DurationButtonProps {
+  duration: number;
+  isSelected: boolean;
+  onSelect: (duration: number) => void;
+}
+
+const DurationButton = memo(({ duration, isSelected, onSelect }: DurationButtonProps): React.ReactElement => {
+  const handleClick = useCallback(() => onSelect(duration), [duration, onSelect]);
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cn(
+        "flex-1 py-[10px] rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-[120ms]",
+        isSelected
+          ? "border border-accent-blue bg-[rgba(60,131,246,0.15)] text-accent-blue"
+          : "border border-border-primary bg-bg-tertiary text-text-secondary",
+      )}
+    >
+      {duration}
+    </button>
+  );
+});
+
+interface SlotButtonProps {
+  slot: string;
+  isSelected: boolean;
+  hasConflict: boolean;
+  onSelect: (slot: string) => void;
+}
+
+const SlotButton = memo(({ slot, isSelected, hasConflict, onSelect }: SlotButtonProps): React.ReactElement => {
+  const handleClick = useCallback(() => onSelect(slot), [slot, onSelect]);
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cn(
+        "py-[6px] px-[11px] rounded-[8px] text-xs cursor-pointer font-sans transition-all duration-[120ms] relative",
+        isSelected
+          ? hasConflict
+            ? "border-2 border-accent-red bg-[rgba(239,68,68,0.15)] text-accent-red font-semibold"
+            : "border-2 border-accent-blue bg-[rgba(60,131,246,0.15)] text-accent-blue font-semibold"
+          : hasConflict
+            ? "border border-border-primary bg-[rgba(239,68,68,0.06)] text-accent-red"
+            : "border border-border-primary bg-bg-tertiary text-text-secondary",
+      )}
+    >
+      {slot}
+      {hasConflict && (
+        <span className="absolute -top-[3px] -right-[3px] w-2 h-2 rounded-full bg-accent-red border-[1.5px] border-bg-secondary" />
+      )}
+    </button>
+  );
+});
+
+const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactElement => {
   const dispatch = useAppDispatch();
   const patients = useAppSelector((s: RootState) => s.patients.patients);
   const appointments = useAppSelector((s: RootState) => s.appointments.appointments);
@@ -104,12 +160,11 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
     notes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, boolean>>>({});
-  const [hoveredBlock, setHoveredBlock] = useState<{ x: number; y: number; text: string } | null>(
-    null,
-  );
+  const [hoveredBlock, setHoveredBlock] = useState<{ x: number; y: number; text: string } | null>(null);
 
-  const updateField = (k: keyof FormState, v: FormState[keyof FormState]): void =>
+  const updateField = useCallback((k: keyof FormState, v: FormState[keyof FormState]): void => {
     setForm(f => ({ ...f, [k]: v }));
+  }, []);
 
   const fieldCls = (k: keyof FormState): string =>
     cn(
@@ -117,29 +172,51 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
       errors[k] ? "border border-accent-red" : "border border-border-primary",
     );
 
-  const docBusy = appointments.filter((a: Appointment) => a.doctor === form.doctor && a.date === form.date);
-  const patBusy = appointments.filter((a: Appointment) => a.patientId === form.patientId && a.date === form.date);
-  const doctors = [...new Set(appointments.map((a: Appointment) => a.doctor))];
+  const docBusy = useMemo(
+    () => appointments.filter((a: Appointment) => a.doctor === form.doctor && a.date === form.date),
+    [appointments, form.doctor, form.date],
+  );
+  const patBusy = useMemo(
+    () => appointments.filter((a: Appointment) => a.patientId === form.patientId && a.date === form.date),
+    [appointments, form.patientId, form.date],
+  );
+  const doctors = useMemo(
+    () => [...new Set(appointments.map((a: Appointment) => a.doctor))],
+    [appointments],
+  );
 
-  const selConflict = form.time ? getConflict(form.time, form.duration, docBusy, patBusy) : {};
+  const selConflict = useMemo(
+    () => (form.time ? getConflict(form.time, form.duration, docBusy, patBusy) : {}),
+    [form.time, form.duration, docBusy, patBusy],
+  );
   const hasConflict = !!(selConflict.doctor || selConflict.patient);
 
-  const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const slotConflicts = useMemo(
+    () =>
+      SLOTS.reduce<Record<string, boolean>>((acc, slot) => {
+        const c = getConflict(slot, form.duration, docBusy, patBusy);
+        acc[slot] = !!(c.doctor || c.patient);
+        return acc;
+      }, {}),
+    [form.duration, docBusy, patBusy],
+  );
+
+  const handleTimelineClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const rawMin = TSTART + ((e.clientX - rect.left) / rect.width) * TDUR;
     const snapped = Math.round(rawMin / 30) * 30;
     const clamped = Math.max(TSTART, Math.min(TEND - form.duration, snapped));
     updateField("time", minToTime(clamped));
     setErrors(err => ({ ...err, time: false }));
-  };
+  }, [form.duration, updateField]);
 
-  const handleSubmit = (): void => {
+  const handleSubmit = useCallback((): void => {
     const errs = validateForm(form);
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
     const appointment = buildAppointment(form, patients, appointments);
-    const pt = patients.find((p: Patient) => p.id === form.patientId)!;
+    const pt = patients.find((patient: Patient) => patient.id === form.patientId)!;
     dispatch(addAppointment(appointment));
     dispatch(
       addToast({
@@ -155,7 +232,40 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
       }),
     );
     onClose();
-  };
+  }, [form, patients, appointments, dispatch, onClose]);
+
+  const handleStopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
+
+  const handlePatientChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateField("patientId", e.target.value);
+    setErrors(err => ({ ...err, patientId: false }));
+  }, [updateField]);
+
+  const handleDoctorChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateField("doctor", e.target.value);
+    setErrors(err => ({ ...err, doctor: false }));
+  }, [updateField]);
+
+  const handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    updateField("date", e.target.value);
+  }, [updateField]);
+
+  const handleTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateField("type", e.target.value as FormState["type"]);
+  }, [updateField]);
+
+  const handleNotesChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updateField("notes", e.target.value);
+  }, [updateField]);
+
+  const handleSelectDuration = useCallback((duration: number) => {
+    updateField("duration", duration);
+  }, [updateField]);
+
+  const handleSelectSlot = useCallback((slot: string) => {
+    updateField("time", slot);
+    setErrors(err => ({ ...err, time: false }));
+  }, [updateField]);
 
   return (
     <motion.div
@@ -171,7 +281,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
         exit={{ scale: 0.92, opacity: 0, y: 16 }}
         transition={{ type: "spring", duration: 0.35 }}
         className="w-full sm:max-w-[680px] rounded-t-[24px] sm:rounded-[24px] bg-bg-secondary border border-border-primary overflow-hidden max-h-[92vh] flex flex-col"
-        onClick={e => e.stopPropagation()}
+        onClick={handleStopPropagation}
       >
         {/* Header */}
         <div className="py-[22px] px-6 border-b border-border-primary flex items-center justify-between shrink-0">
@@ -182,6 +292,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="w-8 h-8 rounded-[10px] flex items-center justify-center border border-border-primary bg-bg-tertiary cursor-pointer text-text-secondary"
           >
@@ -199,16 +310,13 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
               </label>
               <select
                 value={form.patientId}
-                onChange={e => {
-                  updateField("patientId", e.target.value);
-                  setErrors(err => ({ ...err, patientId: false }));
-                }}
+                onChange={handlePatientChange}
                 className={fieldCls("patientId")}
               >
                 <option value="">Select patient…</option>
-                {patients.map(p => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
+                {patients.map(patient => (
+                  <option key={patient.id} value={patient.id}>
+                    {patient.name}
                   </option>
                 ))}
               </select>
@@ -220,16 +328,13 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
               </label>
               <select
                 value={form.doctor}
-                onChange={e => {
-                  updateField("doctor", e.target.value);
-                  setErrors(err => ({ ...err, doctor: false }));
-                }}
+                onChange={handleDoctorChange}
                 className={fieldCls("doctor")}
               >
                 <option value="">Select doctor…</option>
-                {doctors.map(d => (
-                  <option key={d} value={d}>
-                    {d}
+                {doctors.map(doctor => (
+                  <option key={doctor} value={doctor}>
+                    {doctor}
                   </option>
                 ))}
               </select>
@@ -242,7 +347,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
               <input
                 type="date"
                 value={form.date}
-                onChange={e => updateField("date", e.target.value)}
+                onChange={handleDateChange}
                 className={fieldCls("date")}
               />
             </div>
@@ -253,12 +358,12 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
               </label>
               <select
                 value={form.type}
-                onChange={e => updateField("type", e.target.value as FormState["type"])}
+                onChange={handleTypeChange}
                 className={fieldCls("type")}
               >
-                {TYPES.map(t => (
-                  <option key={t} value={t}>
-                    {t}
+                {TYPES.map(apptType => (
+                  <option key={apptType} value={apptType}>
+                    {apptType}
                   </option>
                 ))}
               </select>
@@ -270,18 +375,12 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
               </label>
               <div className="flex gap-[6px]">
                 {DURATIONS.map(d => (
-                  <button
+                  <DurationButton
                     key={d}
-                    onClick={() => updateField("duration", d)}
-                    className={cn(
-                      "flex-1 py-[10px] rounded-[10px] text-xs font-medium cursor-pointer font-sans transition-all duration-[120ms]",
-                      form.duration === d
-                        ? "border border-accent-blue bg-[rgba(60,131,246,0.15)] text-accent-blue"
-                        : "border border-border-primary bg-bg-tertiary text-text-secondary",
-                    )}
-                  >
-                    {d}
-                  </button>
+                    duration={d}
+                    isSelected={form.duration === d}
+                    onSelect={handleSelectDuration}
+                  />
                 ))}
               </div>
             </div>
@@ -292,7 +391,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
               </label>
               <textarea
                 value={form.notes}
-                onChange={e => updateField("notes", e.target.value)}
+                onChange={handleNotesChange}
                 placeholder="Optional clinical notes…"
                 rows={2}
                 className="w-full bg-bg-tertiary border border-border-primary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border resize-none leading-[1.5] focus:border-accent-blue transition-colors duration-150"
@@ -343,7 +442,7 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
 
             {form.patientId ? (
               <TrackRow
-                label={patients.find(p => p.id === form.patientId)?.name ?? "Patient"}
+                label={patients.find(patient => patient.id === form.patientId)?.name ?? "Patient"}
                 busy={patBusy}
                 color="var(--accent-purple)"
                 colorRgb="124,59,237"
@@ -380,35 +479,15 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
             Or pick a slot
           </p>
           <div className="flex flex-wrap gap-[6px]">
-            {SLOTS.map(slot => {
-              const c = getConflict(slot, form.duration, docBusy, patBusy);
-              const hasC = !!(c.doctor || c.patient);
-              const isSel = form.time === slot;
-              return (
-                <button
-                  key={slot}
-                  onClick={() => {
-                    updateField("time", slot);
-                    setErrors(err => ({ ...err, time: false }));
-                  }}
-                  className={cn(
-                    "py-[6px] px-[11px] rounded-[8px] text-xs cursor-pointer font-sans transition-all duration-[120ms] relative",
-                    isSel
-                      ? hasC
-                        ? "border-2 border-accent-red bg-[rgba(239,68,68,0.15)] text-accent-red font-semibold"
-                        : "border-2 border-accent-blue bg-[rgba(60,131,246,0.15)] text-accent-blue font-semibold"
-                      : hasC
-                        ? "border border-border-primary bg-[rgba(239,68,68,0.06)] text-accent-red"
-                        : "border border-border-primary bg-bg-tertiary text-text-secondary",
-                  )}
-                >
-                  {slot}
-                  {hasC && (
-                    <span className="absolute -top-[3px] -right-[3px] w-2 h-2 rounded-full bg-accent-red border-[1.5px] border-bg-secondary" />
-                  )}
-                </button>
-              );
-            })}
+            {SLOTS.map(slot => (
+              <SlotButton
+                key={slot}
+                slot={slot}
+                isSelected={form.time === slot}
+                hasConflict={slotConflicts[slot]}
+                onSelect={handleSelectSlot}
+              />
+            ))}
           </div>
 
           {/* Conflict banner */}
@@ -459,19 +538,22 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
         {/* Footer */}
         <div className="py-4 px-6 border-t border-border-primary flex gap-[10px] shrink-0">
           <button
+            type="button"
             onClick={onClose}
             className="flex-1 py-3 rounded-[12px] border border-border-primary bg-transparent text-text-secondary cursor-pointer font-sans text-sm font-medium"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={hasConflict}
-            className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-[12px] border-0 cursor-pointer font-sans text-sm font-semibold disabled:cursor-not-allowed"
-            style={{
-              background: hasConflict ? "var(--bg-tertiary)" : "var(--gradient-primary)",
-              color: hasConflict ? "var(--text-tertiary)" : "white",
-            }}
+            className={cn(
+              "flex-[2] flex items-center justify-center gap-2 py-3 rounded-[12px] border-0 cursor-pointer font-sans text-sm font-semibold disabled:cursor-not-allowed",
+              hasConflict
+                ? "bg-bg-tertiary text-text-tertiary"
+                : "[background:var(--gradient-primary)] text-white",
+            )}
           >
             {hasConflict ? <><AlertTriangle size={14} /> Conflicts — Change Time</> : "Book Appointment"}
           </button>
@@ -489,6 +571,6 @@ const NewAppointmentModal = ({ defaultDate, onClose }: Props): React.ReactElemen
       )}
     </motion.div>
   );
-};
+});
 
 export default NewAppointmentModal;

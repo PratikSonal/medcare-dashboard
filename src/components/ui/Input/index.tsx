@@ -1,8 +1,8 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import { cn } from "@/utils";
 import type { InputProps } from "./types";
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = memo(forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, icon, ...props }, ref) => (
     <div className="flex flex-col gap-1.5 w-full">
       {label && <label className="text-sm font-medium text-text-secondary">{label}</label>}
@@ -27,5 +27,5 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       {error && <p className="text-xs text-accent-red">{error}</p>}
     </div>
   ),
-);
+));
 Input.displayName = "Input";
