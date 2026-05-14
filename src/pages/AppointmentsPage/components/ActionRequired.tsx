@@ -28,7 +28,7 @@ const ActionItem = memo(({ app }: ActionItemProps): React.ReactElement => {
   return (
     <motion.div
       whileHover={{ x: 4, transition: { duration: 0.3, ease: "easeOut" } }}
-      className="p-3 rounded-[12px] bg-[rgba(245,158,11,0.06)] border border-[rgba(245,158,11,0.2)]"
+      className="p-3 rounded-[12px] bg-[rgba(245,158,11,0.06)] border border-[var(--accent-yellow-border)]"
     >
       <div className="flex items-center gap-2 mb-2">
         <Avatar initials={app.patientAvatar} size={24} radius="50%" />
@@ -40,7 +40,7 @@ const ActionItem = memo(({ app }: ActionItemProps): React.ReactElement => {
           <button
             type="button"
             onClick={handleCompleteIntake}
-            className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.3)] cursor-pointer font-sans"
+            className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[var(--accent-yellow-subtle)] text-accent-yellow border border-[rgba(245,158,11,0.3)] cursor-pointer font-sans"
           >
             <ClipboardCheck size={10} /> Complete Intake
           </button>
@@ -49,7 +49,7 @@ const ActionItem = memo(({ app }: ActionItemProps): React.ReactElement => {
           <button
             type="button"
             onClick={handleVerifyInsurance}
-            className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.3)] cursor-pointer font-sans"
+            className="flex items-center gap-1 text-[10px] font-semibold py-[3px] px-2 rounded-[6px] bg-[var(--accent-red-subtle)] text-accent-red border border-[rgba(239,68,68,0.3)] cursor-pointer font-sans"
           >
             <ShieldCheck size={10} /> Verify Insurance
           </button>

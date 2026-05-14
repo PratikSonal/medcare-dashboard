@@ -1,9 +1,7 @@
+import { format, parseISO } from "date-fns";
+
 export const formatDate = (dateString: string): string =>
-  new Date(dateString).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  format(parseISO(dateString), "dd MMM yyyy");
 
 export const formatCurrency = (amount: number): string =>
   new Intl.NumberFormat("en-IN", {

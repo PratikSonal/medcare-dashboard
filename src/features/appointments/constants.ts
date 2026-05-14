@@ -1,9 +1,9 @@
 export const APPT_STATUS_COLORS: Record<string, { color: string; bg: string }> = {
-  Confirmed: { color: "var(--accent-blue)", bg: "rgba(60,131,246,0.1)" },
-  Pending: { color: "var(--accent-yellow)", bg: "rgba(245,158,11,0.1)" },
-  Completed: { color: "var(--accent-cyan)", bg: "rgba(14,165,233,0.1)" },
-  Cancelled: { color: "#6b7280", bg: "rgba(107,114,128,0.1)" },
-  "No-Show": { color: "var(--accent-red)", bg: "rgba(239,68,68,0.1)" },
+  Confirmed: { color: "var(--accent-blue)", bg: "var(--accent-blue-subtle)" },
+  Pending: { color: "var(--accent-yellow)", bg: "var(--accent-yellow-subtle)" },
+  Completed: { color: "var(--accent-cyan)", bg: "var(--accent-cyan-subtle)" },
+  Cancelled: { color: "var(--text-tertiary)", bg: "rgba(107,114,128,0.1)" },
+  "No-Show": { color: "var(--accent-red)", bg: "var(--accent-red-subtle)" },
 };
 
 export const APPT_TYPE_COLORS: Record<string, string> = {
@@ -12,6 +12,6 @@ export const APPT_TYPE_COLORS: Record<string, string> = {
   "Follow-up": "var(--accent-blue)",
   "Routine Check": "var(--accent-cyan)",
   Consultation: "var(--accent-yellow)",
-  "Dialysis Review": "#38bdf8",
+  "Dialysis Review": "var(--chart-sky)",
   "Insulin Review": "var(--accent-cyan)",
 };

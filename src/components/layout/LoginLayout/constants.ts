@@ -28,7 +28,7 @@ export const slides: Slide[] = [
   },
   {
     icon: Heart,
-    color: "#38bdf8",
+    color: "var(--chart-sky)",
     stat: "46.5%",
     headline: "Fewer Claim Denials",
     description:

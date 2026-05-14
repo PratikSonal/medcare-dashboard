@@ -99,7 +99,7 @@ const AppointmentCard = memo(({ app, onSelectApp }: AppointmentCardProps): React
                 <button
                   type="button"
                   onClick={handleConfirm}
-                  className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(14,165,233,0.35)] bg-[rgba(14,165,233,0.1)] text-accent-cyan cursor-pointer font-sans"
+                  className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(14,165,233,0.35)] bg-[var(--accent-cyan-subtle)] text-accent-cyan cursor-pointer font-sans"
                 >
                   <CheckCircle size={10} /> Confirm
                 </button>
@@ -114,7 +114,7 @@ const AppointmentCard = memo(({ app, onSelectApp }: AppointmentCardProps): React
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.08)] text-accent-red cursor-pointer font-sans"
+                className="flex items-center gap-[3px] py-[3px] px-2 rounded-[6px] text-[10px] font-semibold border border-[rgba(239,68,68,0.3)] bg-[var(--accent-red-muted)] text-accent-red cursor-pointer font-sans"
               >
                 <XCircle size={10} /> Cancel
               </button>
@@ -125,8 +125,8 @@ const AppointmentCard = memo(({ app, onSelectApp }: AppointmentCardProps): React
               className={cn(
                 "flex items-center gap-[3px] text-[10px] py-[2px] px-[6px] rounded-[6px]",
                 app.intakeComplete
-                  ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
-                  : "bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.2)]",
+                  ? "bg-[var(--accent-cyan-subtle)] text-accent-cyan border border-[var(--accent-cyan-border)]"
+                  : "bg-[var(--accent-yellow-subtle)] text-accent-yellow border border-[var(--accent-yellow-border)]",
               )}
             >
               {app.intakeComplete ? <><Check size={9} /> Intake</> : <><Clock size={9} /> Intake</>}
@@ -135,8 +135,8 @@ const AppointmentCard = memo(({ app, onSelectApp }: AppointmentCardProps): React
               className={cn(
                 "flex items-center gap-[3px] text-[10px] py-[2px] px-[6px] rounded-[6px]",
                 app.insuranceVerified
-                  ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
-                  : "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.2)]",
+                  ? "bg-[var(--accent-cyan-subtle)] text-accent-cyan border border-[var(--accent-cyan-border)]"
+                  : "bg-[var(--accent-red-subtle)] text-accent-red border border-[var(--accent-red-border)]",
               )}
             >
               {app.insuranceVerified ? <><Check size={9} /> Insured</> : <><X size={9} /> Insurance</>}

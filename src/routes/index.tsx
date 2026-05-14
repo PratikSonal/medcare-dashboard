@@ -7,6 +7,7 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setUser } from "@/features/auth/authSlice";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/pages/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
@@ -51,8 +52,8 @@ export const AppRouter = () => (
           }
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="dashboard" element={<ErrorBoundary><DashboardPage /></ErrorBoundary>} />
+          <Route path="analytics" element={<ErrorBoundary><AnalyticsPage /></ErrorBoundary>} />
           <Route path="patients" element={<PatientDetailsPage />} />
           <Route path="appointments" element={<AppointmentsPage />} />
           <Route path="billing" element={<BillingPage />} />

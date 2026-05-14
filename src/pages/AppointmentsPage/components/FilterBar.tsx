@@ -32,7 +32,7 @@ export const FilterBar = memo(({
         className={cn(
           "flex items-center gap-[7px] py-[10px] px-4 rounded-[12px] text-[13px] font-medium border cursor-pointer font-sans whitespace-nowrap",
           hasActiveFilters
-            ? "border-[rgba(60,131,246,0.4)] bg-[rgba(60,131,246,0.1)] text-accent-blue"
+            ? "border-[rgba(60,131,246,0.4)] bg-[var(--accent-blue-subtle)] text-accent-blue"
             : "border-border-primary bg-bg-secondary text-text-secondary",
         )}
       >

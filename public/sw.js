@@ -1,4 +1,4 @@
-const CACHE_NAME = 'medcare-v1';
+const CACHE_NAME = 'medcare-v2';
 const urlsToCache = ['/', '/index.html'];
 
 self.addEventListener('install', (event) => {
@@ -11,10 +11,12 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// Network-first for navigation: only serve cached index.html when offline.
+// Cache-first caused stale HTML with outdated JS chunk hashes → MIME errors.
 self.addEventListener('fetch', (event) => {
   if (event.request.mode !== 'navigate') return;
   event.respondWith(
-    caches.match('/index.html').then((response) => response || fetch(event.request))
+    fetch(event.request).catch(() => caches.match('/index.html'))
   );
 });
 

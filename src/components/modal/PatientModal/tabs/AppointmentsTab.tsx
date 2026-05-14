@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -48,11 +49,7 @@ export const AppointmentsTab = memo(({ appointments }: Props): React.ReactElemen
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-semibold text-text-primary">
-                      {new Date(appointment.date).toLocaleDateString("en-IN", {
-                        weekday: "short",
-                        day: "numeric",
-                        month: "short",
-                      })}{" "}
+                      {format(parseISO(appointment.date), "EEE, d MMM")}{" "}
                       · {appointment.time}
                     </p>
                     <span
@@ -85,8 +82,8 @@ export const AppointmentsTab = memo(({ appointments }: Props): React.ReactElemen
                   className={cn(
                     "flex items-center gap-[3px] text-[10px] py-[2px] px-[6px] rounded-[6px]",
                     appointment.intakeComplete
-                      ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
-                      : "bg-[rgba(245,158,11,0.1)] text-accent-yellow border border-[rgba(245,158,11,0.2)]",
+                      ? "bg-[var(--accent-cyan-subtle)] text-accent-cyan border border-[var(--accent-cyan-border)]"
+                      : "bg-[var(--accent-yellow-subtle)] text-accent-yellow border border-[var(--accent-yellow-border)]",
                   )}
                 >
                   {appointment.intakeComplete ? (
@@ -99,8 +96,8 @@ export const AppointmentsTab = memo(({ appointments }: Props): React.ReactElemen
                   className={cn(
                     "flex items-center gap-[3px] text-[10px] py-[2px] px-[6px] rounded-[6px]",
                     appointment.insuranceVerified
-                      ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan border border-[rgba(14,165,233,0.2)]"
-                      : "bg-[rgba(239,68,68,0.1)] text-accent-red border border-[rgba(239,68,68,0.2)]",
+                      ? "bg-[var(--accent-cyan-subtle)] text-accent-cyan border border-[var(--accent-cyan-border)]"
+                      : "bg-[var(--accent-red-subtle)] text-accent-red border border-[var(--accent-red-border)]",
                   )}
                 >
                   {appointment.insuranceVerified ? (
@@ -114,7 +111,7 @@ export const AppointmentsTab = memo(({ appointments }: Props): React.ReactElemen
                 </span>
               </div>
               {appointment.notes && (
-                <p className="flex items-center gap-[5px] text-[11px] text-accent-yellow mt-2 py-[6px] px-[10px] rounded-[8px] bg-[rgba(245,158,11,0.08)]">
+                <p className="flex items-center gap-[5px] text-[11px] text-accent-yellow mt-2 py-[6px] px-[10px] rounded-[8px] bg-[var(--accent-yellow-muted)]">
                   <AlertTriangle size={11} /> {appointment.notes}
                 </p>
               )}

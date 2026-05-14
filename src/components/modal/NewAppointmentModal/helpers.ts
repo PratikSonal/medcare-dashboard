@@ -1,19 +1,14 @@
+import { getYear } from "date-fns";
+import { t2m, minToTime } from "@/utils/time";
 import type { Appointment } from "@/features/appointments/types";
 import type { Patient } from "@/features/patients/types";
 import type { ConflictInfo, FormState } from "./types";
 import { TSTART, TDUR } from "./constants";
-
-export const t2m = (t: string): number => {
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
-};
+export { t2m, minToTime };
 
 export const toLeft = (min: number): string => `${(((min - TSTART) / TDUR) * 100).toFixed(2)}%`;
 
 export const toWidth = (dur: number): string => `${((dur / TDUR) * 100).toFixed(2)}%`;
-
-export const minToTime = (min: number): string =>
-  `${String(Math.floor(min / 60)).padStart(2, "0")}:${String(min % 60).padStart(2, "0")}`;
 
 export const getConflict = (
   slot: string,
@@ -58,7 +53,7 @@ export const buildAppointment = (
     patientId: pt.id,
     patientName: pt.name,
     patientAvatar: pt.avatar,
-    dob: `01 Jan ${new Date().getFullYear() - pt.age}`,
+    dob: `01 Jan ${getYear(new Date()) - pt.age}`,
     phone: pt.phone,
     doctor: form.doctor,
     department: pt.department,

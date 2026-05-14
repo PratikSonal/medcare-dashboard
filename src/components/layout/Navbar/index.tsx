@@ -169,13 +169,23 @@ export const Navbar = memo((): React.ReactElement => {
 
       <div className="flex items-center gap-1 ml-auto">
         {/* Theme toggle */}
-        <button type="button" onClick={handleToggleTheme} className={styles.iconBtn}>
+        <button
+          type="button"
+          onClick={handleToggleTheme}
+          className={styles.iconBtn}
+          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+        >
           {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
         </button>
 
         {/* Notifications */}
         <div className="relative">
-          <button type="button" onClick={handleToggleNotifs} className={styles.iconBtn}>
+          <button
+            type="button"
+            onClick={handleToggleNotifs}
+            className={styles.iconBtn}
+            aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+          >
             <span className={unreadCount > 0 ? styles.bellRing : undefined}>
               <Bell size={15} />
             </span>

@@ -23,19 +23,15 @@ export const ttStyle = {
 };
 
 export const RADIAN = Math.PI / 180;
-export const PROC_COLORS = ["var(--accent-blue)", "var(--accent-purple)", "var(--accent-cyan)", "var(--accent-yellow)", "#6366f1"];
+export const PROC_COLORS = ["var(--accent-blue)", "var(--accent-purple)", "var(--accent-cyan)", "var(--accent-yellow)", "var(--chart-indigo)"];
 
 export const STATUS_CELLS: {
   key: "active" | "critical" | "recovering" | "discharged";
   bg: string;
   color: string;
 }[] = [
-  { key: "active", bg: "rgba(14,165,233,0.1)", color: "var(--accent-cyan)" },
-  { key: "critical", bg: "rgba(239,68,68,0.1)", color: "var(--accent-red)" },
-  { key: "recovering", bg: "rgba(245,158,11,0.1)", color: "var(--accent-yellow)" },
-  {
-    key: "discharged",
-    bg: "rgba(107,114,128,0.1)",
-    color: "var(--text-tertiary)",
-  },
+  { key: "active", bg: "var(--accent-cyan-subtle)", color: "var(--accent-cyan)" },
+  { key: "critical", bg: "var(--accent-red-subtle)", color: "var(--accent-red)" },
+  { key: "recovering", bg: "var(--accent-yellow-subtle)", color: "var(--accent-yellow)" },
+  { key: "discharged", bg: "rgba(107,114,128,0.1)", color: "var(--text-tertiary)" },
 ];

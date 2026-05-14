@@ -11,7 +11,7 @@ const VitalBadge = memo(({ icon, label, value, alert = false }: VitalBadgeProps)
     className={cn(
       "flex flex-col items-center p-3 rounded-[12px] cursor-default",
       alert
-        ? "bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)]"
+        ? "bg-[var(--accent-red-muted)] border border-[var(--accent-red-border)]"
         : "bg-bg-tertiary border border-border-primary",
     )}
   >

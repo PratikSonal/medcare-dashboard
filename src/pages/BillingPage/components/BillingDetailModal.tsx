@@ -1,4 +1,5 @@
 import { memo, useCallback } from "react";
+import { format, parseISO } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import type { BillingDetailModalProps } from "./types";
@@ -44,7 +45,7 @@ export const BillingDetailModal = memo(({ record, onClose }: BillingDetailModalP
                 <div>
                   <p className="text-[17px] font-bold text-text-primary">{record.patientName}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] px-2 py-[2px] rounded-[6px] bg-[rgba(60,131,246,0.1)] text-accent-blue font-medium">
+                    <span className="text-[11px] px-2 py-[2px] rounded-[6px] bg-[var(--accent-blue-subtle)] text-accent-blue font-medium">
                       {record.department}
                     </span>
                     <span className="text-[11px] text-text-tertiary">{record.policyNumber}</span>
@@ -66,11 +67,7 @@ export const BillingDetailModal = memo(({ record, onClose }: BillingDetailModalP
                   Visit Date
                 </p>
                 <p className="text-sm font-semibold text-text-primary">
-                  {new Date(record.visitDate).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {format(parseISO(record.visitDate), "d MMMM yyyy")}
                 </p>
               </div>
               <div className="p-3 rounded-12 bg-bg-secondary border border-border-primary">

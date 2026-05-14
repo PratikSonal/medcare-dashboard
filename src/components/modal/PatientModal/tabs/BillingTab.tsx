@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
@@ -22,7 +23,7 @@ export const BillingTab = memo(({ billingRecords }: Props): React.ReactElement =
     >
       {billing ? (
         <>
-          <div className="p-4 rounded-[16px] bg-[rgba(60,131,246,0.06)] border border-[rgba(60,131,246,0.2)]">
+          <div className="p-4 rounded-[16px] bg-[rgba(60,131,246,0.06)] border border-[var(--accent-blue-border)]">
             <div className="flex items-center gap-2 mb-[14px]">
               <Shield size={15} className="text-accent-blue" />
               <h3 className="text-sm font-semibold text-text-primary">Insurance Details</h3>
@@ -30,8 +31,8 @@ export const BillingTab = memo(({ billingRecords }: Props): React.ReactElement =
                 className={cn(
                   "ml-auto text-[11px] font-semibold py-[3px] px-[10px] rounded-[8px]",
                   billing.insuranceCovered > 0
-                    ? "bg-[rgba(14,165,233,0.1)] text-accent-cyan"
-                    : "bg-[rgba(239,68,68,0.1)] text-accent-red",
+                    ? "bg-[var(--accent-cyan-subtle)] text-accent-cyan"
+                    : "bg-[var(--accent-red-subtle)] text-accent-red",
                 )}
               >
                 {billing.insuranceCovered > 0 ? "Covered" : "Unverified"}
@@ -65,11 +66,7 @@ export const BillingTab = memo(({ billingRecords }: Props): React.ReactElement =
                       </p>
                       <p className="text-[11px] text-text-tertiary mt-[2px]">
                         {record.department} ·{" "}
-                        {new Date(record.visitDate).toLocaleDateString("en-IN", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {format(parseISO(record.visitDate), "d MMM yyyy")}
                       </p>
                     </div>
                     <span

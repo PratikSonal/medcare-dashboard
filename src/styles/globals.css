@@ -23,6 +23,30 @@
   --accent-red: #ef4444;
   --accent-green: #10bc83;
 
+  /* Chart / extended palette tokens */
+  --chart-sky: #38bdf8;
+  --chart-indigo: #6366f1;
+  --chart-violet: #a78bfa;
+  --chart-gray: #6b7280;
+
+  /* Alpha channel tokens */
+  --accent-blue-subtle: rgba(60, 131, 246, 0.1);
+  --accent-blue-muted: rgba(60, 131, 246, 0.08);
+  --accent-blue-border: rgba(60, 131, 246, 0.2);
+  --accent-cyan-subtle: rgba(14, 165, 233, 0.1);
+  --accent-cyan-muted: rgba(14, 165, 233, 0.08);
+  --accent-cyan-border: rgba(14, 165, 233, 0.2);
+  --accent-yellow-subtle: rgba(245, 158, 11, 0.1);
+  --accent-yellow-muted: rgba(245, 158, 11, 0.08);
+  --accent-yellow-border: rgba(245, 158, 11, 0.2);
+  --accent-red-subtle: rgba(239, 68, 68, 0.1);
+  --accent-red-muted: rgba(239, 68, 68, 0.08);
+  --accent-red-border: rgba(239, 68, 68, 0.2);
+  --accent-green-subtle: rgba(16, 188, 131, 0.1);
+  --accent-green-border: rgba(16, 188, 131, 0.2);
+  --accent-purple-subtle: rgba(124, 59, 237, 0.1);
+  --accent-purple-border: rgba(124, 59, 237, 0.2);
+
   --gradient-primary: linear-gradient(135deg, #3c83f6, #0ea5e9);
   --gradient-hero: linear-gradient(135deg, #3c83f6, #7c3bed);
   --gradient-card: linear-gradient(135deg, rgba(60, 131, 246, 0.05), rgba(14, 165, 233, 0.05));

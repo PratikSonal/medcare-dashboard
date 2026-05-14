@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { format, getDate } from "date-fns";
 import { motion } from "framer-motion";
 import type { WeekStripProps } from "./types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -26,7 +27,7 @@ export const WeekStrip = memo(({
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-[15px] font-semibold text-text-primary">
-          {baseDate.toLocaleDateString("en-IN", { month: "long", year: "numeric" })}
+          {format(baseDate, "MMMM yyyy")}
         </h3>
         <div className="flex gap-2">
           <button
@@ -78,7 +79,7 @@ export const WeekStrip = memo(({
                   isSelected ? "text-accent-blue" : "text-text-primary",
                 )}
               >
-                {day.getDate()}
+                {getDate(day)}
               </span>
               {appCount > 0 && (
                 <span

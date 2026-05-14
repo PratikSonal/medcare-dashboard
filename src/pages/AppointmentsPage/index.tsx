@@ -1,4 +1,6 @@
 import { useCallback, useState, useMemo } from "react";
+import { addDays, format } from "date-fns";
+import { useDebounce } from "use-debounce";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Plus, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 import type { Appointment } from "@/features/appointments/types";
@@ -6,6 +8,7 @@ import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
 import { KpiCard } from "@/components/ui/KpiCard";
 import NewAppointmentModal from "@/components/modal/NewAppointmentModal";
+import { selectDoctorRoster } from "@/features/appointments/selectors";
 import { getWeekDays, formatDateKey } from "./helpers";
 import { TODAY_DATE } from "./constants";
 import { WeekStrip } from "./components/WeekStrip";
@@ -22,14 +25,14 @@ const AppointmentsPage = (): React.ReactElement => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterStatus, setFilterStatus] = useState<string>("All");
   const [filterType, setFilterType] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery] = useDebounce(searchInput, 300);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Appointment | null>(null);
   const [showNewAppModal, setShowNewAppModal] = useState(false);
 
   const { baseDate, weekDays } = useMemo(() => {
-    const d = new Date(TODAY_DATE);
-    d.setDate(d.getDate() + weekOffset * 7);
+    const d = addDays(new Date(TODAY_DATE), weekOffset * 7);
     return { baseDate: d, weekDays: getWeekDays(d) };
   }, [weekOffset]);
 
@@ -71,6 +74,7 @@ const AppointmentsPage = (): React.ReactElement => {
   const handleClearFilters = useCallback(() => {
     setFilterStatus("All");
     setFilterType("All");
+    setSearchInput("");
   }, []);
   const handlePrevWeek = useCallback(() => setWeekOffset(w => w - 1), []);
   const handleNextWeek = useCallback(() => setWeekOffset(w => w + 1), []);
@@ -79,10 +83,7 @@ const AppointmentsPage = (): React.ReactElement => {
   const handleCloseNewAppModal = useCallback(() => setShowNewAppModal(false), []);
   const handleCloseDetailModal = useCallback(() => setSelectedApp(null), []);
 
-  const doctors = useMemo(
-    () => [...new Set(appointments.map((a: Appointment) => a.doctor))],
-    [appointments],
-  );
+  const doctors = useAppSelector(selectDoctorRoster);
 
   const stats = useMemo(
     () => [
@@ -130,11 +131,7 @@ const AppointmentsPage = (): React.ReactElement => {
             <h1 className="text-[30px] font-bold text-text-primary">Appointments</h1>
             <p className="text-sm text-text-secondary mt-1">
               {todayApps.length} appointments on{" "}
-              {selectedDate.toLocaleDateString("en-IN", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
+              {format(selectedDate, "EEEE, d MMMM")}
             </p>
           </div>
           <motion.button
@@ -198,7 +195,7 @@ const AppointmentsPage = (): React.ReactElement => {
           />
           <FilterBar
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
+            onSearchChange={setSearchInput}
             filterStatus={filterStatus}
             onFilterStatus={setFilterStatus}
             filterType={filterType}

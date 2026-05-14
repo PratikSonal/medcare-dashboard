@@ -1,4 +1,5 @@
 import { User, Stethoscope, Activity } from "lucide-react";
+import { format } from "date-fns";
 import { PATIENT_STATUS_COLORS } from "@/features/patients/utils";
 import type { PatientStatus, BloodGroup } from "@/features/patients/types";
 import type { FormData } from "./types";
@@ -54,7 +55,7 @@ export const defaultForm: FormData = {
   diagnosis: "",
   department: "Cardiology",
   doctor: "Dr. Priya Sharma",
-  admissionDate: new Date().toISOString().split("T")[0],
+  admissionDate: format(new Date(), "yyyy-MM-dd"),
   tags: "",
   heartRate: "",
   bloodPressure: "",

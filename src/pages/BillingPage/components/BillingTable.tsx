@@ -1,4 +1,6 @@
 import { memo, useCallback, useState, useMemo } from "react";
+import { format, parseISO } from "date-fns";
+import { useDebounce } from "use-debounce";
 import { motion } from "framer-motion";
 import { SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ClaimStatus } from "@/features/billing/types";
@@ -13,7 +15,8 @@ import { BillingDetailModal } from "./BillingDetailModal";
 export const BillingTable = memo((): React.ReactElement => {
   const records = useAppSelector(s => s.billing.records);
 
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [search] = useDebounce(searchInput, 300);
   const [filterOpen, setFilterOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ClaimStatus[]>([]);
   const [providerFilter, setProviderFilter] = useState<string[]>([]);
@@ -82,7 +85,7 @@ export const BillingTable = memo((): React.ReactElement => {
             <SearchInput
               value={search}
               onChange={v => {
-                setSearch(v);
+                setSearchInput(v);
                 setPage(1);
               }}
               placeholder="Search patient, doctor, procedure..."
@@ -94,7 +97,7 @@ export const BillingTable = memo((): React.ReactElement => {
               className={cn(
                 "flex items-center gap-[6px] px-[14px] py-2 rounded-[10px] text-[13px] font-medium cursor-pointer font-sans transition-all duration-150 border",
                 activeFilters > 0
-                  ? "border-accent-blue bg-[rgba(60,131,246,0.08)] text-accent-blue"
+                  ? "border-accent-blue bg-[var(--accent-blue-muted)] text-accent-blue"
                   : "border-border-primary bg-bg-secondary text-text-secondary",
               )}
             >
@@ -155,7 +158,7 @@ export const BillingTable = memo((): React.ReactElement => {
                       className={cn(
                         "px-3 py-1 rounded-full text-xs cursor-pointer font-sans transition-all duration-150 border",
                         active
-                          ? "border-accent-blue bg-[rgba(60,131,246,0.1)] text-accent-blue font-semibold"
+                          ? "border-accent-blue bg-[var(--accent-blue-subtle)] text-accent-blue font-semibold"
                           : "border-border-primary bg-transparent text-text-secondary",
                       )}
                     >
@@ -227,10 +230,7 @@ export const BillingTable = memo((): React.ReactElement => {
                       </div>
                     </td>
                     <td className="px-3 py-3 text-text-secondary whitespace-nowrap">
-                      {new Date(record.visitDate).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                      })}
+                      {format(parseISO(record.visitDate), "d MMM")}
                     </td>
                     <td className="px-3 py-3 text-text-secondary max-w-[200px]">
                       <p className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -294,7 +294,7 @@ export const BillingTable = memo((): React.ReactElement => {
                   className={cn(
                     "flex items-center justify-center min-w-[32px] h-8 rounded-[8px] text-[13px] cursor-pointer font-sans border",
                     pageNum === safePage
-                      ? "border-accent-blue bg-[rgba(60,131,246,0.1)] text-accent-blue font-semibold"
+                      ? "border-accent-blue bg-[var(--accent-blue-subtle)] text-accent-blue font-semibold"
                       : "border-border-primary bg-bg-secondary text-text-secondary",
                   )}
                 >

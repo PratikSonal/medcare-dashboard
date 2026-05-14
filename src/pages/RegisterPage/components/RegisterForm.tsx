@@ -96,7 +96,7 @@ export const RegisterForm = memo((): React.ReactElement => {
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                className="flex items-center gap-2 py-[10px] px-[14px] rounded-[10px] text-[13px] bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)] text-accent-red"
+                className="flex items-center gap-2 py-[10px] px-[14px] rounded-[10px] text-[13px] bg-[var(--accent-red-muted)] border border-[var(--accent-red-border)] text-accent-red"
                 role="alert"
               >
                 <AlertCircle size={14} />

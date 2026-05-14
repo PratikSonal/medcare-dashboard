@@ -3,18 +3,23 @@ import { motion } from "framer-motion";
 import { cn, formatCompact } from "@/utils";
 import { PROVIDER_SHORT } from "@/features/billing/constants";
 import { useAppSelector } from "@/hooks/useAppDispatch";
-import type { RootState } from "@/store";
+import {
+  selectTotalBilled,
+  selectTotalInsuranceCovered,
+  selectTotalPatientDue,
+  selectApprovalRate,
+} from "@/features/billing/selectors";
 import { item, PROC_COLORS } from "../constants";
 
 export const FinancialBreakdown = memo((): React.ReactElement => {
-  const records = useAppSelector((s: RootState) => s.billing.records);
+  const records = useAppSelector(s => s.billing.records);
+  const totalBilled = useAppSelector(selectTotalBilled);
+  const insuranceCovered = useAppSelector(selectTotalInsuranceCovered);
+  const patientDue = useAppSelector(selectTotalPatientDue);
+  const coveragePct = useAppSelector(selectApprovalRate);
 
-  const { totalBilled, insuranceCovered, patientDue, coveragePct, topProcedures, providerData } =
+  const { topProcedures, providerData } =
     useMemo(() => {
-      const totalBilled = records.reduce((sum, r) => sum + r.totalAmount, 0);
-      const insuranceCovered = records.reduce((sum, r) => sum + r.insuranceCovered, 0);
-      const patientDue = records.reduce((sum, r) => sum + r.patientDue, 0);
-      const coveragePct = Math.round((insuranceCovered / totalBilled) * 100);
       const topProcedures = [...records].sort((a, b) => b.totalAmount - a.totalAmount).slice(0, 5);
 
       const providerMap: Record<string, { total: number; covered: number; due: number; claims: number }> = {};
@@ -30,7 +35,7 @@ export const FinancialBreakdown = memo((): React.ReactElement => {
         .map(([name, d]) => ({ name, ...d, rate: Math.round((d.covered / d.total) * 100) }))
         .sort((a, b) => b.total - a.total);
 
-      return { totalBilled, insuranceCovered, patientDue, coveragePct, topProcedures, providerData };
+      return { topProcedures, providerData };
     }, [records]);
 
   return (

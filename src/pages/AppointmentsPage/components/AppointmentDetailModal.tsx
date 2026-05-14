@@ -1,4 +1,5 @@
 import { memo, useCallback } from "react";
+import { format, parseISO } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import type { AppointmentDetailModalProps } from "./types";
@@ -67,11 +68,7 @@ export const AppointmentDetailModal = memo(({ app, onClose }: AppointmentDetailM
                 {[
                   {
                     label: "Date",
-                    value: new Date(app.date).toLocaleDateString("en-IN", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "long",
-                    }),
+                    value: format(parseISO(app.date), "EEEE, d MMMM"),
                   },
                   { label: "Time", value: `${app.time} (${app.duration} min)` },
                   { label: "Doctor", value: app.doctor },
@@ -93,8 +90,8 @@ export const AppointmentDetailModal = memo(({ app, onClose }: AppointmentDetailM
                   className={cn(
                     "flex-1 p-[14px] rounded-[14px] text-center",
                     app.intakeComplete
-                      ? "bg-[rgba(14,165,233,0.08)] border border-[rgba(14,165,233,0.2)]"
-                      : "bg-[rgba(245,158,11,0.08)] border border-[rgba(245,158,11,0.2)]",
+                      ? "bg-[var(--accent-cyan-muted)] border border-[var(--accent-cyan-border)]"
+                      : "bg-[var(--accent-yellow-muted)] border border-[var(--accent-yellow-border)]",
                   )}
                 >
                   <div className="flex justify-center mb-1">
@@ -116,8 +113,8 @@ export const AppointmentDetailModal = memo(({ app, onClose }: AppointmentDetailM
                   className={cn(
                     "flex-1 p-[14px] rounded-[14px] text-center",
                     app.insuranceVerified
-                      ? "bg-[rgba(14,165,233,0.08)] border border-[rgba(14,165,233,0.2)]"
-                      : "bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.2)]",
+                      ? "bg-[var(--accent-cyan-muted)] border border-[var(--accent-cyan-border)]"
+                      : "bg-[var(--accent-red-muted)] border border-[var(--accent-red-border)]",
                   )}
                 >
                   <div className="flex justify-center mb-1">
@@ -138,7 +135,7 @@ export const AppointmentDetailModal = memo(({ app, onClose }: AppointmentDetailM
               </div>
 
               {app.notes && (
-                <div className="p-[14px] rounded-[14px] bg-[rgba(245,158,11,0.08)] border border-[rgba(245,158,11,0.2)]">
+                <div className="p-[14px] rounded-[14px] bg-[var(--accent-yellow-muted)] border border-[var(--accent-yellow-border)]">
                   <p className="flex items-center gap-[5px] text-xs font-semibold text-accent-yellow mb-[6px]"><AlertTriangle size={12} /> Doctor Notes</p>
                   <p className="text-[13px] text-text-secondary leading-[1.6]">{app.notes}</p>
                 </div>

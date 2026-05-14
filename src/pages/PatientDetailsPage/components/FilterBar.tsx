@@ -1,4 +1,5 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X, ChevronDown } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
@@ -18,9 +19,19 @@ export const FilterBar = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();
   const { searchQuery, filterStatus, filterDepartment } = useAppSelector(s => s.patients);
   const [showFilters, setShowFilters] = useState(false);
+  const [inputValue, setInputValue] = useState(searchQuery);
+  const [debouncedQuery] = useDebounce(inputValue, 300);
   const hasActiveFilters = filterStatus !== "All" || filterDepartment !== "All";
 
-  const handleSearchChange = useCallback((v: string) => dispatch(setSearchQuery(v)), [dispatch]);
+  useEffect(() => {
+    dispatch(setSearchQuery(debouncedQuery));
+  }, [debouncedQuery, dispatch]);
+
+  useEffect(() => {
+    if (searchQuery === "") setInputValue("");
+  }, [searchQuery]);
+
+  const handleSearchChange = useCallback((v: string) => setInputValue(v), []);
   const handleToggleFilters = useCallback(() => setShowFilters(prev => !prev), []);
   const handleClearFilters = useCallback(() => dispatch(clearFilters()), [dispatch]);
 
@@ -43,7 +54,7 @@ export const FilterBar = memo((): React.ReactElement => {
           className={cn(
             "flex items-center gap-2 py-[10px] px-4 rounded-[12px] text-[13px] font-medium border cursor-pointer font-sans transition-all duration-200",
             hasActiveFilters
-              ? "border-[rgba(60,131,246,0.4)] bg-[rgba(60,131,246,0.1)] text-accent-blue"
+              ? "border-[rgba(60,131,246,0.4)] bg-[var(--accent-blue-subtle)] text-accent-blue"
               : "border-border-primary bg-bg-secondary text-text-secondary",
           )}
         >

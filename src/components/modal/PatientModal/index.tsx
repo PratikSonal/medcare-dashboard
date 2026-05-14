@@ -28,7 +28,11 @@ const TabButton = memo(({ tabId, label, icon, count, isActive, onTabSelect }: Ta
   return (
     <button
       type="button"
+      role="tab"
       onClick={handleClick}
+      aria-selected={isActive}
+      aria-controls={`tabpanel-${tabId}`}
+      id={`tab-${tabId}`}
       className={cn(
         "flex items-center gap-[6px] py-[7px] px-[14px] rounded-[10px] text-[13px] font-medium border-0 cursor-pointer font-sans transition-all duration-200 whitespace-nowrap shrink-0",
         isActive ? "bg-accent-blue text-white" : "bg-transparent text-text-secondary",
@@ -77,12 +81,16 @@ export const PatientModal = memo(({ patient, onClose }: Props): React.ReactEleme
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 bg-[rgba(0,0,0,0.7)] backdrop-blur-[8px]"
       onClick={onClose}
+      role="presentation"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: "spring", duration: 0.4 }}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Patient profile: ${patient.name}`}
         className="w-full sm:max-w-[660px] max-h-[92vh] sm:max-h-[90vh] flex flex-col rounded-t-[24px] sm:rounded-[24px] bg-bg-secondary border border-border-primary"
         onClick={handleStopPropagation}
       >
@@ -90,12 +98,13 @@ export const PatientModal = memo(({ patient, onClose }: Props): React.ReactEleme
         <div className="p-6 border-b border-border-primary shrink-0 relative">
           {patient.status === "Critical" ? (
             <div className="flex items-center gap-2 mb-4">
-              <div className="flex-1 flex items-center gap-2 py-[10px] px-[14px] rounded-[12px] text-[13px] bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.3)] text-accent-red">
+              <div className="flex-1 flex items-center gap-2 py-[10px] px-[14px] rounded-[12px] text-[13px] bg-[var(--accent-red-subtle)] border border-[rgba(239,68,68,0.3)] text-accent-red">
                 <AlertTriangle size={14} /> Critical patient — immediate attention required
               </div>
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Close patient profile"
                 className="shrink-0 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary"
               >
                 <X size={16} />
@@ -105,6 +114,7 @@ export const PatientModal = memo(({ patient, onClose }: Props): React.ReactEleme
             <button
               type="button"
               onClick={onClose}
+              aria-label="Close patient profile"
               className="absolute top-6 right-6 w-8 h-8 rounded-[10px] flex items-center justify-center bg-bg-tertiary border-0 cursor-pointer text-text-secondary"
             >
               <X size={16} />
@@ -138,7 +148,7 @@ export const PatientModal = memo(({ patient, onClose }: Props): React.ReactEleme
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 py-3 px-6 border-b border-border-primary shrink-0 overflow-x-auto">
+        <div role="tablist" aria-label="Patient information tabs" className="flex gap-1 py-3 px-6 border-b border-border-primary shrink-0 overflow-x-auto">
           {tabs.map(tabDef => (
             <TabButton
               key={tabDef.id}
@@ -153,7 +163,12 @@ export const PatientModal = memo(({ patient, onClose }: Props): React.ReactEleme
         </div>
 
         {/* Tab content */}
-        <div className="overflow-y-auto p-6 flex-1">
+        <div
+          role="tabpanel"
+          id={`tabpanel-${activeTab}`}
+          aria-labelledby={`tab-${activeTab}`}
+          className="overflow-y-auto p-6 flex-1"
+        >
           <AnimatePresence mode="wait">
             {activeTab === "overview" && <OverviewTab key="overview" patient={patient} />}
             {activeTab === "appointments" && <AppointmentsTab key="appointments" appointments={appointments} />}

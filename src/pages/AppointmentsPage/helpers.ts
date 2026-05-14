@@ -1,13 +1,6 @@
-export const getWeekDays = (baseDate: Date): Date[] => {
-  const days: Date[] = [];
-  const start = new Date(baseDate);
-  start.setDate(start.getDate() - start.getDay() + 1);
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(start);
-    d.setDate(start.getDate() + i);
-    days.push(d);
-  }
-  return days;
-};
+import { startOfWeek, addDays, format } from "date-fns";
 
-export const formatDateKey = (d: Date): string => d.toISOString().split("T")[0];
+export const getWeekDays = (baseDate: Date): Date[] =>
+  Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(baseDate, { weekStartsOn: 1 }), i));
+
+export const formatDateKey = (d: Date): string => format(d, "yyyy-MM-dd");

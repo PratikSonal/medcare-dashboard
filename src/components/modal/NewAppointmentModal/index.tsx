@@ -19,11 +19,10 @@ import {
   TIMELINE_HOURS,
   TIMELINE_LEGEND,
 } from "./constants";
+import { t2m, minToTime } from "@/utils/time";
 import {
-  t2m,
   toLeft,
   toWidth,
-  minToTime,
   getConflict,
   validateForm,
   buildAppointment,
@@ -495,7 +494,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
             <motion.div
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-[14px] p-[14px] rounded-[12px] bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.25)]"
+              className="mt-[14px] p-[14px] rounded-[12px] bg-[var(--accent-red-muted)] border border-[rgba(239,68,68,0.25)]"
             >
               <div className="flex items-center gap-[7px] mb-2">
                 <AlertTriangle size={14} className="text-accent-red shrink-0" />
@@ -525,7 +524,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
             <motion.div
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-[14px] py-3 px-[14px] rounded-[12px] bg-[rgba(14,165,233,0.08)] border border-[rgba(14,165,233,0.2)] flex items-center gap-2"
+              className="mt-[14px] py-3 px-[14px] rounded-[12px] bg-[var(--accent-cyan-muted)] border border-[var(--accent-cyan-border)] flex items-center gap-2"
             >
               <CheckCircle2 size={14} className="text-accent-cyan shrink-0" />
               <p className="text-xs text-accent-cyan font-medium">

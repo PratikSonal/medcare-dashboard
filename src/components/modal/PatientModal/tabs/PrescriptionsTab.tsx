@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { Pill, AlertTriangle } from "lucide-react";
 import { cn } from "@/utils";
@@ -45,19 +46,15 @@ export const PrescriptionsTab = memo(({ prescriptions }: Props): React.ReactElem
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <p className="text-[11px] text-text-tertiary">
                   {rx.prescribedBy} ·{" "}
-                  {new Date(rx.prescribedDate).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                  {format(parseISO(rx.prescribedDate), "d MMM yyyy")}
                 </p>
                 {rx.refillsLeft !== undefined && rx.status === "Active" && (
                   <span
                     className={cn(
                       "text-[11px] py-[2px] px-2 rounded-[6px]",
                       rx.refillsLeft > 0
-                        ? "bg-[rgba(60,131,246,0.1)] text-accent-blue"
-                        : "bg-[rgba(245,158,11,0.1)] text-accent-yellow",
+                        ? "bg-[var(--accent-blue-subtle)] text-accent-blue"
+                        : "bg-[var(--accent-yellow-subtle)] text-accent-yellow",
                     )}
                   >
                     {rx.refillsLeft > 0
@@ -67,7 +64,7 @@ export const PrescriptionsTab = memo(({ prescriptions }: Props): React.ReactElem
                 )}
               </div>
               {rx.notes && (
-                <p className="flex items-center gap-[5px] text-[11px] text-accent-yellow mt-[6px] py-[6px] px-[10px] rounded-[8px] bg-[rgba(245,158,11,0.08)]">
+                <p className="flex items-center gap-[5px] text-[11px] text-accent-yellow mt-[6px] py-[6px] px-[10px] rounded-[8px] bg-[var(--accent-yellow-muted)]">
                   <AlertTriangle size={11} /> {rx.notes}
                 </p>
               )}
