@@ -1,5 +1,7 @@
 import { memo } from "react";
+
 import { cn } from "@/utils";
+
 import type { CardProps, StatCardProps } from "./types";
 
 export const Card = memo(({ children, className, hover = false, onClick, style }: CardProps): React.ReactElement => (

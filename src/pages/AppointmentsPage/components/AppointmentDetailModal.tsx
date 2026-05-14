@@ -1,13 +1,15 @@
-import { memo, useCallback } from "react";
 import { format, parseISO } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
-import { Phone, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
-import type { AppointmentDetailModalProps } from "./types";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setSelectedPatient } from "@/features/patients/patientsSlice";
+import { AnimatePresence,motion } from "framer-motion";
+import { AlertTriangle,CheckCircle, Clock, Phone, XCircle } from "lucide-react";
+import { memo, useCallback } from "react";
+
 import { Avatar } from "@/components/ui/Avatar";
+import { setSelectedPatient } from "@/features/patients/patientsSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/utils";
+
 import { STATUS_CONFIG } from "../statusConfig";
+import type { AppointmentDetailModalProps } from "./types";
 
 export const AppointmentDetailModal = memo(({ app, onClose }: AppointmentDetailModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();

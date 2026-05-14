@@ -1,4 +1,4 @@
-import type { PatientStatus, BloodGroup } from "@/features/patients/types";
+import type { BloodGroup,PatientStatus } from "@/features/patients/types";
 
 export interface FieldProps {
   label: string;

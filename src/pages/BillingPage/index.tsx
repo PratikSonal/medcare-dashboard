@@ -1,18 +1,20 @@
-import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, TrendingUp, Clock, CheckCircle } from "lucide-react";
-import { useAppSelector } from "@/hooks/useAppDispatch";
+import { CheckCircle,Clock, CreditCard, TrendingUp } from "lucide-react";
+import { useMemo } from "react";
+
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
-import { formatCompact } from "@/utils";
 import {
   selectTotalBilled,
   selectTotalInsuranceCovered,
   selectTotalPatientDue,
 } from "@/features/billing/selectors";
-import { container, item } from "./constants";
-import { ChartsRow } from "./components/ChartsRow";
+import { useAppSelector } from "@/hooks/useAppDispatch";
+import { formatCompact } from "@/utils";
+
 import { BillingTable } from "./components/BillingTable";
+import { ChartsRow } from "./components/ChartsRow";
+import { container, item } from "./constants";
 
 const BillingPage = (): React.ReactElement => {
   const records = useAppSelector(s => s.billing.records);

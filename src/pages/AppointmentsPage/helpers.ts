@@ -1,4 +1,4 @@
-import { startOfWeek, addDays, format } from "date-fns";
+import { addDays, format,startOfWeek } from "date-fns";
 
 export const getWeekDays = (baseDate: Date): Date[] =>
   Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(baseDate, { weekStartsOn: 1 }), i));

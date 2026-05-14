@@ -1,7 +1,9 @@
 import { memo } from "react";
+
 import { cn } from "@/utils";
-import type { BadgeProps } from "./types";
+
 import { variantClasses } from "./constants";
+import type { BadgeProps } from "./types";
 
 export const Badge = memo(({ children, variant = "default", className }: BadgeProps): React.ReactElement => (
   <span

@@ -1,16 +1,18 @@
+import { AnimatePresence,motion } from "framer-motion";
+import { AlertTriangle,Calendar, Check, CheckCircle, Clock, Phone, UserX, X, XCircle } from "lucide-react";
 import { memo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, CheckCircle, XCircle, Phone, UserX, Check, X, Clock, AlertTriangle } from "lucide-react";
-import type { AppointmentListProps } from "./types";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { updateAppointmentStatus } from "@/features/appointments/appointmentsSlice";
-import { addToast } from "@/features/ui/uiSlice";
-import { APPT_TYPE_COLORS } from "@/features/appointments/constants";
+
 import { Avatar } from "@/components/ui/Avatar";
+import { updateAppointmentStatus } from "@/features/appointments/appointmentsSlice";
+import { APPT_TYPE_COLORS } from "@/features/appointments/constants";
+import type { Appointment } from "@/features/appointments/types";
+import { addToast } from "@/features/ui/uiSlice";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { cn } from "@/utils";
+
 import { container, item } from "../constants";
 import { STATUS_CONFIG } from "../statusConfig";
-import type { Appointment } from "@/features/appointments/types";
+import type { AppointmentListProps } from "./types";
 
 interface AppointmentCardProps {
   app: Appointment;

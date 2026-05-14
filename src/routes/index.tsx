@@ -1,13 +1,14 @@
-import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { setUser } from "@/features/auth/authSlice";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { ProtectedRoute } from "@/pages/ProtectedRoute";
+import { onAuthStateChanged } from "firebase/auth";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Navigate,Route, Routes } from "react-router-dom";
+
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { setUser } from "@/features/auth/authSlice";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { auth } from "@/lib/firebase";
+import { ProtectedRoute } from "@/pages/ProtectedRoute";
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));

@@ -1,25 +1,27 @@
-import { memo, useCallback, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence,motion } from "framer-motion";
 import {
-  Bell,
-  Sun,
-  Moon,
-  X,
-  CheckCheck,
   AlertCircle,
-  Info,
-  CheckCircle,
   AlertTriangle,
+  Bell,
+  CheckCheck,
+  CheckCircle,
+  Info,
   Menu,
+  Moon,
+  Sun,
+  X,
 } from "lucide-react";
-import { cn } from "@/utils";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { toggleTheme, markAllRead, markNotificationRead, toggleSidebar } from "@/features/ui/uiSlice";
+import { memo, useCallback, useState } from "react";
+
 import type { Notification } from "@/features/ui/types";
+import { markAllRead, markNotificationRead, toggleSidebar,toggleTheme } from "@/features/ui/uiSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
+import { cn } from "@/utils";
+
+import { timeAgo } from "./helpers";
 import styles from "./Navbar.module.scss";
 import type { FilterType } from "./types";
-import { timeAgo } from "./helpers";
-import type { RootState } from "@/store";
 
 const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
   error: { icon: <AlertCircle size={14} />, color: "var(--accent-red)", bg: "rgba(239,68,68,0.12)" },

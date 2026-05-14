@@ -1,5 +1,6 @@
-import { Navigate } from "react-router-dom";
 import { Activity } from "lucide-react";
+import { Navigate } from "react-router-dom";
+
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
 

@@ -1,9 +1,11 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
-import type { TimeSlotsProps } from "./types";
+import { memo } from "react";
+
 import { cn } from "@/utils";
+
 import { STATUS_CONFIG } from "../statusConfig";
+import type { TimeSlotsProps } from "./types";
 
 export const TimeSlots = memo(({ todayAll }: TimeSlotsProps): React.ReactElement => (
   <motion.div

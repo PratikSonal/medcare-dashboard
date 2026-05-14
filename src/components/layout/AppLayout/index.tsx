@@ -1,15 +1,17 @@
+import { AnimatePresence } from "framer-motion";
 import { memo, Suspense, useCallback } from "react";
 import { Outlet } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { Sidebar } from "../Sidebar";
-import { Navbar } from "../Navbar";
+
 import { PatientModal } from "@/components/modal/PatientModal";
 import { ToastContainer } from "@/components/ToastContainer";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { useThemeSync } from "@/hooks/useThemeSync";
-import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { RootState } from "@/store";
+
+import { Navbar } from "../Navbar";
+import { Sidebar } from "../Sidebar";
 
 export const AppLayout = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();

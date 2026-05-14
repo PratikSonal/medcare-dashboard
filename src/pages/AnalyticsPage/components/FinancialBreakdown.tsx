@@ -1,14 +1,16 @@
-import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
-import { cn, formatCompact } from "@/utils";
+import { memo, useMemo } from "react";
+
 import { PROVIDER_SHORT } from "@/features/billing/constants";
-import { useAppSelector } from "@/hooks/useAppDispatch";
 import {
+  selectApprovalRate,
   selectTotalBilled,
   selectTotalInsuranceCovered,
   selectTotalPatientDue,
-  selectApprovalRate,
 } from "@/features/billing/selectors";
+import { useAppSelector } from "@/hooks/useAppDispatch";
+import { cn, formatCompact } from "@/utils";
+
 import { item, PROC_COLORS } from "../constants";
 
 export const FinancialBreakdown = memo((): React.ReactElement => {

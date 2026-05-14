@@ -1,8 +1,10 @@
-import { memo, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { cn } from "@/utils";
+import { memo, useState } from "react";
+
 import { useCountUp } from "@/hooks/useCountUp";
+import { cn } from "@/utils";
+
 import type { KpiCardProps } from "./types";
 
 export const KpiCard = memo(({

@@ -1,4 +1,5 @@
 import { memo } from "react";
+
 import styles from "./PageLoader.module.scss";
 
 export const PageLoader = memo((): React.ReactElement => (

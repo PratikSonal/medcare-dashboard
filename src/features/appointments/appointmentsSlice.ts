@@ -1,5 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
 import { mockAppointments } from "@/data/appointments";
+
 import type { Appointment, AppointmentStatus } from "./types";
 
 interface AppointmentsState {

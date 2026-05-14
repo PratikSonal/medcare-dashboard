@@ -68,24 +68,24 @@ The following inline `style` props are intentionally kept — they require dynam
 
 ## P3 — Import Order & Naming
 
-- [ ] **Install `eslint-plugin-simple-import-sort`** — automates import ordering so violations are caught at lint time. Add to `eslint.config.js` with rules `simple-import-sort/imports` and `simple-import-sort/exports`, then run `eslint --fix` once to sort all files. Enforced order: (1) React, (2) third-party, (3) `@/hooks` → `@/lib` → `@/components`, (4) relative, (5) `import type` last.
+- [x] **Install `eslint-plugin-simple-import-sort`** — installed; added to `eslint.config.js` with `plugins: { 'simple-import-sort' }` and rules `simple-import-sort/imports`/`exports` as `warn`. Enforced order: (1) React, (2) third-party, (3) `@/hooks` → `@/lib` → `@/components`, (4) relative, (5) `import type` last.
 - [x] **`RegisterPage/components/RegisterCard.tsx` import order** — moot; `RegisterCard.tsx` was deleted entirely and replaced with `RegisterForm`.
-- [ ] **`AnalyticsPage/components/ChartsRow.tsx` import order** — lucide-react appears after a block of recharts imports; should be grouped with all third-party libraries first.
+- [x] **`AnalyticsPage/components/ChartsRow.tsx` import order** — no lucide import present in file; no action needed.
 
 ---
 
 ## P3 — Technical Debt
 
-- [ ] **`patientsSlice.isLoading` is dead state** — the `isLoading` field exists in `PatientsState` but is never set by any reducer action and never read by any consumer. Either wire it up to actual async data fetching or remove it entirely.
-- [ ] **Hardcoded demo date `"2026-05-11"`** — appears in `AppointmentsPage/index.tsx` (×2), `DashboardPage/index.tsx`, and `AppointmentsTable.tsx`. Extract to a shared constant (`src/lib/constants.ts`) as `TODAY_DEMO_DATE` so all filter comparisons reference one place.
-- [ ] **`Date.now()` used for ID generation in 3 places** — `uiSlice.ts` uses `` `T${Date.now()}` `` (addToast) and `` `N${Date.now()}` `` (addNotification); `NewAppointmentModal/helpers.ts` uses `` `A${Date.now()}` ``. `Date.now()` is not collision-safe under rapid dispatch. Replace all with `crypto.randomUUID()`. Already noted for `AddPatientModal` — apply consistently.
-- [ ] **Magic number timeouts with no named constants** — `3500` (ToastContainer auto-dismiss), `3000` (LeftPanel carousel interval), `5000` (DashboardPage daily summary delay). Extract each to a named constant (`TOAST_DISMISS_MS`, `CAROUSEL_INTERVAL_MS`, `DAILY_SUMMARY_DELAY_MS`) so the intent is readable and changes are made in one place.
-- [ ] **`new Date()` called in `uiSlice` initialState** — notification timestamps (`new Date().toISOString()`) are computed once at module load time, not when the notification was actually created. The timestamp is frozen at app boot. Timestamps should be assigned when the action is dispatched, not in the initial static data.
-- [ ] **Fragile ID generation in `AddPatientModal`** — `Math.max(...patients.map(p => parseInt(p.id.slice(1))))` silently returns `NaN` on format mismatch, `-Infinity` on empty array, and stack overflows at scale. Replace with `crypto.randomUUID()`.
-- [ ] **Module-scope calculations in `DashboardPage`** — some derived values execute at import time by reading `mockBillingData` directly at the top level. Move inside the component or into selectors.
-- [x] **`inputCls` helper defined inside component body (`AddPatientModal`)** — fixed: `getInputCls(field, errors)` extracted to module-level function in `helpers.ts`; all step components import and call it. `NewAppointmentModal` still defines `inputCls` as a closure inside the component body — low-impact since it's a modal (infrequently rendered), but still pending.
-- [ ] **Unused Firebase Analytics import** — `getAnalytics` imported in `firebase.ts` but never used.
-- [ ] **`helper.tsx` vs `helpers.ts` inconsistency** — `AnalyticsPage` uses `.tsx` extension for a file with no JSX. Standardise to `.ts`.
+- [x] **`patientsSlice.isLoading` is dead state** — removed `isLoading` from `PatientsState` interface and `initialState` in `patientsSlice.ts`.
+- [x] **Hardcoded demo date `"2026-05-11"`** — extracted to `src/lib/constants.ts` as `TODAY_DEMO_DATE`; `AppointmentsPage/constants.ts` and `DashboardPage/constants.ts` both import and re-export it as `TODAY_DATE`.
+- [x] **`Date.now()` used for ID generation in 3 places** — replaced with `crypto.randomUUID()` in `uiSlice.ts` (`addToast`, `addNotification`) and `NewAppointmentModal/helpers.ts` (`buildAppointment`).
+- [x] **Magic number timeouts with no named constants** — `TOAST_DISMISS_MS = 3500` added to `ToastContainer/constants.ts`; `CAROUSEL_INTERVAL_MS = 3000` added to `LoginLayout/constants.ts`; `DAILY_SUMMARY_DELAY_MS = 5000` added to `DashboardPage/constants.ts`. All usages updated.
+- [x] **`new Date()` called in `uiSlice` initialState** — replaced all `new Date()` / `new Date(Date.now() - offset)` calls in initial notifications with fixed ISO strings anchored to the demo date (`"2026-05-11T09:00:00.000Z"` etc.). `addNotification` reducer still uses `new Date().toISOString()` correctly at dispatch time.
+- [x] **Fragile ID generation in `AddPatientModal`** — `getNextId` in `helpers.ts` now filters out `NaN`/non-finite values and defaults `maxId` to `0` on empty array. `AddPatientModal/index.tsx` uses `getNextId(patients)` directly instead of duplicating the logic inline. `buildPatient` accepts a pre-computed `nextId: string`.
+- [x] **Module-scope calculations in `DashboardPage`** — replaced the empty-dep `useMemo` that imported `mockBillingData` directly with `useAppSelector(selectTotalBilled)`, `useAppSelector(selectApprovalRate)`, and `useAppSelector(selectBillingByStatus)`. `mockBillingData` import removed.
+- [x] **`inputCls` helper defined inside component body** — `getFieldCls(field, errors)` extracted to module-level in `NewAppointmentModal/helpers.ts`; all `fieldCls(x)` calls in `index.tsx` replaced with `getFieldCls(x, errors)`. `AddPatientModal` was already fixed in a prior pass.
+- [x] **Unused Firebase Analytics import** — removed `getAnalytics` import and `analytics` export from `src/lib/firebase/index.ts`; also removed unused `measurementId` from firebaseConfig.
+- [x] **`helper.tsx` vs `helpers.ts` inconsistency** — `AnalyticsPage/helper.tsx` renamed to `helpers.tsx`; import in `ChartsRow.tsx` updated to `../helpers`.
 - [x] **Single-letter variable names** — `k` (KPI), `t` (tab), `f` (form state), `n` (notification), `r` (record), `s` (status/step), `p` (patient), `d` (doctor/duration) renamed throughout all pages and components.
 
 ---

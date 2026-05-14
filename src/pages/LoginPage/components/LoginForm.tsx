@@ -1,14 +1,15 @@
-import { memo, useCallback, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/Button";
+import { AnimatePresence,motion } from "framer-motion";
+import { AlertCircle,Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { memo, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+
 import { AuthInput } from "@/components/ui/AuthInput";
+import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
-import { loginSchema } from "@/lib/validators";
 import type { LoginFields } from "@/lib/validators";
+import { loginSchema } from "@/lib/validators";
 
 export const LoginForm = memo((): React.ReactElement => {
   const { signIn, isLoading, error, clearError } = useAuth();

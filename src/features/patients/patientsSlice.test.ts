@@ -1,8 +1,8 @@
 import patientsReducer, {
-  setSearchQuery,
-  setFilterStatus,
-  setFilterDepartment,
   clearFilters,
+  setFilterDepartment,
+  setFilterStatus,
+  setSearchQuery,
 } from "./patientsSlice";
 
 const initialState = patientsReducer(undefined, { type: "@@INIT" });

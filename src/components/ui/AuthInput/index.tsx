@@ -1,6 +1,8 @@
-import { memo } from "react";
 import { AlertCircle } from "lucide-react";
+import { memo } from "react";
+
 import { cn } from "@/utils";
+
 import type { AuthInputProps } from "./types";
 
 export const AuthInput = memo(({

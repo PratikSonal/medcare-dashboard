@@ -1,7 +1,8 @@
 import { Provider } from "react-redux";
-import { store } from "@/store";
-import { AppRouter } from "@/routes";
+
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AppRouter } from "@/routes";
+import { store } from "@/store";
 
 const App = () => (
   <Provider store={store}>

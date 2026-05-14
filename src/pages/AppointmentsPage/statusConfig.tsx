@@ -1,6 +1,7 @@
-import { CheckCircle, AlertCircle, XCircle } from "lucide-react";
-import type { AppointmentStatus } from "@/features/appointments/types";
+import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
+
 import { APPT_STATUS_COLORS } from "@/features/appointments/constants";
+import type { AppointmentStatus } from "@/features/appointments/types";
 
 export const STATUS_CONFIG: Record<
   AppointmentStatus,

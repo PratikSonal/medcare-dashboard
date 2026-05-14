@@ -1,5 +1,6 @@
-import { cn } from "@/utils";
 import type { Patient } from "@/features/patients/types";
+import { cn } from "@/utils";
+
 import type { FormData } from "./types";
 
 export const getInputCls = (
@@ -35,8 +36,8 @@ export const validateStep = (
   return e;
 };
 
-export const buildPatient = (form: FormData, maxId: number): Patient => {
-  const newId = `P${String(maxId + 1).padStart(3, "0")}`;
+export const buildPatient = (form: FormData, nextId: string): Patient => {
+  const newId = nextId;
   const initials = form.name
     .trim()
     .split(/\s+/)
@@ -78,6 +79,7 @@ export const buildPatient = (form: FormData, maxId: number): Patient => {
 };
 
 export const getNextId = (patients: { id: string }[]): string => {
-  const maxId = Math.max(...patients.map(p => parseInt(p.id.slice(1), 10)));
+  const ids = patients.map(p => parseInt(p.id.slice(1), 10)).filter(n => !isNaN(n) && isFinite(n));
+  const maxId = ids.length > 0 ? Math.max(...ids) : 0;
   return `P${String(maxId + 1).padStart(3, "0")}`;
 };

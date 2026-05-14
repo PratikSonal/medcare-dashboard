@@ -1,6 +1,8 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
+import { memo } from "react";
+
 import { cn } from "@/utils";
+
 import { Field } from "../Field";
 import { getInputCls } from "../helpers";
 import type { StepProps } from "../types";

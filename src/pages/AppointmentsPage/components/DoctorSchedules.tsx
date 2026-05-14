@@ -1,8 +1,10 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
-import type { DoctorSchedulesProps } from "./types";
+import { memo } from "react";
+
 import { Avatar } from "@/components/ui/Avatar";
+
+import type { DoctorSchedulesProps } from "./types";
 
 export const DoctorSchedules = memo(({ doctors, todayAll }: DoctorSchedulesProps): React.ReactElement => (
   <motion.div

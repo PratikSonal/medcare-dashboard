@@ -1,17 +1,19 @@
+import { motion } from "framer-motion";
+import { Activity,DollarSign, TrendingUp, Users } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { TrendingUp, DollarSign, Users, Activity } from "lucide-react";
+
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
+import { clearFilters,setFilterStatus } from "@/features/patients/patientsSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setFilterStatus, clearFilters } from "@/features/patients/patientsSlice";
 import type { RootState } from "@/store";
-import { container, item } from "./constants";
+
 import { ChartsRow } from "./components/ChartsRow";
-import { TrendsRow } from "./components/TrendsRow";
-import { FinancialBreakdown } from "./components/FinancialBreakdown";
 import { DoctorPerformance } from "./components/DoctorPerformance";
+import { FinancialBreakdown } from "./components/FinancialBreakdown";
+import { TrendsRow } from "./components/TrendsRow";
+import { container, item } from "./constants";
 
 const AnalyticsPage = (): React.ReactElement => {
   const navigate = useNavigate();

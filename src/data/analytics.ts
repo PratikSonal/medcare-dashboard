@@ -1,4 +1,4 @@
-import type { MetricDataPoint, DepartmentStat } from "@/features/analytics/types";
+import type { DepartmentStat,MetricDataPoint } from "@/features/analytics/types";
 
 export const metricsData: MetricDataPoint[] = [
   { month: "Nov", patients: 310, revenue: 420000, appointments: 280, recovered: 185 },

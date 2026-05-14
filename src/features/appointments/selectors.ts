@@ -1,4 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
+
 import type { RootState } from "@/store";
 
 const selectAppointments = (s: RootState) => s.appointments.appointments;

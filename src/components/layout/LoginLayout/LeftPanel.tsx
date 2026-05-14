@@ -1,7 +1,8 @@
-import { memo, useCallback, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence,motion } from "framer-motion";
 import { Activity } from "lucide-react";
-import { slides } from "./constants";
+import { memo, useCallback, useEffect,useState } from "react";
+
+import { CAROUSEL_INTERVAL_MS,slides } from "./constants";
 import type { Slide } from "./types";
 
 interface DotButtonProps {
@@ -30,7 +31,7 @@ const FeatureCarousel = memo((): React.ReactElement => {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => setActive(p => (p + 1) % slides.length), 3000);
+    const timer = setInterval(() => setActive(p => (p + 1) % slides.length), CAROUSEL_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
 

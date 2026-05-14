@@ -1,4 +1,5 @@
 import type { Variants } from "framer-motion";
+
 import type { ClaimStatus } from "@/features/billing/types";
 
 export const container: Variants = {

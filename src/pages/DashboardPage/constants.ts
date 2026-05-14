@@ -1,6 +1,9 @@
 import type { Variants } from "framer-motion";
 
-export const TODAY_DATE = "2026-05-11";
+import { TODAY_DEMO_DATE } from "@/lib/constants";
+
+export const TODAY_DATE = TODAY_DEMO_DATE;
+export const DAILY_SUMMARY_DELAY_MS = 5000;
 
 export const container: Variants = {
   hidden: { opacity: 0 },

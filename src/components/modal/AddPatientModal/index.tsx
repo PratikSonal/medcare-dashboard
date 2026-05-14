@@ -1,20 +1,21 @@
-import { memo, useCallback, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence,motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { memo, useCallback, useState } from "react";
+
 import { addPatient } from "@/features/patients/patientsSlice";
-import { addToast } from "@/features/ui/uiSlice";
-import { cn } from "@/utils";
-import type { RootState } from "@/store";
-import type { Patient } from "@/features/patients/types";
 import type { PatientStatus } from "@/features/patients/types";
-import type { FormData, AddPatientModalProps } from "./types";
-import { STEPS, defaultForm } from "./constants";
-import { validateStep, buildPatient, getNextId } from "./helpers";
+import { addToast } from "@/features/ui/uiSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
+import { cn } from "@/utils";
+
+import { defaultForm,STEPS } from "./constants";
+import { buildPatient, getNextId,validateStep } from "./helpers";
 import { StepIndicator } from "./StepIndicator";
 import { Step0Personal } from "./steps/Step0Personal";
 import { Step1Clinical } from "./steps/Step1Clinical";
 import { Step2Vitals } from "./steps/Step2Vitals";
+import type { AddPatientModalProps,FormData } from "./types";
 
 export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();
@@ -48,8 +49,7 @@ export const AddPatientModal = memo(({ onClose }: AddPatientModalProps): React.R
 
   const submit = useCallback((): void => {
     if (!validate(2)) return;
-    const maxId = Math.max(...patients.map((patient: Patient) => parseInt(patient.id.slice(1), 10)));
-    const patient = buildPatient(form, maxId);
+    const patient = buildPatient(form, getNextId(patients));
     dispatch(addPatient(patient));
     dispatch(addToast({ message: `${patient.name} added successfully`, type: "success" }));
     onClose();

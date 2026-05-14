@@ -1,10 +1,11 @@
-import { memo } from "react";
 import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
+import { memo } from "react";
+
 import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
-import { cn } from "@/utils";
 import type { BillingRecord } from "@/features/billing/types";
+import { cn } from "@/utils";
 
 interface Props {
   billingRecords: BillingRecord[];

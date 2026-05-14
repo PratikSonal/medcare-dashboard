@@ -1,7 +1,9 @@
-import { User, Stethoscope, Activity } from "lucide-react";
 import { format } from "date-fns";
+import { Activity,Stethoscope, User } from "lucide-react";
+
+import type { BloodGroup,PatientStatus } from "@/features/patients/types";
 import { PATIENT_STATUS_COLORS } from "@/features/patients/utils";
-import type { PatientStatus, BloodGroup } from "@/features/patients/types";
+
 import type { FormData } from "./types";
 
 export const DEPARTMENTS = [

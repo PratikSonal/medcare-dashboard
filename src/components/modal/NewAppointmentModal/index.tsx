@@ -1,32 +1,35 @@
-import { memo, useCallback, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { X, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
-import { useAppSelector, useAppDispatch } from "@/hooks/useAppDispatch";
-import type { RootState } from "@/store";
-import type { Patient } from "@/features/patients/types";
-import type { Appointment } from "@/features/appointments/types";
-import { addToast, addNotification } from "@/features/ui/uiSlice";
+import { AlertTriangle, CheckCircle2, Clock,X } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
+
 import { addAppointment } from "@/features/appointments/appointmentsSlice";
+import type { Appointment } from "@/features/appointments/types";
+import type { Patient } from "@/features/patients/types";
+import { addNotification,addToast } from "@/features/ui/uiSlice";
+import { useAppDispatch,useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
 import { cn } from "@/utils";
-import type { Props, FormState, TrackRowProps } from "./types";
+import { minToTime,t2m } from "@/utils/time";
+
 import {
-  TSTART,
-  TEND,
-  TDUR,
-  SLOTS,
-  TYPES,
   DURATIONS,
+  SLOTS,
+  TDUR,
+  TEND,
   TIMELINE_HOURS,
   TIMELINE_LEGEND,
+  TSTART,
+  TYPES,
 } from "./constants";
-import { t2m, minToTime } from "@/utils/time";
 import {
+  buildAppointment,
+  getConflict,
+  getFieldCls,
   toLeft,
   toWidth,
-  getConflict,
   validateForm,
-  buildAppointment,
 } from "./helpers";
+import type { FormState, Props, TrackRowProps } from "./types";
 
 const TrackRow = memo(({
   label,
@@ -164,12 +167,6 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
   const updateField = useCallback((k: keyof FormState, v: FormState[keyof FormState]): void => {
     setForm(f => ({ ...f, [k]: v }));
   }, []);
-
-  const fieldCls = (k: keyof FormState): string =>
-    cn(
-      "w-full bg-bg-tertiary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
-      errors[k] ? "border border-accent-red" : "border border-border-primary",
-    );
 
   const docBusy = useMemo(
     () => appointments.filter((a: Appointment) => a.doctor === form.doctor && a.date === form.date),
@@ -310,7 +307,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
               <select
                 value={form.patientId}
                 onChange={handlePatientChange}
-                className={fieldCls("patientId")}
+                className={getFieldCls("patientId", errors)}
               >
                 <option value="">Select patient…</option>
                 {patients.map(patient => (
@@ -328,7 +325,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
               <select
                 value={form.doctor}
                 onChange={handleDoctorChange}
-                className={fieldCls("doctor")}
+                className={getFieldCls("doctor", errors)}
               >
                 <option value="">Select doctor…</option>
                 {doctors.map(doctor => (
@@ -347,7 +344,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
                 type="date"
                 value={form.date}
                 onChange={handleDateChange}
-                className={fieldCls("date")}
+                className={getFieldCls("date", errors)}
               />
             </div>
 
@@ -358,7 +355,7 @@ const NewAppointmentModal = memo(({ defaultDate, onClose }: Props): React.ReactE
               <select
                 value={form.type}
                 onChange={handleTypeChange}
-                className={fieldCls("type")}
+                className={getFieldCls("type", errors)}
               >
                 {TYPES.map(apptType => (
                   <option key={apptType} value={apptType}>

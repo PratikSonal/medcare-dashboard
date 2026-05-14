@@ -1,6 +1,8 @@
-import { memo } from "react";
 import { Check } from "lucide-react";
+import { memo } from "react";
+
 import { cn } from "@/utils";
+
 import { STEPS } from "./constants";
 
 interface Props {

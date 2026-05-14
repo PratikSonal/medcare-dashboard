@@ -1,18 +1,20 @@
+import { AnimatePresence,motion } from "framer-motion";
+import { ChevronDown,Filter, X } from "lucide-react";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
-import { motion, AnimatePresence } from "framer-motion";
-import { Filter, X, ChevronDown } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { SearchInput } from "@/components/ui/SearchInput";
+
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { SearchInput } from "@/components/ui/SearchInput";
 import {
-  setSearchQuery,
-  setFilterStatus,
-  setFilterDepartment,
   clearFilters,
+  setFilterDepartment,
+  setFilterStatus,
+  setSearchQuery,
 } from "@/features/patients/patientsSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/utils";
+
 import { DEPARTMENTS, STATUSES } from "../constants";
 
 export const FilterBar = memo((): React.ReactElement => {

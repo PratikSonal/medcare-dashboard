@@ -1,7 +1,9 @@
 import type { Variants } from "framer-motion";
-import type { AppointmentStatus } from "@/features/appointments/types";
 
-export const TODAY_DATE = "2026-05-11";
+import type { AppointmentStatus } from "@/features/appointments/types";
+import { TODAY_DEMO_DATE } from "@/lib/constants";
+
+export const TODAY_DATE = TODAY_DEMO_DATE;
 
 export const container: Variants = {
   hidden: { opacity: 0 },

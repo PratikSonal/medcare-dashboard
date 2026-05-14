@@ -1,8 +1,10 @@
-import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
+import { memo, useMemo } from "react";
+
+import { Avatar } from "@/components/ui/Avatar";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/utils";
-import { Avatar } from "@/components/ui/Avatar";
+
 import { item, STATUS_CELLS } from "../constants";
 
 export const DoctorPerformance = memo((): React.ReactElement => {

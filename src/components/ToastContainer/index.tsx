@@ -1,11 +1,13 @@
-import { memo, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence,motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { memo, useCallback, useEffect } from "react";
+
 import { removeToast } from "@/features/ui/uiSlice";
-import type { ToastProps } from "./types";
-import { CONFIG } from "./constants";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
+
+import { CONFIG, TOAST_DISMISS_MS } from "./constants";
+import type { ToastProps } from "./types";
 
 const Toast = memo(({ id, message, type }: ToastProps): React.ReactElement => {
   const dispatch = useAppDispatch();
@@ -14,7 +16,7 @@ const Toast = memo(({ id, message, type }: ToastProps): React.ReactElement => {
   const handleDismiss = useCallback(() => dispatch(removeToast(id)), [id, dispatch]);
 
   useEffect(() => {
-    const timer = setTimeout(() => dispatch(removeToast(id)), 3500);
+    const timer = setTimeout(() => dispatch(removeToast(id)), TOAST_DISMISS_MS);
     return () => clearTimeout(timer);
   }, [id, dispatch]);
 

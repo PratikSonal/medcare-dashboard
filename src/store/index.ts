@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
+
+import analyticsReducer from "@/features/analytics/analyticsSlice";
+import appointmentsReducer from "@/features/appointments/appointmentsSlice";
 import authReducer from "@/features/auth/authSlice";
+import billingReducer from "@/features/billing/billingSlice";
 import patientsReducer from "@/features/patients/patientsSlice";
 import uiReducer from "@/features/ui/uiSlice";
-import appointmentsReducer from "@/features/appointments/appointmentsSlice";
-import billingReducer from "@/features/billing/billingSlice";
-import analyticsReducer from "@/features/analytics/analyticsSlice";
 
 export const store = configureStore({
   reducer: {

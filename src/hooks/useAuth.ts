@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { FirebaseError } from "firebase/app";
-import { auth } from "@/lib/firebase";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { setError,setUser } from "@/features/auth/authSlice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { setUser, setError } from "@/features/auth/authSlice";
-import { showWelcomeNotification, registerServiceWorker } from "@/services/notifications";
+import { auth } from "@/lib/firebase";
 import { getFirebaseErrorMessage } from "@/lib/firebase/errors";
+import { registerServiceWorker,showWelcomeNotification } from "@/services/notifications";
 
 interface UseAuthReturn {
   signIn: (email: string, password: string) => Promise<void>;

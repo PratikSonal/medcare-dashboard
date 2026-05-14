@@ -1,18 +1,20 @@
+import { AnimatePresence,motion } from "framer-motion";
+import { AlertTriangle,Calendar, FileText, Pill, Shield, X } from "lucide-react";
 import { memo, useCallback, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, FileText, Shield, Pill, Calendar, AlertTriangle } from "lucide-react";
-import { useAppSelector } from "@/hooks/useAppDispatch";
-import { getStatusBg, getStatusColor } from "@/features/patients/utils";
-import { cn } from "@/utils";
-import { Badge } from "@/components/ui/Badge";
+
 import { Avatar } from "@/components/ui/Avatar";
-import { OverviewTab } from "./tabs/OverviewTab";
+import { Badge } from "@/components/ui/Badge";
+import type { Appointment } from "@/features/appointments/types";
+import { getStatusBg, getStatusColor } from "@/features/patients/utils";
+import { useAppSelector } from "@/hooks/useAppDispatch";
+import type { RootState } from "@/store";
+import { cn } from "@/utils";
+
 import { AppointmentsTab } from "./tabs/AppointmentsTab";
 import { BillingTab } from "./tabs/BillingTab";
+import { OverviewTab } from "./tabs/OverviewTab";
 import { PrescriptionsTab } from "./tabs/PrescriptionsTab";
 import type { Props, TabId } from "./types";
-import type { RootState } from "@/store";
-import type { Appointment } from "@/features/appointments/types";
 
 interface TabButtonProps {
   tabId: TabId;

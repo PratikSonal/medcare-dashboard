@@ -1,9 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Theme, Notification, Toast } from "./types";
 
-const MS_30_MIN = 30 * 60 * 1000;
-const MS_1_HOUR = 60 * 60 * 1000;
-const MS_2_HOURS = 2 * 60 * 60 * 1000;
+import type { Notification, Theme, Toast } from "./types";
 
 interface UIState {
   theme: Theme;
@@ -27,7 +24,7 @@ const initialState: UIState = {
       title: "Critical Alert",
       message: "Patient Rohan Verma requires immediate attention in ICU.",
       type: "error",
-      timestamp: new Date().toISOString(),
+      timestamp: "2026-05-11T09:00:00.000Z",
       read: false,
     },
     {
@@ -35,7 +32,7 @@ const initialState: UIState = {
       title: "New Admission",
       message: "Lakshmi Naidu admitted to Neurology department.",
       type: "info",
-      timestamp: new Date(Date.now() - MS_30_MIN).toISOString(),
+      timestamp: "2026-05-11T08:30:00.000Z",
       read: false,
     },
     {
@@ -43,7 +40,7 @@ const initialState: UIState = {
       title: "Lab Results Ready",
       message: "Blood panel results for Sanya Kapoor are available.",
       type: "success",
-      timestamp: new Date(Date.now() - MS_1_HOUR).toISOString(),
+      timestamp: "2026-05-11T08:00:00.000Z",
       read: true,
     },
     {
@@ -51,7 +48,7 @@ const initialState: UIState = {
       title: "Appointment Reminder",
       message: "Dr. Sneha Iyer has 3 appointments in 30 minutes.",
       type: "warning",
-      timestamp: new Date(Date.now() - MS_2_HOURS).toISOString(),
+      timestamp: "2026-05-11T07:00:00.000Z",
       read: true,
     },
   ],
@@ -88,7 +85,7 @@ const uiSlice = createSlice({
       state,
       action: PayloadAction<{ message: string; type: "success" | "error" | "info" }>,
     ) {
-      state.toasts.push({ id: `T${Date.now()}`, ...action.payload });
+      state.toasts.push({ id: crypto.randomUUID(), ...action.payload });
     },
     removeToast(state, action: PayloadAction<string>) {
       state.toasts = state.toasts.filter(t => t.id !== action.payload);
@@ -96,7 +93,7 @@ const uiSlice = createSlice({
     addNotification(state, action: PayloadAction<Omit<Notification, "id" | "timestamp" | "read">>) {
       const newNotif: Notification = {
         ...action.payload,
-        id: `N${Date.now()}`,
+        id: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
         read: false,
       };

@@ -1,23 +1,25 @@
-import { memo, useCallback, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
+import { memo, useCallback, useMemo,useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setSelectedPatient, clearFilters } from "@/features/patients/patientsSlice";
+
 import { metricsData } from "@/data/analytics";
-import { getStatusBg, getStatusColor } from "@/features/patients/utils";
-import { cn } from "@/utils";
-import { item } from "../constants";
+import { clearFilters,setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { Patient } from "@/features/patients/types";
+import { getStatusBg, getStatusColor } from "@/features/patients/utils";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { cn } from "@/utils";
+
+import { item } from "../constants";
 
 type ChartPeriod = "3M" | "6M" | "All";
 

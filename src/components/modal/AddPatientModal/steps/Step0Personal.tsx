@@ -1,8 +1,9 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
+import { memo } from "react";
+
+import { BLOOD_GROUPS } from "../constants";
 import { Field } from "../Field";
 import { getInputCls } from "../helpers";
-import { BLOOD_GROUPS } from "../constants";
 import type { StepProps } from "../types";
 
 export const Step0Personal = memo(({ form, errors, set }: StepProps): React.ReactElement => (

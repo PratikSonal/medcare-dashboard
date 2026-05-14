@@ -1,23 +1,25 @@
-import { useCallback, useState, useMemo } from "react";
 import { addDays, format } from "date-fns";
+import { AnimatePresence,motion } from "framer-motion";
+import { AlertCircle, Calendar, CheckCircle, Plus, XCircle } from "lucide-react";
+import { useCallback, useMemo,useState } from "react";
 import { useDebounce } from "use-debounce";
-import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Plus, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+
+import NewAppointmentModal from "@/components/modal/NewAppointmentModal";
+import { KpiCard } from "@/components/ui/KpiCard";
+import { selectDoctorRoster } from "@/features/appointments/selectors";
 import type { Appointment } from "@/features/appointments/types";
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
-import { KpiCard } from "@/components/ui/KpiCard";
-import NewAppointmentModal from "@/components/modal/NewAppointmentModal";
-import { selectDoctorRoster } from "@/features/appointments/selectors";
-import { getWeekDays, formatDateKey } from "./helpers";
-import { TODAY_DATE } from "./constants";
-import { WeekStrip } from "./components/WeekStrip";
-import { FilterBar } from "./components/FilterBar";
+
+import { ActionRequired } from "./components/ActionRequired";
+import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
 import { AppointmentList } from "./components/AppointmentList";
 import { DoctorSchedules } from "./components/DoctorSchedules";
-import { ActionRequired } from "./components/ActionRequired";
+import { FilterBar } from "./components/FilterBar";
 import { TimeSlots } from "./components/TimeSlots";
-import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
+import { WeekStrip } from "./components/WeekStrip";
+import { TODAY_DATE } from "./constants";
+import { formatDateKey,getWeekDays } from "./helpers";
 
 const AppointmentsPage = (): React.ReactElement => {
   const appointments = useAppSelector((s: RootState) => s.appointments.appointments);

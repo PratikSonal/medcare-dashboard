@@ -1,10 +1,12 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
+import { memo } from "react";
+
 import { Avatar } from "@/components/ui/Avatar";
 import { getStatusBg, getStatusColor } from "@/features/patients/utils";
 import { formatDate } from "@/utils";
-import type { PatientListRowProps, PatientListViewProps } from "./types";
+
 import { container, item } from "../constants";
+import type { PatientListRowProps, PatientListViewProps } from "./types";
 
 const PatientListRow = memo(({ patient, onPatientClick }: PatientListRowProps): React.ReactElement => (
   <motion.tr

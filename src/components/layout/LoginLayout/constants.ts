@@ -1,5 +1,8 @@
-import { Shield, Zap, Brain, Heart, TrendingUp, Clock } from "lucide-react";
+import { Brain, Clock,Heart, Shield, TrendingUp, Zap } from "lucide-react";
+
 import type { Slide } from "./types";
+
+export const CAROUSEL_INTERVAL_MS = 3000;
 
 export const slides: Slide[] = [
   {

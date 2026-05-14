@@ -1,10 +1,12 @@
-import { memo } from "react";
 import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
-import { Pill, AlertTriangle } from "lucide-react";
-import { cn } from "@/utils";
-import { PRESCRIPTION_COLORS } from "../constants";
+import { AlertTriangle,Pill } from "lucide-react";
+import { memo } from "react";
+
 import type { Prescription } from "@/features/patients/types";
+import { cn } from "@/utils";
+
+import { PRESCRIPTION_COLORS } from "../constants";
 
 interface Props {
   prescriptions: Prescription[];

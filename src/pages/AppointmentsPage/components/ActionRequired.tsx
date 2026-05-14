@@ -1,12 +1,14 @@
-import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ClipboardCheck, ShieldCheck } from "lucide-react";
-import type { ActionRequiredProps } from "./types";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { updateAppointmentChecks } from "@/features/appointments/appointmentsSlice";
-import { addToast } from "@/features/ui/uiSlice";
+import { memo, useCallback } from "react";
+
 import { Avatar } from "@/components/ui/Avatar";
+import { updateAppointmentChecks } from "@/features/appointments/appointmentsSlice";
 import type { Appointment } from "@/features/appointments/types";
+import { addToast } from "@/features/ui/uiSlice";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+
+import type { ActionRequiredProps } from "./types";
 
 interface ActionItemProps {
   app: Appointment;

@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { metricsData, departmentStats } from "@/data/analytics";
-import type { MetricDataPoint, DepartmentStat } from "./types";
+
+import { departmentStats,metricsData } from "@/data/analytics";
+
+import type { DepartmentStat,MetricDataPoint } from "./types";
 
 interface AnalyticsState {
   metrics: MetricDataPoint[];

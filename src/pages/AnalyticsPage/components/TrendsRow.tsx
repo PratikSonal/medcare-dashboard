@@ -1,19 +1,21 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
+import { memo } from "react";
 import {
-  LineChart,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  AreaChart,
-  Area,
 } from "recharts";
+
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
+
 import { item, ttStyle } from "../constants";
 
 export const TrendsRow = memo((): React.ReactElement => {

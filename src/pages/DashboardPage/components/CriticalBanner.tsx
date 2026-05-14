@@ -1,11 +1,13 @@
-import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, ChevronRight } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setSelectedPatient, setFilterStatus } from "@/features/patients/patientsSlice";
-import { item } from "../constants";
+
+import { setFilterStatus,setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { Patient } from "@/features/patients/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+
+import { item } from "../constants";
 
 interface CriticalPatientCardProps {
   patient: Patient;

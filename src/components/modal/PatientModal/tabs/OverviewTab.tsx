@@ -1,8 +1,10 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
-import { Heart, Thermometer, Wind, Activity, Phone, Mail, MapPin } from "lucide-react";
-import { formatDate, cn } from "@/utils";
+import { Activity, Heart, Mail, MapPin,Phone, Thermometer, Wind } from "lucide-react";
+import { memo } from "react";
+
 import type { Patient } from "@/features/patients/types";
+import { cn,formatDate } from "@/utils";
+
 import type { VitalBadgeProps } from "../types";
 
 const VitalBadge = memo(({ icon, label, value, alert = false }: VitalBadgeProps): React.ReactElement => (

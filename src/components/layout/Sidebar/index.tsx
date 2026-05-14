@@ -1,15 +1,17 @@
+import { signOut } from "firebase/auth";
+import { Activity,LogOut } from "lucide-react";
 import { memo, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut, Activity } from "lucide-react";
-import { cn } from "@/utils";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+
 import { logout } from "@/features/auth/authSlice";
 import { toggleSidebar } from "@/features/ui/uiSlice";
-import type { RootState } from "@/store";
-import { signOut } from "firebase/auth";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
 import { auth } from "@/lib/firebase";
-import styles from "./Sidebar.module.scss";
+import type { RootState } from "@/store";
+import { cn } from "@/utils";
+
 import { navItems } from "./constants";
+import styles from "./Sidebar.module.scss";
 
 export const Sidebar = memo((): React.ReactElement => {
   const dispatch = useAppDispatch();

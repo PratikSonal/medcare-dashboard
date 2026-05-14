@@ -1,14 +1,16 @@
+import { AnimatePresence,motion } from "framer-motion";
+import { Grid3X3, List, Search,UserPlus } from "lucide-react";
 import { useCallback, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Grid3X3, List, UserPlus, Search } from "lucide-react";
+
 import { AddPatientModal } from "@/components/modal/AddPatientModal";
 import { Button } from "@/components/ui/Button";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import type { RootState } from "@/store";
-import { setViewMode, setSelectedPatient, clearFilters } from "@/features/patients/patientsSlice";
-import { showPatientAlertNotification } from "@/services/notifications";
+import { clearFilters,setSelectedPatient, setViewMode } from "@/features/patients/patientsSlice";
 import type { Patient } from "@/features/patients/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { showPatientAlertNotification } from "@/services/notifications";
+import type { RootState } from "@/store";
 import { cn } from "@/utils";
+
 import { FilterBar } from "./components/FilterBar";
 import { PatientGrid } from "./components/PatientGrid";
 import { PatientListView } from "./components/PatientListView";

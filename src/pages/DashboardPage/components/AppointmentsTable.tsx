@@ -1,14 +1,16 @@
-import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Calendar, ChevronRight, Check, X, Clock } from "lucide-react";
+import { Calendar, Check, ChevronRight, Clock,X } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setSelectedPatient } from "@/features/patients/patientsSlice";
+
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/features/appointments/constants";
-import { cn } from "@/utils";
-import { item, TODAY_DATE } from "../constants";
 import type { Appointment } from "@/features/appointments/types";
+import { setSelectedPatient } from "@/features/patients/patientsSlice";
 import type { Patient } from "@/features/patients/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { cn } from "@/utils";
+
+import { item, TODAY_DATE } from "../constants";
 
 interface AppointmentRowProps {
   app: Appointment;

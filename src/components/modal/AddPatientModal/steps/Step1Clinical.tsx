@@ -1,10 +1,12 @@
-import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
+import { memo, useCallback } from "react";
+
+import type { PatientStatus } from "@/features/patients/types";
+
+import { DEPARTMENTS, DOCTORS, STATUS_COLORS,STATUSES } from "../constants";
 import { Field } from "../Field";
 import { getInputCls } from "../helpers";
-import { DEPARTMENTS, DOCTORS, STATUSES, STATUS_COLORS } from "../constants";
 import type { StepProps } from "../types";
-import type { PatientStatus } from "@/features/patients/types";
 
 interface StatusPillProps {
   status: PatientStatus;

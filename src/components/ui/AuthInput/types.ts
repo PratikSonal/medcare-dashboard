@@ -1,5 +1,5 @@
-import type { InputHTMLAttributes, ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 
 export interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputId: string;

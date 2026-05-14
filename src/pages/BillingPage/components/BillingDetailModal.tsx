@@ -1,14 +1,16 @@
-import { memo, useCallback } from "react";
 import { format, parseISO } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence,motion } from "framer-motion";
 import { X } from "lucide-react";
-import type { BillingDetailModalProps } from "./types";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setSelectedPatient } from "@/features/patients/patientsSlice";
-import { updateClaimStatus } from "@/features/billing/billingSlice";
+import { memo, useCallback } from "react";
+
 import { Avatar } from "@/components/ui/Avatar";
+import { updateClaimStatus } from "@/features/billing/billingSlice";
 import { CLAIM_STATUS_COLORS } from "@/features/billing/constants";
+import { setSelectedPatient } from "@/features/patients/patientsSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+
 import { ALL_STATUSES } from "../constants";
+import type { BillingDetailModalProps } from "./types";
 
 export const BillingDetailModal = memo(({ record, onClose }: BillingDetailModalProps): React.ReactElement => {
   const dispatch = useAppDispatch();

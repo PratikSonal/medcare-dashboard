@@ -1,6 +1,8 @@
-import { memo } from "react";
 import { Search, X } from "lucide-react";
+import { memo } from "react";
+
 import { cn } from "@/utils";
+
 import type { SearchInputProps } from "./types";
 
 export const SearchInput = memo(({

@@ -1,5 +1,6 @@
-import { t2m, minToTime, toLeft, toWidth, getConflict } from "./helpers";
 import type { Appointment } from "@/features/appointments/types";
+
+import { getConflict,minToTime, t2m, toLeft, toWidth } from "./helpers";
 
 const makeAppt = (time: string, duration: number): Appointment =>
   ({

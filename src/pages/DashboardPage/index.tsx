@@ -1,30 +1,32 @@
-import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Users,
   Activity,
   AlertTriangle,
+  Building2,
   Calendar,
   CreditCard,
-  UserCheck,
-  Building2,
   ShieldCheck,
+  UserCheck,
+  Users,
 } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
-import { mockBillingData } from "@/data/billing";
-import { showDailySummaryNotification } from "@/services/notifications";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
-import { setFilterStatus, clearFilters } from "@/features/patients/patientsSlice";
-import { formatDate } from "@/utils";
-import type { RootState } from "@/store";
-import type { Patient } from "@/features/patients/types";
 import type { Appointment } from "@/features/appointments/types";
-import { container, item, TODAY_DATE } from "./constants";
+import { selectApprovalRate, selectBillingByStatus,selectTotalBilled } from "@/features/billing/selectors";
+import { clearFilters,setFilterStatus } from "@/features/patients/patientsSlice";
+import type { Patient } from "@/features/patients/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { showDailySummaryNotification } from "@/services/notifications";
+import type { RootState } from "@/store";
+import { formatDate } from "@/utils";
+
+import { AppointmentsTable } from "./components/AppointmentsTable";
 import { CriticalBanner } from "./components/CriticalBanner";
 import { TrendsRow } from "./components/TrendsRow";
-import { AppointmentsTable } from "./components/AppointmentsTable";
+import { container, DAILY_SUMMARY_DELAY_MS,item, TODAY_DATE } from "./constants";
 
 const DashboardPage = (): React.ReactElement => {
   const dispatch = useAppDispatch();
@@ -62,18 +64,9 @@ const DashboardPage = (): React.ReactElement => {
     [appointments],
   );
 
-  const { totalBilled, pendingClaims, approvalRate } = useMemo(
-    () => ({
-      totalBilled: mockBillingData.reduce((sum, record) => sum + record.totalAmount, 0),
-      pendingClaims: mockBillingData.filter(record => record.claimStatus === "Pending").length,
-      approvalRate: Math.round(
-        (mockBillingData.filter(record => record.claimStatus === "Approved").length /
-          mockBillingData.length) *
-          100,
-      ),
-    }),
-    [],
-  );
+  const totalBilled = useAppSelector(selectTotalBilled);
+  const approvalRate = useAppSelector(selectApprovalRate);
+  const { Pending: pendingClaims } = useAppSelector(selectBillingByStatus);
 
   const kpis = useMemo(
     () => [
@@ -202,7 +195,7 @@ const DashboardPage = (): React.ReactElement => {
   );
 
   useEffect(() => {
-    const t = setTimeout(() => showDailySummaryNotification(patients.length, criticalCount), 5000);
+    const t = setTimeout(() => showDailySummaryNotification(patients.length, criticalCount), DAILY_SUMMARY_DELAY_MS);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

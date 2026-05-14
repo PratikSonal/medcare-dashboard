@@ -1,19 +1,20 @@
-import { memo } from "react";
 import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import {
-  Check,
-  Clock,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
   AlertCircle,
-  XCircle,
+  AlertTriangle,
+  Calendar,
+  Check,
+  CheckCircle,
+  Clock,
   X,
+  XCircle,
 } from "lucide-react";
+import { memo } from "react";
+
 import { APPT_STATUS_COLORS, APPT_TYPE_COLORS } from "@/features/appointments/constants";
-import { cn } from "@/utils";
 import type { Appointment } from "@/features/appointments/types";
+import { cn } from "@/utils";
 
 const APP_STATUS: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
   Confirmed: { ...APPT_STATUS_COLORS.Confirmed, icon: <CheckCircle size={11} /> },

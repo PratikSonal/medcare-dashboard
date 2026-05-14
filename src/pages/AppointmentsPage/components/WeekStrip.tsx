@@ -1,12 +1,14 @@
-import { memo } from "react";
 import { format, getDate } from "date-fns";
 import { motion } from "framer-motion";
-import type { WeekStripProps } from "./types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { memo } from "react";
+
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import { cn } from "@/utils";
+
 import { DAY_NAMES } from "../constants";
 import { formatDateKey } from "../helpers";
+import type { WeekStripProps } from "./types";
 
 export const WeekStrip = memo(({
   weekDays,

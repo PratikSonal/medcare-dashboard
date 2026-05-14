@@ -1,10 +1,22 @@
 import { getYear } from "date-fns";
-import { t2m, minToTime } from "@/utils/time";
+
 import type { Appointment } from "@/features/appointments/types";
 import type { Patient } from "@/features/patients/types";
+import { cn } from "@/utils";
+import { minToTime,t2m } from "@/utils/time";
+
+import { TDUR,TSTART } from "./constants";
 import type { ConflictInfo, FormState } from "./types";
-import { TSTART, TDUR } from "./constants";
-export { t2m, minToTime };
+export { minToTime,t2m };
+
+export const getFieldCls = (
+  field: keyof FormState,
+  errors: Partial<Record<keyof FormState, boolean>>,
+): string =>
+  cn(
+    "w-full bg-bg-tertiary rounded-[10px] py-[10px] px-3 text-[13px] text-text-primary outline-none font-sans box-border transition-colors duration-150 focus:border-accent-blue",
+    errors[field] ? "border border-accent-red" : "border border-border-primary",
+  );
 
 export const toLeft = (min: number): string => `${(((min - TSTART) / TDUR) * 100).toFixed(2)}%`;
 
@@ -49,7 +61,7 @@ export const buildAppointment = (
   const existingPat = appointments.find(a => a.patientId === form.patientId);
 
   return {
-    id: `A${Date.now()}`,
+    id: crypto.randomUUID(),
     patientId: pt.id,
     patientName: pt.name,
     patientAvatar: pt.avatar,

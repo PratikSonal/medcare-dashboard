@@ -1,7 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Patient, Prescription } from "./types";
-import type { ViewMode } from "@/features/ui/types";
+
 import { mockPatients, mockPrescriptions } from "@/data/patients";
+import type { ViewMode } from "@/features/ui/types";
+
+import type { Patient, Prescription } from "./types";
 
 interface PatientsState {
   patients: Patient[];
@@ -12,7 +14,6 @@ interface PatientsState {
   searchQuery: string;
   filterStatus: string;
   filterDepartment: string;
-  isLoading: boolean;
 }
 
 const initialState: PatientsState = {
@@ -24,7 +25,6 @@ const initialState: PatientsState = {
   searchQuery: "",
   filterStatus: "All",
   filterDepartment: "All",
-  isLoading: false,
 };
 
 const applyFilters = (state: PatientsState) => {

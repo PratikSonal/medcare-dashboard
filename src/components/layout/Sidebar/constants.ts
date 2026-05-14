@@ -1,4 +1,5 @@
-import { LayoutDashboard, BarChart3, Users, Calendar, CreditCard } from "lucide-react";
+import { BarChart3, Calendar, CreditCard,LayoutDashboard, Users } from "lucide-react";
+
 import type { NavItem } from "./types";
 
 export const navItems: NavItem[] = [

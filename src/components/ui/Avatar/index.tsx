@@ -1,4 +1,5 @@
 import { memo } from "react";
+
 import type { AvatarProps } from "./types";
 
 export const Avatar = memo(({ initials, size = 36, radius }: AvatarProps): React.ReactElement => {

@@ -1,11 +1,13 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
 import { Activity, Heart } from "lucide-react";
+import { memo } from "react";
+
 import { Avatar } from "@/components/ui/Avatar";
 import { getStatusBg, getStatusColor } from "@/features/patients/utils";
-import { formatDate, cn } from "@/utils";
-import type { PatientCardProps, PatientGridProps } from "./types";
+import { cn,formatDate } from "@/utils";
+
 import { container, item } from "../constants";
+import type { PatientCardProps, PatientGridProps } from "./types";
 
 const PatientCard = memo(({ patient, onPatientClick }: PatientCardProps): React.ReactElement => {
   const isCritical = patient.status === "Critical";

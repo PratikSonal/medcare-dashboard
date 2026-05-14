@@ -1,21 +1,23 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
+import { memo } from "react";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
+
 import { useAppSelector } from "@/hooks/useAppDispatch";
 import type { RootState } from "@/store";
+
 import { item, ttStyle } from "../constants";
-import { renderLabel } from "../helper";
+import { renderLabel } from "../helpers";
 
 export const ChartsRow = memo((): React.ReactElement => {
   const metrics = useAppSelector((s: RootState) => s.analytics.metrics);

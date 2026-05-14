@@ -1,5 +1,8 @@
-import { CheckCircle, XCircle, Info } from "lucide-react";
+import { CheckCircle, Info,XCircle } from "lucide-react";
+
 import type { ToastType } from "./types";
+
+export const TOAST_DISMISS_MS = 3500;
 
 export const CONFIG: Record<ToastType, { icon: typeof CheckCircle; color: string; bg: string }> = {
   success: { icon: CheckCircle, color: "var(--accent-green)", bg: "var(--accent-green-subtle)" },
