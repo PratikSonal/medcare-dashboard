@@ -31,6 +31,9 @@ export default {
         '20': '20px',
         '999': '999px',
       },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+      },
       spacing: {
         '18': '4.5rem',
       },

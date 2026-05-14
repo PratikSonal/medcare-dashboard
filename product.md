@@ -32,7 +32,7 @@ Live at: `medcare-dashboard.vercel.app` (pending) | GitHub: `medcare-dashboard` 
 ```
 src/
 ├── components/
-│   ├── ui/               — Badge, Button, Card, Input, AuthInput, KpiCard, Avatar, SearchInput
+│   ├── ui/               — Badge, Button, Card, Input, AuthInput, KpiCard, Avatar, SearchInput, PageLoader
 │   ├── layout/
 │   │   ├── AppLayout/    — authenticated shell (sidebar + navbar + outlet)
 │   │   ├── LoginLayout/  — unauthenticated shell (LeftPanel + slot); used by LoginPage + RegisterPage
@@ -54,9 +54,8 @@ src/
 │   └── ui/               — uiSlice.ts (theme, sidebar, notifications, toasts)
 ├── hooks/
 │   ├── useAppDispatch.ts — typed Redux hooks
-│   ├── useAuth.ts        — provider-agnostic auth hook (re-exports useFirebaseAuth)
-│   ├── useCountUp.ts     — animated number counter
-│   └── useFirebaseAuth.ts — Firebase implementation (signIn, register, isLoading, error)
+│   ├── useAuth.ts        — full Firebase auth implementation (signIn, register, isLoading, error, clearError; exports UseAuthReturn interface)
+│   └── useCountUp.ts     — animated number counter
 ├── lib/
 │   ├── errorMessages.ts  — Firebase error code → human string map
 │   ├── firebase.ts       — Firebase app init
@@ -122,13 +121,13 @@ public/sw.js          — Service Worker (push notifications)
 - Dot-grid background: `radial-gradient(circle, rgba(...) 1px, transparent 1px)` — applied via `.dot-grid` utility class in `globals.css`
 
 ### Layout
-- **Sidebar**: Floating rounded card (`borderRadius: 20px`, `left: 12px`, `top: 12px`, `height: calc(100vh - 24px)`). Nav item clicks call `document.documentElement.scrollTop = 0` for instant scroll-to-top on route change.
-- **Navbar**: Themed pill (`borderRadius: 999px`, uses `var(--bg-card)` + `var(--border-primary)`) — raga.ai inspired, floats at top, respects light/dark theme. Left section shows gradient avatar (user initial) + staggered "Welcome, [name]" animation. Right section: theme toggle + notifications.
-- **AppLayout**: `marginLeft` animates with sidebar open/closed state
+- **Sidebar**: Floating rounded card (`borderRadius: 20px`, `left: 12px`, `top: 12px`, `height: calc(100vh - 24px)`). Nav item clicks call `document.documentElement.scrollTop = 0` for instant scroll-to-top on route change. **Mobile drawer** (< 640px): slides in from the left via `translate-x-0` / `-translate-x-[calc(100%+16px)]`, controlled by Redux `sidebarOpen` (defaults `false`). `sm:translate-x-0` forces it always-visible on desktop regardless of Redux state. A `bg-black/50 backdrop-blur-sm sm:hidden` overlay covers content when open on mobile.
+- **Navbar**: Themed pill (`borderRadius: 999px`, uses `var(--bg-card)` + `var(--border-primary)`) — raga.ai inspired, floats at top, respects light/dark theme. Left section shows gradient avatar (user initial) + staggered "Welcome, [name]" animation + hamburger button (`Menu` icon, `sm:hidden`) that toggles `sidebarOpen`. Right section: theme toggle + notifications.
+- **AppLayout**: Main content uses `ml-0 sm:ml-[264px]` (no margin on mobile — sidebar overlays; fixed margin on desktop). `<Outlet />` is wrapped in a nested `<Suspense fallback={<PageLoader />}>` so page transitions show a gradient arc spinner without unmounting the Sidebar/Navbar.
 
 ### Auth Architecture
-- `useAuth.ts` is a one-line re-export of `useFirebaseAuth` — components only ever import `useAuth`, never the provider directly. To swap Firebase for Clerk/Auth0/Supabase: change one import in `useAuth.ts`, nothing else.
-- `useFirebaseAuth` owns all Firebase calls, `isLoading` local state, and error mapping. Redux `authSlice` receives the error string via `dispatch(setError(msg))` but loading is **not** tracked in Redux — form-submit loading lives in local state only (avoids the "stuck-true" bug where `setLoading(true)` was called but the `finally` block never ran).
+- `useAuth.ts` is the full Firebase auth implementation — owns all Firebase calls (`signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `updateProfile`), `isLoading` local state, and error mapping via `getFirebaseErrorMessage()`. Exports a `UseAuthReturn` interface documenting the public contract (`signIn`, `register`, `isLoading`, `error`, `clearError`). Components import only from `useAuth`; swapping Firebase for Clerk/Auth0/Supabase means rewriting this one file.
+- Redux `authSlice` receives the error string via `dispatch(setError(msg))` but loading is **not** tracked in Redux — form-submit loading lives in local state only (avoids the "stuck-true" bug where `setLoading(true)` was called but the `finally` block never ran).
 - `LoginLayout` is the unauthenticated shell: `<LeftPanel />` (always dark, private to `LoginLayout`) + a right-side children slot. Both `LoginPage` and `RegisterPage` compose it.
 - `AuthInput` (`src/components/ui/AuthInput/`) — generic labeled input with `htmlFor`/`id` a11y pairing, `icon`, `headerRight` (for "Forgot password?"), and `rightElement` (for show/hide toggle) slots.
 - Zod schemas in `src/lib/validators.ts`: `loginSchema` (email + password), `registerSchema` extends `loginSchema` with `name`. Both forms call `schema.safeParse()` before submitting; `result.error.issues[0].message` surfaces the first validation error.
@@ -364,3 +363,13 @@ On first load, theme defaults to `'light'` (set in `uiSlice.ts`). If testing, cl
 ```js
 localStorage.removeItem('medcare-theme')
 ```
+
+### Mobile responsiveness (sm = 640px)
+- All responsive breakpoints use `sm:` (640px). Default (no prefix) = mobile, `sm:` = desktop override.
+- **Sidebar default `sidebarOpen: false`** is intentional — the `sm:translate-x-0` Tailwind class keeps it always-visible on desktop via CSS, not Redux state.
+- Modals use `items-end sm:items-center` + `rounded-t-[24px] sm:rounded-[24px]` — sheet sliding up from bottom on mobile, centered dialog on desktop.
+- Grid layouts use `grid-cols-1 sm:grid-cols-N` throughout (KPI cards, charts rows, appointment panels).
+- Mobile layout refinement is deferred — rough pass is in place; final polish before submission.
+
+### PageLoader
+`src/components/ui/PageLoader/` — gradient arc spinner using `conic-gradient` + `radial-gradient` mask (CSS-only ring, no SVG). Used as the Suspense fallback inside `AppLayout` for page transitions. Avoids the flash caused by the outer `fallback={null}` Suspense which would unmount Sidebar/Navbar on every navigation.

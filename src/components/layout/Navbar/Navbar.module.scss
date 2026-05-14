@@ -108,3 +108,11 @@
     background 200ms ease,
     color 200ms ease;
 }
+
+.noScrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

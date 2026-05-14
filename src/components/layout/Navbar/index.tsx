@@ -64,8 +64,7 @@ export const Navbar = (): React.ReactElement => {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 320, damping: 22, delay: 0.1 }}
-          className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
-          style={{ background: "var(--gradient-primary)" }}
+          className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 bg-gradient-primary"
         >
           {initial}
         </motion.div>
@@ -160,7 +159,7 @@ export const Navbar = (): React.ReactElement => {
                   </div>
 
                   {/* List */}
-                  <div className="max-h-80 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+                  <div className={cn("max-h-80 overflow-y-auto", styles.noScrollbar)}>
                     {visible.length === 0 ? (
                       <div className="py-8 px-4 text-center text-text-tertiary text-[13px]">
                         No unread notifications

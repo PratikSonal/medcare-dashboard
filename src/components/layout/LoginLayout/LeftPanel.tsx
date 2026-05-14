@@ -38,17 +38,11 @@ const FeatureCarousel = (): React.ReactElement => {
                 >
                   {slide.stat}
                 </span>
-                <span
-                  className="text-[16px] font-semibold leading-none"
-                  style={{ color: "#f8fafc" }}
-                >
+                <span className="text-[16px] font-semibold leading-none text-[#f8fafc]">
                   {slide.headline}
                 </span>
               </div>
-              <p
-                className="text-[13px] leading-[1.55] m-0 max-w-[300px]"
-                style={{ color: "#9ca3af" }}
-              >
+              <p className="text-[13px] leading-[1.55] m-0 max-w-[300px] text-[#9ca3af]">
                 {slide.description}
               </p>
             </div>
@@ -77,18 +71,14 @@ export const LeftPanel = (): React.ReactElement => (
     initial={{ opacity: 0, x: -40 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ duration: 0.5 }}
-    className="hidden lg:flex flex-col w-[52%] relative overflow-hidden"
-    style={{ background: "#0c111d", borderRight: "1px solid #1d2839" }}
+    className="hidden lg:flex flex-col w-[52%] relative overflow-hidden bg-[#0c111d] border-r border-[#1d2839]"
   >
     <div className="absolute -top-[80px] -left-[80px] w-[400px] h-[400px] rounded-full opacity-[0.07] blur-[80px] pointer-events-none bg-accent-blue" />
     <div className="absolute -bottom-[80px] -right-[60px] w-[350px] h-[350px] rounded-full opacity-[0.05] blur-[80px] pointer-events-none bg-accent-cyan" />
 
     <div className="pt-[40px] px-[48px] relative z-[1]">
       <div className="flex items-center gap-[10px]">
-        <div
-          className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-          style={{ background: "var(--gradient-primary)" }}
-        >
+        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 bg-gradient-primary">
           <Activity size={18} color="white" />
         </div>
         <span className="gradient-text text-[18px] font-bold">MedCare</span>
@@ -97,18 +87,12 @@ export const LeftPanel = (): React.ReactElement => (
 
     <div className="flex-1 flex flex-col justify-center px-[48px] relative z-[1]">
       <div className="glow-line mb-5 w-14" />
-      <h1
-        className="text-[36px] font-extrabold leading-[1.2] mb-3 tracking-[-0.02em]"
-        style={{ color: "#f8fafc" }}
-      >
+      <h1 className="text-[36px] font-extrabold leading-[1.2] mb-3 tracking-[-0.02em] text-[#f8fafc]">
         Healthcare Intelligence
         <br />
         <span className="gradient-text">Reimagined</span>
       </h1>
-      <p
-        className="text-[14px] leading-[1.7] mb-[40px] max-w-[340px]"
-        style={{ color: "#9ca3af" }}
-      >
+      <p className="text-[14px] leading-[1.7] mb-[40px] max-w-[340px] text-[#9ca3af]">
         A unified platform for modern healthcare teams — monitor patients, schedule appointments,
         and deliver exceptional care.
       </p>
@@ -116,17 +100,11 @@ export const LeftPanel = (): React.ReactElement => (
     </div>
 
     <div className="pb-[40px] px-[48px] relative z-[1]">
-      <p className="text-[11px] flex items-center" style={{ color: "#4b5563" }}>
+      <p className="text-[11px] flex items-center text-[#4b5563]">
         HIPAA Certified
-        <span
-          className="inline-block w-[3px] h-[3px] rounded-full mx-[10px]"
-          style={{ background: "#4b5563" }}
-        />
+        <span className="inline-block w-[3px] h-[3px] rounded-full mx-[10px] bg-[#4b5563]" />
         SOC 2 Type II
-        <span
-          className="inline-block w-[3px] h-[3px] rounded-full mx-[10px]"
-          style={{ background: "#4b5563" }}
-        />
+        <span className="inline-block w-[3px] h-[3px] rounded-full mx-[10px] bg-[#4b5563]" />
         FHIR Ready
       </p>
     </div>

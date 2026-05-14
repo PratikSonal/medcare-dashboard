@@ -13,7 +13,6 @@ export const store = configureStore({
     appointments: appointmentsReducer,
     billing: billingReducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

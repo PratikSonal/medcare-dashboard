@@ -50,10 +50,7 @@ export const Sidebar = (): React.ReactElement => {
       >
         {/* Logo */}
         <div className="flex items-center gap-[10px] px-4 py-5 shrink-0">
-          <div
-            className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-            style={{ background: "var(--gradient-primary)" }}
-          >
+          <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 bg-gradient-primary">
             <Activity size={18} color="white" />
           </div>
           <span className="gradient-text text-[17px] font-bold whitespace-nowrap">MedCare</span>
@@ -92,10 +89,7 @@ export const Sidebar = (): React.ReactElement => {
         <div className="p-2 shrink-0 border-t border-border-primary">
           {user && (
             <div className="flex items-center gap-[10px] px-3 py-[10px] mb-1 rounded-12 bg-bg-tertiary">
-              <div
-                className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                style={{ background: "var(--gradient-primary)" }}
-              >
+              <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 bg-gradient-primary">
                 {user.email?.[0].toUpperCase()}
               </div>
               <div className="min-w-0">

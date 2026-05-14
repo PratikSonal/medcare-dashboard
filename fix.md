@@ -28,7 +28,7 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 - [ ] **Replace all date formatting with `date-fns`** — `toLocaleDateString()` is called in 7+ places (`PatientModal`, `lib/utils.ts`, `AppointmentsPage`, `BillingPage`, `WeekStrip`); `toISOString().split("T")[0]` appears in `AddPatientModal/constants.ts` and `AppointmentsPage/helpers.ts`; manual `.setDate()`/`.getDate()` arithmetic in `AppointmentsPage/helpers.ts`. Replace all with `date-fns` — `format()`, `addDays()`, `startOfWeek()`, `parseISO()`. Consistent locale, timezone-safe, tree-shakeable.
 - [ ] **Add debouncing to all search inputs** — `AppointmentsPage` search, `PatientDetailsPage/FilterBar` dispatch, and `BillingTable` search all update state on every keystroke with no delay. Install `use-debounce` and wrap each with `useDebounce(value, 300)` to reduce unnecessary renders and Redux dispatches.
 - [ ] **Derived state belongs in selectors** — `totalBilled`, `approvalRate`, filtered appointment lists, doctor rosters are computed in component bodies with `useMemo`. Move to `createSelector` (RTK) so every consumer gets the memoized result without duplicating dependency arrays.
-- [ ] **`serializableCheck: false` in store** — this disables a critical RTK guard. Identify what non-serializable value is triggering it (likely a Firebase `User` object or a `Date`) and fix the root cause.
+- [x] **`serializableCheck: false` in store** — removed; root cause was Firebase `User` object stored directly in Redux. `ProtectedRoute` now maps it to a plain `{ uid, email, displayName, photoURL }` before dispatch. RTK's default serializable check is active.
 - [ ] **Add Error Boundaries** — no `ErrorBoundary` exists anywhere. One bad render (malformed chart data, bad mock entry) crashes the entire app to a white screen. Add at app root and around modal/chart-heavy pages.
 - [ ] **Fix all missing accessibility attributes** — Navbar bell + theme toggle have no `aria-label`. PatientModal tabs need `aria-selected` + `aria-controls`. Modals need focus trap and focus restoration on close.
 - [ ] **Deduplicate time formatting helpers** — `AppointmentsPage/helpers.ts` and `NewAppointmentModal/helpers.ts` both implement time formatting. Consolidate into `src/lib/utils.ts`.
@@ -39,7 +39,7 @@ Issues surfaced from brutal code review. Work top-to-bottom.
 
 - [ ] **`rgba` alpha variants are still hardcoded** — `rgba(60,131,246,0.1)`, `rgba(14,165,233,0.12)`, `rgba(239,68,68,0.35)`, etc. appear throughout components and constants. The design system has no alpha-channel tokens. Add `--accent-blue-subtle`, `--accent-cyan-subtle`, `--accent-red-subtle`, `--accent-yellow-subtle`, `--accent-purple-subtle` CSS variables (at 10–12% opacity) and replace all inline `rgba(...)` background/border values.
 - [ ] **Design-system gaps in chart/dept colours** — `#38bdf8` (Orthopedics), `#6366f1` (Surgery/PROC_COLORS), `#a78bfa` (Nephrology), `#6b7280` (Others) are used in `departmentStats.ts`, `mockData.ts`, and `AnalyticsPage/constants.ts` with no corresponding CSS variable. Add them to the design system or replace with existing tokens.
-- [ ] **`RegisterPage` bypasses the design system entirely** — `RegisterCard.tsx` and `RegisterPage/index.tsx` use ~25 raw hex values (`#070d1a`, `#0d1b33`, `#1e3a5f`, `#2563eb`, `#fca5a5`, etc.) that have no CSS variable equivalents. This page needs to be migrated to the same dark-mode token system used by `LoginPage`.
+- [x] **`RegisterPage` bypasses the design system entirely** — `RegisterCard.tsx` deleted; `RegisterPage` rebuilt using `LoginLayout` (same CSS variable token system as `LoginPage`). `RegisterForm` mirrors `LoginForm` structure with Zod + `useAuth`.
 - [ ] **`LoginPage/LeftPanel.tsx` has residual dark-only hex values** — `#0c111d`, `#1d2839`, `#4b5563`, `#f8fafc`, `#9ca3af` are hardcoded because the panel is always rendered dark regardless of theme. These should map to the dark-mode CSS var values (`--bg-secondary`, `--border-primary`, etc.) and be expressed as `var(--x)` so a future theme change doesn't require revisiting.
 
 ---
@@ -94,7 +94,7 @@ The following inline `style` props are intentionally kept — they require dynam
 
 - [x] **`auth.isLoading` permanently `true` after submit** — removed `dispatch(setLoading)` from forms; loading is now local state only in `useFirebaseAuth`.
 - [x] **`RegisterPage` / `RegisterCard` dead code** — deleted both files; `/register` now renders a real `RegisterPage` with `RegisterForm`.
-- [x] **Split `AuthForm`** — Firebase logic extracted to `useFirebaseAuth` → re-exported as `useAuth`; `LoginForm` and `RegisterForm` are fully presentational.
+- [x] **Split `AuthForm`** — Firebase logic extracted to `useAuth.ts` (full implementation, not a re-export; `useFirebaseAuth.ts` deleted); `LoginForm` and `RegisterForm` are fully presentational.
 - [x] **`isRegister` derived from `useLocation()`** — split into two independent components (`LoginForm`, `RegisterForm`); no router reads inside forms.
 - [x] **Labels not linked to inputs** — `AuthInput` component uses proper `htmlFor`/`id` pairing on every field.
 - [x] **Deduplicate error message maps** — single `src/lib/errorMessages.ts` with `getFirebaseErrorMessage()`.
@@ -109,4 +109,9 @@ The following inline `style` props are intentionally kept — they require dynam
 - [x] **Redundant `ThemeInitializer` component** — deleted from `routes/index.tsx`; `uiSlice.ts` already sets `data-theme` at module load.
 - [x] **Email validation with weak regex** — replaced with `z.string().email()` via Zod across both auth forms.
 - [x] **`LoginLayout` as shared auth shell** — `LeftPanel`, `constants.ts`, `types.ts` moved to `src/components/layout/LoginLayout/`; both `LoginPage` and `RegisterPage` compose it.
-- [x] **Provider-agnostic auth hook** — `useAuth.ts` re-exports `useFirebaseAuth`; swapping providers requires changing one import.
+- [x] **Provider-agnostic auth hook** — `useAuth.ts` is the full implementation with `UseAuthReturn` interface; `useFirebaseAuth.ts` deleted. Swapping providers means rewriting `useAuth.ts` only.
+- [x] **Orphaned CSS files deleted** — `src/index.css` and `src/App.css` were stub comment files with no consumers; removed.
+- [x] **Explicit TypeScript types codebase-wide** — added `: React.ReactElement` on all components, `(s: RootState) =>` on all selectors, `: Promise<void>` on async functions, typed map/filter/reduce callbacks, `UseAuthReturn` interface on `useAuth`, `inputCls` return type `string`, field handler return types. Skipped `useState` for unambiguously-inferred primitives (`boolean`, `number`, `string`).
+- [x] **Page transition lag from lazy loading** — root cause: outer `Suspense fallback={null}` was unmounting Sidebar/Navbar on every navigation. Fix: nested `Suspense` with `<PageLoader />` inside `AppLayout` wrapping only `<Outlet />`; Sidebar/Navbar stay mounted throughout.
+- [x] **PageLoader component** — `src/components/ui/PageLoader/` — gradient arc ring spinner via `conic-gradient` + `radial-gradient` CSS mask. No SVG, no extra dependencies.
+- [x] **Mobile responsive layout** — `sm:` (640px) breakpoints added throughout: Sidebar slide-in drawer, Navbar hamburger button, modal sheet pattern (`items-end sm:items-center`, `rounded-t-[24px] sm:rounded-[24px]`), KPI/chart grids (`grid-cols-1 sm:grid-cols-N`), AppLayout margin (`ml-0 sm:ml-[264px]`). Final mobile polish deferred.
